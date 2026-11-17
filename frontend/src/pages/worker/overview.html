@@ -1,0 +1,86 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Worker Operations Overview
+     ID: view-worker-overview
+     Location: frontend/src/pages/worker/overview.html
+     ========================================================================= -->
+
+<div id="view-worker-overview" class="auth-view hidden">
+  <!-- Mobile & Desktop Shift Banner -->
+  <div class="mb-6 p-4 sm:p-5 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-mono font-bold text-lg">
+        RK
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 class="text-base font-bold text-white">Rajesh Kumar</h2>
+          <span class="font-mono text-xs text-slate-400">WRK-0018</span>
+        </div>
+        <p class="text-xs text-slate-300">Electrical & Power Systems • Shift A (08:00 - 16:30)</p>
+      </div>
+    </div>
+    
+    <!-- Online/Offline Switch -->
+    <div class="flex items-center gap-3 bg-slate-800/80 p-2 rounded-xl border border-slate-700">
+      <span class="text-xs font-mono font-medium" id="worker-status-label">ONLINE & AVAILABLE</span>
+      <button onclick="toggleWorkerAvailability()" id="worker-status-btn" class="px-3 py-1 bg-emerald-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-emerald-400 transition-colors">
+        Go Offline
+      </button>
+    </div>
+  </div>
+
+  <!-- URGENT INCOMING ASSIGNMENT BANNER (TICKING 30M COUNTDOWN) -->
+  <div id="worker-urgent-alert" class="mb-8 p-5 sm:p-6 bg-gradient-to-r from-red-500 to-amber-600 text-white rounded-2xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 rounded-full bg-white text-red-600 flex items-center justify-center shrink-0 shadow-md animate-pulse">
+        <span class="material-symbols-outlined text-[28px]">notification_important</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-mono font-bold uppercase tracking-wider">NEW DISPATCH ALERT</span>
+          <span class="px-2 py-0.5 rounded-full bg-white text-red-700 text-[11px] font-mono font-bold">HIGH PRIORITY</span>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold mt-1">CF-2026-00124: Switchboard Malfunction & Sparking</h3>
+        <p class="text-xs sm:text-sm text-red-100 mt-0.5">Academic Block B, Second Floor, Room 204 • Complainant: Aarav Patel</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+      <div class="text-center md:text-right bg-black/25 px-4 py-2.5 rounded-xl border border-white/20 w-full sm:w-auto">
+        <span class="text-[10px] font-mono uppercase tracking-wider block text-white/80">30-Min Acceptance SLA</span>
+        <span class="text-2xl font-bold font-mono tracking-tight text-white countdown-display">28m 14s</span>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <button onclick="navigateTo('worker-incoming', 'worker')" class="flex-1 sm:flex-initial px-5 py-3 bg-white text-slate-900 rounded-xl font-bold text-xs hover:bg-slate-100 shadow-md transition-all">
+          Respond Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Worker Shift KPI Stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Today's Jobs</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">3 Tasks</div>
+      <span class="text-[11px] text-slate-500">2 closed, 1 active</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">SLA Acceptance Rate</span>
+      <div class="text-2xl font-bold text-emerald-600 mt-1">98.4%</div>
+      <span class="text-[11px] text-emerald-700 font-mono">Top 5% on campus</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Avg Response Time</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">2.4 min</div>
+      <span class="text-[11px] text-slate-500">Target &lt; 30m</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Career Jobs Closed</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">342</div>
+      <span class="text-[11px] text-slate-500">4.9 / 5 Rating</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 27: INCOMING JOB REQUEST (worker-incoming) -->

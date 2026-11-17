@@ -1,0 +1,41 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Automated Dispatch Telemetry
+     ID: view-admin-assignments
+     Location: frontend/src/pages/admin/assignment-telemetry.html
+     ========================================================================= -->
+
+<div id="view-admin-assignments" class="auth-view hidden">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Assignment Engine Telemetry</h1>
+    <p class="text-xs text-slate-600">Live monitoring of 30-minute worker acceptance windows and auto-reassignment triggers</p>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="py-3.5 px-4">Ticket</th>
+          <th class="py-3.5 px-4">Candidate Worker</th>
+          <th class="py-3.5 px-4">Dispatched At</th>
+          <th class="py-3.5 px-4">30m SLA Status</th>
+          <th class="py-3.5 px-4">Attempt</th>
+          <th class="py-3.5 px-4 text-right">Intervention</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr class="hover:bg-slate-50">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">CF-2026-00124</td>
+          <td class="py-3.5 px-4 font-semibold text-slate-900">Rajesh Kumar (WRK-0018)</td>
+          <td class="py-3.5 px-4 font-mono text-slate-500">09:42 AM</td>
+          <td class="py-3.5 px-4 text-emerald-600 font-semibold font-mono">Accepted within 1.8m</td>
+          <td class="py-3.5 px-4 font-mono text-slate-600">Attempt #1</td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="openInterventionModal('CF-2026-00124')" class="px-2 py-1 bg-slate-100 border border-slate-300 rounded text-slate-700 hover:bg-slate-200 font-mono font-semibold">
+              Manual Override
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

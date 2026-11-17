@@ -1,0 +1,38 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Institutional Maintenance Reports
+     ID: view-admin-reports
+     Location: frontend/src/pages/admin/reports.html
+     ========================================================================= -->
+
+<div id="view-admin-reports" class="auth-view hidden">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Institutional Operational Reports</h1>
+      <p class="text-xs text-slate-600">Export audited SLA metrics, workforce utilization, and departmental compliance</p>
+    </div>
+    <button onclick="showToast('Generating institutional report export...', 'info')" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-sm">
+      <span class="material-symbols-outlined text-[16px]">download</span>
+      <span>Export Report (PDF / CSV)</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Overall Campus SLA</span>
+      <div class="text-3xl font-bold text-emerald-600 mt-1">98.4%</div>
+      <p class="text-xs text-slate-500 mt-1">Target is 95.0%</p>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">30m SLA Expirations</span>
+      <div class="text-3xl font-bold text-slate-900 mt-1">1.8%</div>
+      <p class="text-xs text-emerald-600 mt-1">Down from 14% prior year</p>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Technician Utilization</span>
+      <div class="text-3xl font-bold text-slate-900 mt-1">87.2%</div>
+      <p class="text-xs text-slate-500 mt-1">Balanced shift distribution</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 46: ADMIN NOTIFICATIONS & SETTINGS -->

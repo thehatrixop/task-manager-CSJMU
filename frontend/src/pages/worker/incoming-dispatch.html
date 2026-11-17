@@ -1,0 +1,78 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Incoming Job Dispatch with 30-min SLA
+     ID: view-worker-incoming
+     Location: frontend/src/pages/worker/incoming-dispatch.html
+     ========================================================================= -->
+
+<div id="view-worker-incoming" class="auth-view hidden">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+      <button onclick="navigateTo('worker-overview', 'worker')" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 mb-2">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        <span>Back to Overview</span>
+      </button>
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-slate-900">Incoming Dispatch Alert</h1>
+        <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 font-mono text-xs font-bold animate-pulse">Action Required</span>
+      </div>
+    </div>
+
+    <!-- 30-Minute Acceptance Countdown Timer Box -->
+    <div class="bg-slate-950 text-white rounded-2xl p-6 mb-6 shadow-xl text-center border border-slate-800">
+      <span class="font-mono text-xs text-slate-400 uppercase tracking-widest block mb-1">AUTOMATED DISPATCH DEADLINE</span>
+      <div class="text-4xl sm:text-5xl font-mono font-bold text-red-400 tracking-tight my-2 countdown-display">
+        28m 14s
+      </div>
+      <p class="text-xs text-slate-400 max-w-md mx-auto">
+        If you decline or do not acknowledge within the remaining window, the intelligent assignment engine will automatically reassign this job to a secondary standby worker.
+      </p>
+    </div>
+
+    <!-- Job Specs Card -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 mb-6">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div>
+          <span class="text-[10px] font-mono uppercase text-slate-400">Complaint ID</span>
+          <div class="text-lg font-bold font-mono text-slate-900">CF-2026-00124</div>
+        </div>
+        <div class="text-right">
+          <span class="text-[10px] font-mono uppercase text-slate-400">Department</span>
+          <div class="text-sm font-bold text-amber-700">Electrical & Power Systems</div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-bold uppercase text-slate-500 mb-1">Issue Title</h3>
+        <p class="text-base font-bold text-slate-900">Electrical Switchboard Malfunction & Sparking</p>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-bold uppercase text-slate-500 mb-1">Room Location (Descriptive)</h3>
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs text-slate-800">
+          Academic Block B, Second Floor, Room 204, Near Laboratory Entrance
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-bold uppercase text-slate-500 mb-1">Problem Description</h3>
+        <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200">
+          Main laboratory switchboard in Room 204 experienced intermittent sparking when high-draw oscilloscopes were activated. Faint burning odor noted near circuit breaker #4. Power isolated locally at emergency switch.
+        </p>
+      </div>
+
+      <!-- Accept / Decline Action Buttons -->
+      <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+        <button onclick="acceptJobWorker('CF-2026-00124')" class="w-full py-3.5 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 shadow-md transition-colors flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+          <span>ACCEPT JOB</span>
+        </button>
+        <button onclick="openWorkerDeclineModal('CF-2026-00124')" class="w-full py-3.5 bg-slate-100 text-slate-700 border border-slate-300 rounded-xl font-bold text-sm hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">cancel</span>
+          <span>DECLINE</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 28: ASSIGNMENT DETAILS (worker-assignment) -->

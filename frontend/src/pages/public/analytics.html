@@ -1,0 +1,88 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Public Analytics
+     ID: view-analytics
+     Location: frontend/src/pages/public/analytics.html
+     ========================================================================= -->
+
+<div id="view-analytics" class="public-view pt-24 hidden">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-300 mb-3">
+          <span class="font-mono text-[11px] text-slate-900 font-semibold uppercase tracking-wider">PUBLIC AUDIT PREVIEW</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-bold text-on-surface">Campus Operational Benchmark</h1>
+        <p class="text-sm text-on-surface-variant mt-2 max-w-2xl">
+          Illustrative real-time telemetry from across 24 academic complexes, 18 residential towers, and central laboratory assets.
+        </p>
+      </div>
+      <button onclick="showToast('Exporting PDF institutional benchmark...', 'info')" class="px-4 py-2.5 rounded-lg bg-surface-container-lowest border border-slate-300 shadow-sm text-slate-900 font-medium text-xs hover:bg-slate-50 transition-colors flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+        <span>Export Audit Report (PDF)</span>
+      </button>
+    </div>
+
+    <!-- 4 High Impact KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Total Logged Orders</span>
+          <span class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+            <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+          </span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold text-on-surface">1,428</span>
+          <span class="font-mono text-emerald-600 text-xs font-semibold">+12.4%</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">vs. previous academic term</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Avg Worker Response</span>
+          <span class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+            <span class="material-symbols-outlined text-[18px]">timer</span>
+          </span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold text-on-surface">18.4 <span class="text-base font-normal text-slate-500">min</span></span>
+          <span class="font-mono text-emerald-600 text-xs font-semibold">-93%</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Down from 4.2h paper chits</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">1st-Attempt Acceptance</span>
+          <span class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+            <span class="material-symbols-outlined text-[18px]">bolt</span>
+          </span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold text-on-surface">91.8%</span>
+          <span class="font-mono text-emerald-600 text-xs font-semibold">Optimal</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Intelligent skill matching</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Campus Infrastructure Uptime</span>
+          <span class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+            <span class="material-symbols-outlined text-[18px]">vital_signs</span>
+          </span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold text-on-surface">99.2%</span>
+          <span class="font-mono text-emerald-600 text-xs font-semibold">SLA Pass</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Across high-voltage chillers & grid</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- PUBLIC VIEW 8: LOGIN & SIGNUP (login / signup) -->
+<!-- ========================================== -->

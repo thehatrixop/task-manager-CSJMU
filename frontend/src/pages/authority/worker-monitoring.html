@@ -1,0 +1,48 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Department Worker Monitoring
+     ID: view-authority-workers
+     Location: frontend/src/pages/authority/worker-monitoring.html
+     ========================================================================= -->
+
+<div id="view-authority-workers" class="auth-view hidden">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Assigned Department Workers</h1>
+    <p class="text-xs text-slate-600">Electrical and facility technicians operating within this jurisdiction</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-mono text-xs font-bold text-slate-900">WRK-0018</span>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono text-[10px] font-semibold">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> On Active Job
+        </span>
+      </div>
+      <h3 class="text-sm font-bold text-slate-900">Rajesh Kumar</h3>
+      <p class="text-xs text-slate-500 font-mono">Senior Electrician • Shift A</p>
+      <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-mono space-y-1 text-slate-600">
+        <div class="flex justify-between"><span>Current:</span><span class="font-bold text-slate-900">CF-2026-00124</span></div>
+        <div class="flex justify-between"><span>Completed:</span><span>342 Jobs</span></div>
+        <div class="flex justify-between"><span>SLA Rating:</span><span class="text-emerald-600 font-bold">98.4%</span></div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-mono text-xs font-bold text-slate-900">WRK-0019</span>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono text-[10px] font-semibold">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available / Standby
+        </span>
+      </div>
+      <h3 class="text-sm font-bold text-slate-900">Vikram Singh</h3>
+      <p class="text-xs text-slate-500 font-mono">Electrician II • Shift A</p>
+      <div class="mt-4 pt-3 border-t border-slate-100 text-xs font-mono space-y-1 text-slate-600">
+        <div class="flex justify-between"><span>Current:</span><span class="text-slate-400">None (Idle)</span></div>
+        <div class="flex justify-between"><span>Completed:</span><span>214 Jobs</span></div>
+        <div class="flex justify-between"><span>SLA Rating:</span><span class="text-emerald-600 font-bold">95.1%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 24: AUTHORITY ANALYTICS (authority-analytics) -->

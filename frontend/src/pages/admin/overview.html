@@ -1,0 +1,115 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: University Administrator Overview
+     ID: view-admin-overview
+     Location: frontend/src/pages/admin/overview.html
+     ========================================================================= -->
+
+<div id="view-admin-overview" class="auth-view hidden">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <span class="font-mono text-xs text-purple-700 font-bold uppercase tracking-wider">CAMPUS DISPATCH COMMAND</span>
+      <h1 class="text-2xl font-bold text-slate-900 mt-1">Central Facilities Command</h1>
+      <p class="text-xs text-slate-600">Omni-channel university operations, workforce routing, and SLA exception monitoring</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="navigateTo('admin-create-worker', 'admin')" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-sm">
+        <span class="material-symbols-outlined text-[16px]">person_add</span>
+        <span>Provision Worker</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 8 Campus-Wide KPI Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Total Requests</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">1,428</div>
+      <span class="text-[11px] text-emerald-600 font-mono">+12.4% term</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-amber-600">Pending Authority</span>
+      <div class="text-2xl font-bold text-amber-600 mt-1">14</div>
+      <span class="text-[11px] text-slate-500">With HODs/Wardens</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-blue-600">Active Field Units</span>
+      <div class="text-2xl font-bold text-blue-600 mt-1">42</div>
+      <span class="text-[11px] text-slate-500">On physical repairs</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-red-600">SLA At Risk (&gt;25m)</span>
+      <div class="text-2xl font-bold text-red-600 mt-1">2</div>
+      <span class="text-[11px] text-red-600 font-semibold">Auto-reassign pending</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Total Workforce</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">95 Staff</div>
+      <span class="text-[11px] text-slate-500">6 Trades</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-emerald-600">Available / Standby</span>
+      <div class="text-2xl font-bold text-emerald-600 mt-1">18 Staff</div>
+      <span class="text-[11px] text-slate-500">Ready for dispatch</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-slate-500">Avg Resolution SLA</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">18.4 min</div>
+      <span class="text-[11px] text-emerald-600 font-mono">Target &lt; 30m</span>
+    </div>
+    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <span class="text-xs font-mono uppercase text-emerald-600">Monthly Resolved</span>
+      <div class="text-2xl font-bold text-emerald-600 mt-1">1,369</div>
+      <span class="text-[11px] text-slate-500">96% on-time pass</span>
+    </div>
+  </div>
+
+  <!-- Live Dispatch Telemetry Table -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="text-base font-bold text-slate-900">Live Dispatch & SLA Countdown Monitor</h3>
+        <p class="text-xs text-slate-500">Real-time telemetry of worker response countdowns across campus</p>
+      </div>
+      <button onclick="navigateTo('admin-assignments', 'admin')" class="text-xs font-semibold text-blue-600 hover:underline">
+        View All Active Assignments →
+      </button>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="border-b border-slate-200 font-mono text-slate-500 uppercase">
+          <tr>
+            <th class="pb-3">Ticket</th>
+            <th class="pb-3">Department</th>
+            <th class="pb-3">Location</th>
+            <th class="pb-3">Dispatched Worker</th>
+            <th class="pb-3">Dispatched At</th>
+            <th class="pb-3">SLA Timer</th>
+            <th class="pb-3">Attempt</th>
+            <th class="pb-3 text-right">Intervention</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="hover:bg-slate-50">
+            <td class="py-3.5 font-mono font-bold text-slate-900">CF-2026-00124</td>
+            <td class="py-3.5"><span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded font-mono text-[10px]">Electrical</span></td>
+            <td class="py-3.5 text-slate-700 font-mono">Block B, Rm 204</td>
+            <td class="py-3.5 font-semibold text-slate-900">Rajesh Kumar (WRK-0018)</td>
+            <td class="py-3.5 font-mono text-slate-500">09:42 AM</td>
+            <td class="py-3.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono text-[10px] font-semibold border border-emerald-200">
+                Accepted (1.8m)
+              </span>
+            </td>
+            <td class="py-3.5 font-mono text-slate-600">Attempt #1</td>
+            <td class="py-3.5 text-right">
+              <button onclick="openInterventionModal('CF-2026-00124')" class="text-blue-600 hover:underline font-semibold font-mono">Override</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 37: COMPLAINT MANAGEMENT (admin-complaints) -->

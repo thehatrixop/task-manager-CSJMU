@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" style="background-color: #f8fafc;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started with CampusFlow — CampusFlow</title>
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' },
+            surface: { DEFAULT: '#f8fafc', container: '#f1f5f9', 'container-lowest': '#ffffff', 'container-high': '#e2e8f0', 'container-highest': '#cbd5e1' },
+            'on-surface': '#0f172a',
+            'on-surface-variant': '#475569',
+            outline: '#cbd5e1',
+            'outline-variant': '#e2e8f0',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    html, body {
+      background-color: #f8fafc !important;
+      color: #0f172a;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen relative w-full" style="background-color: #f8fafc;">
+
+
+<!-- Public Header -->
+<header id="public-header" class="fixed top-0 inset-x-0 z-50 py-3 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="h-16 px-5 rounded-full bg-surface-container-lowest/90 backdrop-blur-xl border border-slate-200/80 shadow-[0_4px_6px_-1px_rgba(15,23,42,0.05),0_2px_4px_-2px_rgba(15,23,42,0.05)] flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-sm group-hover:bg-emerald-600 transition-colors">
+          <span class="material-symbols-outlined text-[20px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-lg font-bold tracking-tight text-on-surface">CampusFlow</span>
+          <span class="font-mono text-[9px] text-slate-500 uppercase tracking-widest leading-none">University Operations OS</span>
+        </div>
+      </a>
+      
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-medium">
+        <a href="../../index.html" class="text-slate-600 hover:text-emerald-600 transition-colors">Home</a>
+        <a href="about.html" class="text-slate-600 hover:text-emerald-600 transition-colors">About</a>
+        <a href="platform.html" class="text-slate-600 hover:text-emerald-600 transition-colors">Platform</a>
+        <a href="how-it-works.html" class="text-slate-600 hover:text-emerald-600 transition-colors">How It Works</a>
+        <a href="departments.html" class="text-slate-600 hover:text-emerald-600 transition-colors">Departments</a>
+        <a href="analytics.html" class="text-slate-600 hover:text-emerald-600 transition-colors">Analytics</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="login.html?mode=signin" class="font-medium text-sm px-4 py-2 text-slate-700 hover:text-emerald-600 hover:bg-slate-50 rounded-full transition-all" title="Sign In to Portal">Sign In</a>
+        <a href="login.html?mode=signup" class="font-medium text-sm px-5 py-2 bg-slate-900 text-white rounded-full hover:bg-emerald-600 shadow-sm transition-all flex items-center gap-1.5" title="Create Institutional Account">
+          <span>Get Started</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <div class="pt-32 pb-24 text-center max-w-md mx-auto px-4">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-4 animate-spin">
+        <span class="material-symbols-outlined text-[32px]">sync</span>
+      </div>
+      <h2 class="text-xl font-bold text-slate-900 mb-2">Redirecting to Registration...</h2>
+      <p class="text-xs text-slate-500 mb-6">Taking you to the CampusFlow institutional account creation portal.</p>
+      <a href="login.html?mode=signup" class="px-6 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-emerald-600 transition-colors">
+        Click here if not redirected
+      </a>
+      <script>
+        window.location.replace('login.html?mode=signup');
+      </script>
+    </div>
+    
+
+<!-- Public Footer -->
+<footer id="public-footer" class="w-full text-slate-400 py-16 border-t border-slate-900 mt-auto relative z-30" style="background-color: #020617 !important;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <!-- Col 1: Institutional Seal & Campus Security -->
+      <div class="flex flex-col justify-between space-y-6">
+        <div class="flex flex-col items-start">
+          <div class="w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border border-slate-700/80 shadow-2xl flex flex-col items-center justify-center p-4 relative group">
+            <div class="absolute inset-1 rounded-full border border-emerald-500/20"></div>
+            <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-2 shadow-sm">
+              <span class="material-symbols-outlined text-[26px]">account_balance</span>
+            </div>
+            <span class="font-bold text-white text-xs tracking-wider uppercase font-mono text-center">CampusFlow</span>
+            <span class="text-[10px] text-slate-400 font-mono tracking-widest">VERIFIED CORE</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold font-mono text-white uppercase tracking-widest mb-3">Campus Security</h4>
+          <p class="text-xs text-slate-400 leading-relaxed mb-3">
+            SOC2 Type II Certified, FERPA Compliant, SHA-256 Tamper-Proof Audit Logging.
+          </p>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>99.98% System Uptime SLA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 2: Brand & Actions -->
+      <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">account_balance</span>
+            </div>
+            <span class="text-white font-bold text-lg tracking-tight">CampusFlow</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed mb-6">
+            Centralized university facility management and autonomous workforce dispatch platform.
+          </p>
+        </div>
+        <div class="pt-4 border-t border-slate-800/80">
+          <div class="inline-flex items-center gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
+            <a href="login.html?mode=signup" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shadow-sm">Get Started Free</a>
+            <a href="login.html?mode=signin" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors border border-slate-700">Sign In</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 3: Platform Links -->
+      <div class="p-4">
+        <h4 class="text-xs font-bold font-mono text-white uppercase tracking-widest mb-4">Platform Pages</h4>
+        <ul class="space-y-2.5 text-xs text-slate-400">
+          <li><a href="landing.html" class="hover:text-emerald-400 transition-colors">Home Landing</a></li>
+          <li><a href="about.html" class="hover:text-emerald-400 transition-colors">About Mission</a></li>
+          <li><a href="platform.html" class="hover:text-emerald-400 transition-colors">Cloud Architecture</a></li>
+          <li><a href="how-it-works.html" class="hover:text-emerald-400 transition-colors">How It Works</a></li>
+          <li><a href="departments.html" class="hover:text-emerald-400 transition-colors">Departments Bento</a></li>
+          <li><a href="analytics.html" class="hover:text-emerald-400 transition-colors">Operations Analytics</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Role Portals -->
+      <div class="p-4">
+        <h4 class="text-xs font-bold font-mono text-white uppercase tracking-widest mb-4">Portals</h4>
+        <ul class="space-y-2.5 text-xs text-slate-400">
+          <li><a href="login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Student / Complainant Portal</a></li>
+          <li><a href="login.html?mode=signin" class="hover:text-emerald-400 transition-colors">HOD / Warden Verification Queue</a></li>
+          <li><a href="login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Field Technician Cockpit (30m SLA)</a></li>
+          <li><a href="login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Campus Facilities Administration</a></li>
+          <li><a href="login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Super Admin Global Control</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+      <p>© 2026 CampusFlow Technologies Inc. All rights reserved.</p>
+      <div class="flex items-center gap-6">
+        <a href="about.html" class="hover:text-slate-400 transition-colors">Privacy Policy</a>
+        <a href="about.html" class="hover:text-slate-400 transition-colors">Terms of Service</a>
+        <a href="about.html" class="hover:text-slate-400 transition-colors">Security Architecture</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="../../js/app.js"></script>
+<script src="../../js/auth.js"></script>
+</body>
+</html>

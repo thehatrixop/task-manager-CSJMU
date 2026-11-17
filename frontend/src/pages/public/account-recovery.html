@@ -1,0 +1,32 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Account Recovery & Password Reset
+     ID: view-account-recovery
+     Location: frontend/src/pages/public/account-recovery.html
+     ========================================================================= -->
+
+<div id="view-account-recovery" class="public-view pt-24 hidden">
+  <div class="max-w-md mx-auto px-4 py-12">
+    <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-8 shadow-xl">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold text-slate-900">Account Recovery</h1>
+        <p class="text-xs text-slate-600 mt-1">Recover your university credentials securely via registered phone verification.</p>
+      </div>
+
+      <form onsubmit="handleRecoverySubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Registered Phone Number</label>
+          <input type="tel" required placeholder="+91 98765 43210" class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">University Roll / Employee ID</label>
+          <input type="text" required placeholder="2024-ENG-UG-0142" class="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"/>
+        </div>
+        <button type="submit" class="w-full h-11 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-sm">
+          Send Recovery Link
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Public Footer -->

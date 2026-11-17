@@ -1,0 +1,137 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Departments Directory
+     ID: view-departments
+     Location: frontend/src/pages/public/departments.html
+     ========================================================================= -->
+
+<div id="view-departments" class="public-view pt-24 hidden">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-16">
+      <span class="font-mono text-xs uppercase tracking-widest text-emerald-700 font-semibold">INFRASTRUCTURE ROSTER</span>
+      <h1 class="text-4xl sm:text-5xl font-bold text-on-surface mt-2 mb-4">University Maintenance Departments</h1>
+      <p class="text-lg text-on-surface-variant max-w-2xl mx-auto">
+        Explore the 6 specialized trade units managing physical assets across all campus blocks.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Card 1 -->
+      <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[24px]">electrical_services</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">Electrical Systems</h3>
+        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+          High-voltage substations, backup diesel generators, classroom wiring, lighting ballasts, and main breaker panels.
+        </p>
+        <div class="space-y-2 text-xs font-mono text-slate-600 pt-3 border-t border-slate-100 mb-4">
+          <div class="flex justify-between"><span>Technicians:</span><span class="font-bold text-slate-900">18 Staff</span></div>
+          <div class="flex justify-between"><span>Avg Response SLA:</span><span class="font-bold text-emerald-600">14.2 min</span></div>
+          <div class="flex justify-between"><span>Superintendent:</span><span class="font-bold text-slate-900">Er. Anand Verma</span></div>
+        </div>
+        <button onclick="navigateTo('department-details', 'public')" class="w-full py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors">
+          View Electrical Deep Dive
+        </button>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[24px]">mode_fan</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">HVAC & Climate Control</h3>
+        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+          Central chiller plants, server room CRAC environmental units, VRF systems, and lab fume hoods.
+        </p>
+        <div class="space-y-2 text-xs font-mono text-slate-600 pt-3 border-t border-slate-100 mb-4">
+          <div class="flex justify-between"><span>Technicians:</span><span class="font-bold text-slate-900">12 Staff</span></div>
+          <div class="flex justify-between"><span>Avg Response SLA:</span><span class="font-bold text-emerald-600">22.0 min</span></div>
+          <div class="flex justify-between"><span>Superintendent:</span><span class="font-bold text-slate-900">Er. Meenakshi S.</span></div>
+        </div>
+        <button onclick="navigateTo('department-details', 'public')" class="w-full py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors">
+          View Department Details
+        </button>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[24px]">plumbing</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">Plumbing & Water Core</h3>
+        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+          Overhead water reservoir pumps, RO drinking water filters, dormitory piping, and drainage networks.
+        </p>
+        <div class="space-y-2 text-xs font-mono text-slate-600 pt-3 border-t border-slate-100 mb-4">
+          <div class="flex justify-between"><span>Technicians:</span><span class="font-bold text-slate-900">15 Staff</span></div>
+          <div class="flex justify-between"><span>Avg Response SLA:</span><span class="font-bold text-emerald-600">19.5 min</span></div>
+          <div class="flex justify-between"><span>Superintendent:</span><span class="font-bold text-slate-900">Er. Suresh Babu</span></div>
+        </div>
+        <button onclick="navigateTo('department-details', 'public')" class="w-full py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors">
+          View Department Details
+        </button>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[24px]">foundation</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">Civil & Structural</h3>
+        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+          Building masonry, roof waterproofing, asphalt walkway maintenance, and classroom plaster repairs.
+        </p>
+        <div class="space-y-2 text-xs font-mono text-slate-600 pt-3 border-t border-slate-100 mb-4">
+          <div class="flex justify-between"><span>Technicians:</span><span class="font-bold text-slate-900">8 Units</span></div>
+          <div class="flex justify-between"><span>Avg Response SLA:</span><span class="font-bold text-emerald-600">45.0 min</span></div>
+          <div class="flex justify-between"><span>Superintendent:</span><span class="font-bold text-slate-900">Er. K. Natarajan</span></div>
+        </div>
+        <button onclick="navigateTo('department-details', 'public')" class="w-full py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors">
+          View Department Details
+        </button>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[24px]">carpenter</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">Carpentry & Locksmith</h3>
+        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+          Laboratory workstations, fire door hardware, digital RFID electronic locks, and auditorium seating.
+        </p>
+        <div class="space-y-2 text-xs font-mono text-slate-600 pt-3 border-t border-slate-100 mb-4">
+          <div class="flex justify-between"><span>Technicians:</span><span class="font-bold text-slate-900">6 Staff</span></div>
+          <div class="flex justify-between"><span>Avg Response SLA:</span><span class="font-bold text-emerald-600">28.4 min</span></div>
+          <div class="flex justify-between"><span>Superintendent:</span><span class="font-bold text-slate-900">Er. Harish Rao</span></div>
+        </div>
+        <button onclick="navigateTo('department-details', 'public')" class="w-full py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors">
+          View Department Details
+        </button>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[24px]">cleaning_services</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">General Sanitation & Logistics</h3>
+        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+          Hazardous chemical disposal from science faculties, biohazard safety containment, and emergency spill response.
+        </p>
+        <div class="space-y-2 text-xs font-mono text-slate-600 pt-3 border-t border-slate-100 mb-4">
+          <div class="flex justify-between"><span>Technicians:</span><span class="font-bold text-slate-900">34 Staff</span></div>
+          <div class="flex justify-between"><span>Avg Response SLA:</span><span class="font-bold text-emerald-600">11.0 min</span></div>
+          <div class="flex justify-between"><span>Superintendent:</span><span class="font-bold text-slate-900">Er. Geeta Menon</span></div>
+        </div>
+        <button onclick="navigateTo('department-details', 'public')" class="w-full py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors">
+          View Department Details
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- PUBLIC VIEW 6: DEPARTMENT DETAILS (department-details) -->
+<!-- ========================================== -->

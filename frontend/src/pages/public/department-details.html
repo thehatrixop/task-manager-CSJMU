@@ -1,0 +1,63 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Department Details
+     ID: view-department-details
+     Location: frontend/src/pages/public/department-details.html
+     ========================================================================= -->
+
+<div id="view-department-details" class="public-view pt-24 hidden">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-6">
+      <button onclick="navigateTo('departments', 'public')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 mb-4">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        <span>Back to Departments Directory</span>
+      </button>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+        <div>
+          <span class="font-mono text-xs text-amber-700 font-bold uppercase tracking-wider">DEPARTMENT CODE: DEPT-ELEC-01</span>
+          <h1 class="text-3xl font-bold text-slate-900 mt-1">Electrical & Power Systems</h1>
+          <p class="text-sm text-slate-600 mt-1">Supervised by Er. Anand Verma (Chief Electrical Engineer)</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 18 Active Technicians
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="p-5 bg-surface-container-lowest border border-slate-200 rounded-xl">
+        <span class="text-xs text-slate-500 font-mono uppercase">Open Work Orders</span>
+        <div class="text-3xl font-bold text-slate-900 mt-1">14 Tickets</div>
+        <p class="text-xs text-slate-500 mt-1">2 high-priority active</p>
+      </div>
+      <div class="p-5 bg-surface-container-lowest border border-slate-200 rounded-xl">
+        <span class="text-xs text-slate-500 font-mono uppercase">Avg Resolution SLA</span>
+        <div class="text-3xl font-bold text-emerald-600 mt-1">14.2 min</div>
+        <p class="text-xs text-slate-500 mt-1">Benchmark &lt; 30 min</p>
+      </div>
+      <div class="p-5 bg-surface-container-lowest border border-slate-200 rounded-xl">
+        <span class="text-xs text-slate-500 font-mono uppercase">First-Pass Fix Rate</span>
+        <div class="text-3xl font-bold text-slate-900 mt-1">96.8%</div>
+        <p class="text-xs text-slate-500 mt-1">Highest on campus</p>
+      </div>
+    </div>
+
+    <!-- Certified Skills & Equipment Roster -->
+    <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
+      <h3 class="text-lg font-bold text-slate-900 mb-4">Certified Skill Tags for Intelligent Matching</h3>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono text-slate-800">High-Voltage Substation Repair</span>
+        <span class="px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono text-slate-800">Classroom Switchboard Wiring</span>
+        <span class="px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono text-slate-800">Diesel Genset Synchronization</span>
+        <span class="px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono text-slate-800">LED Ballast & Driver Replacement</span>
+        <span class="px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono text-slate-800">Earthing & Ground Resistance Testing</span>
+        <span class="px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-mono text-slate-800">UPS Inverter Maintenance</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- PUBLIC VIEW 7: ANALYTICS PREVIEW (analytics) -->
+<!-- ========================================== -->

@@ -1,0 +1,134 @@
+// database/schema.prisma
+// Prisma Schema for CampusFlow — University Facility Management & Autonomous Workforce Dispatch
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  AUTHORITY
+  WORKER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  EMERGENCY
+}
+
+enum ComplaintStatus {
+  PENDING_VERIFICATION
+  APPROVED_AWAITING_DISPATCH
+  WORKER_DISPATCHED
+  ACTIVE_IN_PROGRESS
+  AWAITING_MATERIALS
+  TEMPORARILY_BLOCKED
+  RESOLVED
+  REJECTED
+}
+
+enum AssignmentStatus {
+  OFFERED
+  ACCEPTED
+  DECLINED
+  EXPIRED_TIMEOUT
+  REASSIGNED
+  FORCE_OVERRIDDEN
+}
+
+model User {
+  id              String        @id @default(cuid())
+  name            String
+  email           String        @unique
+  phone           String        @unique
+  passwordHash    String
+  role            Role          @default(USER)
+  campusId        String?       // Roll Number or Employee Code
+  jurisdiction    String?       // e.g., "Academic Block B & Labs"
+  departmentId    String?
+  department      Department?   @relation(fields: [departmentId], references: [id])
+  isOnline        Boolean       @default(false)
+  complaints      Complaint[]   @relation("Complainant")
+  assignedJobs    Complaint[]   @relation("AssignedWorker")
+  auditActions    AuditLog[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Department {
+  id              String        @id @default(cuid())
+  code            String        @unique // e.g., "DEPT-ELEC-01"
+  name            String        // Electrical & Power Systems
+  superintendent  String
+  workers         User[]
+  complaints      Complaint[]
+}
+
+model Complaint {
+  id              String            @id // Format: "CF-2026-XXXXX"
+  title           String
+  description     String
+  locationDesc    String            // Descriptive location (no GPS needed)
+  priority        Priority          @default(MEDIUM)
+  status          ComplaintStatus   @default(PENDING_VERIFICATION)
+  departmentId    String
+  department      Department        @relation(fields: [departmentId], references: [id])
+  complainantId   String
+  complainant     User              @relation("Complainant", fields: [complainantId], references: [id])
+  workerId        String?
+  worker          User?             @relation("AssignedWorker", fields: [workerId], references: [id])
+  
+  // Verification Info
+  verifiedById    String?
+  verifiedAt      DateTime?
+  rejectionReason String?
+  
+  // Attachments & Evidence
+  submittedPhotos String[]
+  completionNotes String?
+  completionProof String?
+  
+  // Assignment Lifecycle History
+  assignments     AssignmentAttempt[]
+  auditLogs       AuditLog[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model AssignmentAttempt {
+  id              String            @id @default(cuid())
+  complaintId     String
+  complaint       Complaint         @relation(fields: [complaintId], references: [id])
+  candidateId     String
+  attemptNumber   Int
+  matchScore      Float             // e.g. 96.4%
+  status          AssignmentStatus  @default(OFFERED)
+  dispatchedAt    DateTime          @default(now())
+  deadlineAt      DateTime          // dispatchedAt + 30 minutes
+  respondedAt     DateTime?
+  declineReason   String?
+}
+
+model AuditLog {
+  id              String            @id @default(cuid())
+  eventId         String            @unique // "EVT-XXXXX"
+  actorId         String
+  actor           User              @relation(fields: [actorId], references: [id])
+  action          String            // "APPROVE_TICKET", "ACCEPT_DISPATCH"
+  complaintId     String?
+  complaint       Complaint?        @relation(fields: [complaintId], references: [id])
+  fromState       String?
+  toState         String?
+  sha256Hash      String            // Cryptographic audit chain
+  timestamp       DateTime          @default(now())
+}
+

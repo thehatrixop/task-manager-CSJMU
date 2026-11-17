@@ -1,0 +1,41 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Active Maintenance Work
+     ID: view-authority-active
+     Location: frontend/src/pages/authority/active-maintenance.html
+     ========================================================================= -->
+
+<div id="view-authority-active" class="auth-view hidden">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Active Maintenance in Academic Block B</h1>
+    <p class="text-xs text-slate-600">Real-time status of technicians currently on premises</p>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="py-3.5 px-4">Ticket</th>
+          <th class="py-3.5 px-4">Location</th>
+          <th class="py-3.5 px-4">Technician</th>
+          <th class="py-3.5 px-4">Assigned At</th>
+          <th class="py-3.5 px-4">Current Work Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr class="hover:bg-slate-50">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">CF-2026-00124</td>
+          <td class="py-3.5 px-4 font-mono text-slate-700">Block B, Rm 204</td>
+          <td class="py-3.5 px-4 font-semibold text-slate-900">Rajesh Kumar (Electrical)</td>
+          <td class="py-3.5 px-4 font-mono text-slate-500">09:42 AM</td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono text-[10px] font-semibold border border-blue-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> In Progress (Replacing 16A breaker)
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE 23: WORKER MONITORING (authority-workers) -->

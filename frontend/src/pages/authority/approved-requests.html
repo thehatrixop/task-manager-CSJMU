@@ -1,0 +1,43 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Approved Requests
+     ID: view-authority-approved
+     Location: frontend/src/pages/authority/approved-requests.html
+     ========================================================================= -->
+
+<div id="view-authority-approved" class="auth-view hidden">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Approved Maintenance Requests</h1>
+    <p class="text-xs text-slate-600">Requests approved by this authority and handed over to the intelligent dispatch engine</p>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="py-3.5 px-4">Ticket</th>
+          <th class="py-3.5 px-4">Issue Title</th>
+          <th class="py-3.5 px-4">Approved At</th>
+          <th class="py-3.5 px-4">Assigned Worker</th>
+          <th class="py-3.5 px-4">Worker Response</th>
+          <th class="py-3.5 px-4">Current Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr class="hover:bg-slate-50">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">CF-2026-00124</td>
+          <td class="py-3.5 px-4 font-medium text-slate-900">Switchboard Malfunction</td>
+          <td class="py-3.5 px-4 font-mono text-slate-500">Today, 09:42 AM</td>
+          <td class="py-3.5 px-4 font-semibold text-slate-900">Rajesh Kumar (WRK-0018)</td>
+          <td class="py-3.5 px-4 text-emerald-600 font-mono font-semibold">Accepted (1.8m)</td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono text-[10px] font-semibold border border-blue-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Work In Progress
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE 21: REJECTED REQUESTS (authority-rejected) -->

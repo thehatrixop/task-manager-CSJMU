@@ -1,0 +1,71 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: 5-Role Granular Permission Matrix
+     ID: view-super-permissions
+     Location: frontend/src/pages/super/permission-matrix.html
+     ========================================================================= -->
+
+<div id="view-super-permissions" class="auth-view hidden">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Permission Configuration Matrix</h1>
+    <p class="text-xs text-slate-600">Configure functional group access permissions across 8 capability domains</p>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 overflow-x-auto">
+    <table class="w-full text-left text-xs">
+      <thead class="border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="pb-3">Capability Group</th>
+          <th class="pb-3 text-center">User</th>
+          <th class="pb-3 text-center">Authority</th>
+          <th class="pb-3 text-center">Worker</th>
+          <th class="pb-3 text-center">Admin</th>
+          <th class="pb-3 text-center">Super Admin</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr>
+          <td class="py-3 font-semibold text-slate-900">Submit Complaints</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+        </tr>
+        <tr>
+          <td class="py-3 font-semibold text-slate-900">Authority Verification</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔ (Scoped)</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+        </tr>
+        <tr>
+          <td class="py-3 font-semibold text-slate-900">Accept/Decline Dispatches</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔ (30m SLA)</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+        </tr>
+        <tr>
+          <td class="py-3 font-semibold text-slate-900">Manual Reassignment Override</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔</td>
+        </tr>
+        <tr>
+          <td class="py-3 font-semibold text-slate-900">Assignment Engine Config</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-slate-300">—</td>
+          <td class="py-3 text-center text-emerald-600 font-bold">✔ (Exclusive)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE 52: DEPARTMENT HIERARCHY (super-hierarchy) -->

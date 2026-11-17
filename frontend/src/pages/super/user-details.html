@@ -1,0 +1,28 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: User Account Inspector & Privilege Grant
+     ID: view-super-user-details
+     Location: frontend/src/pages/super/user-details.html
+     ========================================================================= -->
+
+<div id="view-super-user-details" class="auth-view hidden">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+      <button onclick="navigateTo('super-users', 'super')" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 mb-2">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        <span>Back to User Directory</span>
+      </button>
+      <h1 class="text-2xl font-bold text-slate-900">User Identity & Privilege Audit</h1>
+      <p class="text-xs text-slate-600 font-mono">USR-1042: Aarav Patel</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4 text-xs font-mono">
+      <div class="flex justify-between py-2 border-b border-slate-100"><span>Account Role:</span><span class="font-bold text-slate-900">User / Complainant</span></div>
+      <div class="flex justify-between py-2 border-b border-slate-100"><span>Email:</span><span class="font-bold text-slate-900">aarav.patel@eng.university.edu</span></div>
+      <div class="flex justify-between py-2 border-b border-slate-100"><span>Phone:</span><span class="font-bold text-slate-900">+91 98765 43210 (Verified)</span></div>
+      <div class="flex justify-between py-2 border-b border-slate-100"><span>Created:</span><span class="font-bold text-slate-900">Aug 14, 2024</span></div>
+      <div class="flex justify-between py-2"><span>Privilege Tier:</span><span class="font-bold text-emerald-600">Standard User (No Admin Access)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 50: ROLE MANAGEMENT & PAGE 51: PERMISSION CONFIGURATION -->

@@ -1,0 +1,14 @@
+{
+  "name": "campusflow-frontend",
+  "version": "1.0.0",
+  "description": "CampusFlow Multi-Page Web Frontend",
+  "scripts": {
+    "dev": "node ../server.js",
+    "start": "node ../server.js",
+    "build": "node ../build-tools/generate_standalone_pages.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  }
+}

@@ -1,0 +1,55 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Verification Queue
+     ID: view-authority-queue
+     Location: frontend/src/pages/authority/verification-queue.html
+     ========================================================================= -->
+
+<div id="view-authority-queue" class="auth-view hidden">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Verification Queue</h1>
+      <p class="text-xs text-slate-600">Complaints pending institutional authority approval in Academic Block B</p>
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="py-3.5 px-4">Ticket ID</th>
+          <th class="py-3.5 px-4">Complainant</th>
+          <th class="py-3.5 px-4">Issue Description</th>
+          <th class="py-3.5 px-4">Department</th>
+          <th class="py-3.5 px-4">Location</th>
+          <th class="py-3.5 px-4">Priority</th>
+          <th class="py-3.5 px-4">Submitted</th>
+          <th class="py-3.5 px-4 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr class="hover:bg-slate-50">
+          <td class="py-4 px-4 font-mono font-bold text-slate-900">CF-2026-00124</td>
+          <td class="py-4 px-4">
+            <div class="font-semibold text-slate-900">Aarav Patel</div>
+            <div class="text-[10px] text-slate-400 font-mono">2024-ENG-UG-0142</div>
+          </td>
+          <td class="py-4 px-4 font-semibold text-slate-900">Electrical Switchboard Malfunction</td>
+          <td class="py-4 px-4"><span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded font-mono text-[10px]">Electrical</span></td>
+          <td class="py-4 px-4 text-slate-600">Block B, Rm 204</td>
+          <td class="py-4 px-4"><span class="px-2 py-0.5 bg-red-100 text-red-800 rounded font-mono text-[10px] font-bold">High</span></td>
+          <td class="py-4 px-4 font-mono text-slate-500">18 min ago</td>
+          <td class="py-4 px-4 text-right space-x-2">
+            <button onclick="navigateTo('authority-review', 'authority')" class="px-3 py-1.5 bg-slate-900 text-white rounded text-xs font-semibold hover:bg-slate-800">
+              Review Ticket
+            </button>
+            <button onclick="approveComplaint('CF-2026-00124')" class="px-3 py-1.5 bg-emerald-600 text-white rounded text-xs font-semibold hover:bg-emerald-700">
+              Approve
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE 19: COMPLAINT REVIEW (authority-review) -->

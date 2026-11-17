@@ -1,0 +1,51 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Provision Technician Account
+     ID: view-admin-create-worker
+     Location: frontend/src/pages/admin/create-worker.html
+     ========================================================================= -->
+
+<div id="view-admin-create-worker" class="auth-view hidden">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+      <button onclick="navigateTo('admin-workers', 'admin')" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 mb-2">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        <span>Back to Workers Directory</span>
+      </button>
+      <h1 class="text-2xl font-bold text-slate-900">Provision Technician Account</h1>
+      <p class="text-xs text-slate-600">Onboard a certified maintenance worker. Worker credentials must be university-issued.</p>
+    </div>
+
+    <form onsubmit="handleCreateWorkerSubmit(event)" class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4 text-xs">
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Full Legal Name <span class="text-red-500">*</span></label>
+        <input type="text" id="cw-name" required placeholder="Rajesh Kumar" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm"/>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Phone Number (For Terminal SMS) <span class="text-red-500">*</span></label>
+          <input type="tel" id="cw-phone" required placeholder="+91 98231 44102" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm"/>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Assigned Department <span class="text-red-500">*</span></label>
+          <select id="cw-dept" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm bg-white">
+            <option>Electrical & Power Systems</option>
+            <option>HVAC & Climate Control</option>
+            <option>Plumbing & Water Core</option>
+            <option>Civil & Structural</option>
+            <option>Carpentry & Locksmith</option>
+            <option>General Services</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Certified Skill Tags <span class="text-red-500">*</span></label>
+        <input type="text" id="cw-skills" required placeholder="Switchboard Wiring, High-Voltage LOTO, Transformer Maintenance" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm"/>
+      </div>
+      <button type="submit" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-emerald-600 transition-colors shadow-sm">
+        Create & Issue Terminal Account
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- PAGE 40: WORKER DETAILS (admin-worker-details) -->

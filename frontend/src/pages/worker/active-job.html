@@ -1,0 +1,42 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Active Job Live Execution
+     ID: view-worker-active
+     Location: frontend/src/pages/worker/active-job.html
+     ========================================================================= -->
+
+<div id="view-worker-active" class="auth-view hidden">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <span class="font-mono text-xs text-blue-600 font-bold uppercase tracking-wider">CURRENTLY DISPATCHED</span>
+        <h1 class="text-2xl font-bold text-slate-900 mt-1">Active Job Execution</h1>
+        <p class="text-xs text-slate-600 font-mono">CF-2026-00124 • Block B, Rm 204</p>
+      </div>
+      <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-mono text-xs font-bold animate-pulse">
+        Work In Progress
+      </span>
+    </div>
+
+    <!-- Active Job Execution Card -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+        <h3 class="text-xs font-bold uppercase text-slate-500 mb-1">Target Location</h3>
+        <p class="text-sm font-semibold text-slate-900 font-mono">Academic Block B, Second Floor, Room 204</p>
+      </div>
+
+      <!-- Stage Buttons -->
+      <div class="space-y-3">
+        <button onclick="navigateTo('worker-progress', 'worker')" class="w-full py-3 bg-slate-100 border border-slate-300 text-slate-800 rounded-xl font-bold text-xs hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">edit_note</span>
+          <span>Log Progress Note / Parts Requisition</span>
+        </button>
+        <button onclick="navigateTo('worker-complete', 'worker')" class="w-full py-3.5 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 shadow-md transition-colors flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">task_alt</span>
+          <span>Mark as Completed & Upload Proof</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 30: WORK PROGRESS (worker-progress) -->

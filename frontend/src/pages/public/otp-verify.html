@@ -1,0 +1,46 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Two-Factor OTP Verification
+     ID: view-otp-verify
+     Location: frontend/src/pages/public/otp-verify.html
+     ========================================================================= -->
+
+<div id="view-otp-verify" class="public-view pt-24 hidden">
+  <div class="max-w-md mx-auto px-4 py-12">
+    <div class="bg-surface-container-lowest border border-slate-200 rounded-2xl p-8 shadow-xl text-center">
+      <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3">
+        <span class="material-symbols-outlined text-[24px]">phonelink_lock</span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900">Enter Security Code</h1>
+      <p class="text-xs text-slate-600 mt-1 mb-6">
+        We sent a 6-digit verification code to <span class="font-mono font-bold text-slate-900">+91 98765 43210</span>
+      </p>
+
+      <form onsubmit="handleOtpSubmit(event)" class="space-y-6">
+        <div class="flex justify-center gap-2">
+          <input type="text" maxlength="1" value="7" class="w-11 h-12 text-center text-xl font-bold border border-slate-300 rounded-lg focus:border-blue-600 focus:outline-none"/>
+          <input type="text" maxlength="1" value="4" class="w-11 h-12 text-center text-xl font-bold border border-slate-300 rounded-lg focus:border-blue-600 focus:outline-none"/>
+          <input type="text" maxlength="1" value="2" class="w-11 h-12 text-center text-xl font-bold border border-slate-300 rounded-lg focus:border-blue-600 focus:outline-none"/>
+          <input type="text" maxlength="1" value="9" class="w-11 h-12 text-center text-xl font-bold border border-slate-300 rounded-lg focus:border-blue-600 focus:outline-none"/>
+          <input type="text" maxlength="1" value="0" class="w-11 h-12 text-center text-xl font-bold border border-slate-300 rounded-lg focus:border-blue-600 focus:outline-none"/>
+          <input type="text" maxlength="1" value="1" class="w-11 h-12 text-center text-xl font-bold border border-slate-300 rounded-lg focus:border-blue-600 focus:outline-none"/>
+        </div>
+
+        <div class="text-xs font-mono text-slate-500">
+          Code expires in <span class="font-bold text-slate-900" id="otp-timer">01:45</span>
+        </div>
+
+        <button type="submit" class="w-full h-11 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-sm">
+          Verify & Enter CampusFlow
+        </button>
+
+        <div class="text-xs text-slate-500">
+          Didn't receive code? <button type="button" onclick="showToast('OTP resent to +91 98765 43210', 'info')" class="text-blue-600 font-semibold hover:underline">Resend OTP</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- PUBLIC VIEW 11: ACCOUNT RECOVERY (account-recovery) & PASSWORD RESET -->
+<!-- ========================================== -->

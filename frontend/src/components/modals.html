@@ -1,0 +1,158 @@
+<!-- SHARED MODALS & SYSTEM STATES -->
+<!-- ========================================== -->
+
+<!-- Modal 1: Complaint Submission Success -->
+<div id="modal-submit-success" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-4 fade-in">
+    <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">task_alt</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Complaint Submitted Successfully</h3>
+    <p class="text-xs text-slate-600">
+      Your ticket has been generated with ID <span class="font-mono font-bold text-slate-900" id="success-ticket-id">CF-2026-00128</span>. It has been routed to your hostel warden / department HOD for immediate verification.
+    </p>
+    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-700">
+      Status: <span class="text-amber-600 font-bold">Pending Authority Verification</span>
+    </div>
+    <div class="flex gap-3 pt-2">
+      <button onclick="closeModal('modal-submit-success'); navigateTo('user-complaints', 'user')" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">
+        Track in My Complaints
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Authority Approval Confirmation -->
+<div id="modal-approve-confirm" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-4 fade-in">
+    <div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">smart_toy</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Authority Verification Approved</h3>
+    <p class="text-xs text-slate-600">
+      Ticket <span class="font-mono font-bold text-slate-900" id="approved-ticket-id">CF-2026-00124</span> is verified. The intelligent assignment engine is now scanning available technicians.
+    </p>
+    <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs font-mono text-blue-800">
+      Dispatching Candidate: <span class="font-bold">Rajesh Kumar (WRK-0018)</span> (Score 96.4%)
+    </div>
+    <button onclick="closeModal('modal-approve-confirm')" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">
+      Done
+    </button>
+  </div>
+</div>
+
+<!-- Modal 3: Authority Rejection Reason -->
+<div id="modal-reject-reason" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Reject Maintenance Request</h3>
+    <p class="text-xs text-slate-600">Provide an administrative justification for declining this request. The complainant will receive this reason.</p>
+    <textarea id="reject-reason-text" rows="3" placeholder="e.g. Duplicate report, user-damage not covered, or incorrect department selection..." class="w-full p-3 border border-slate-300 rounded-xl text-xs focus:border-red-600 focus:outline-none"></textarea>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-reject-reason')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmRejectSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 4: Request Additional Info -->
+<div id="modal-request-info" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Request Information from Complainant</h3>
+    <p class="text-xs text-slate-600">Ask the student or staff member for clarification regarding the room number or symptom.</p>
+    <textarea id="request-info-text" rows="3" placeholder="e.g. Please clarify which sub-bench in Lab 204 is sparking..." class="w-full p-3 border border-slate-300 rounded-xl text-xs focus:border-blue-600 focus:outline-none"></textarea>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-request-info')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmRequestInfoSubmit()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600">Send Clarification Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5: Worker Decline Reason & Auto-Reassignment -->
+<div id="modal-worker-decline" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Decline Job Dispatch</h3>
+    <p class="text-xs text-slate-600">Select reason. The system will automatically reroute this ticket to the next eligible technician without delay.</p>
+    <select id="worker-decline-reason" class="w-full h-10 px-3 border border-slate-300 rounded-xl text-xs bg-white">
+      <option>Handling active emergency job elsewhere</option>
+      <option>Missing specialized high-voltage tools</option>
+      <option>Physical injury / medical relief needed</option>
+      <option>Shift concluding within 15 minutes</option>
+    </select>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-worker-decline')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmWorkerDeclineSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700">Decline & Reassign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 6: Admin Manual Intervention / Reassignment -->
+<div id="modal-admin-intervention" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Manual Administrative Reassignment</h3>
+    <p class="text-xs text-slate-600">Override the automated assignment engine and manually assign a certified technician.</p>
+    <div>
+      <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Select Technician</label>
+      <select id="override-worker-select" class="w-full h-10 px-3 border border-slate-300 rounded-xl text-xs bg-white">
+        <option value="WRK-0018">WRK-0018: Rajesh Kumar (Available)</option>
+        <option value="WRK-0019">WRK-0019: Vikram Singh (Standby)</option>
+        <option value="WRK-0020">WRK-0020: Priya Nair (Available)</option>
+      </select>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-admin-intervention')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmInterventionSubmit()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600">Force Reassign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 7: System States Showcase -->
+<div id="modal-system-states" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 fade-in">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+      <h3 class="text-lg font-bold text-slate-900">System States Inspector</h3>
+      <button onclick="closeModal('modal-system-states')" class="text-slate-400 hover:text-slate-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <p class="text-xs text-slate-600">Trigger standard application operational states for QA inspection:</p>
+    
+    <div class="grid grid-cols-2 gap-2 text-xs">
+      <button onclick="renderSystemState('empty')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">1. Empty Data State</span>
+        <span class="text-slate-500 text-[11px]">No active work orders</span>
+      </button>
+      <button onclick="renderSystemState('loading')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">2. Skeleton Loading</span>
+        <span class="text-slate-500 text-[11px]">Asynchronous data fetch</span>
+      </button>
+      <button onclick="renderSystemState('timeout')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-red-600 block">3. 30m SLA Expiry</span>
+        <span class="text-slate-500 text-[11px]">Auto-cascade state</span>
+      </button>
+      <button onclick="renderSystemState('unauthorized')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">4. 403 Forbidden</span>
+        <span class="text-slate-500 text-[11px]">Jurisdiction boundary</span>
+      </button>
+      <button onclick="renderSystemState('offline')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">5. Offline Cache</span>
+        <span class="text-slate-500 text-[11px]">Basement plant room mode</span>
+      </button>
+      <button onclick="renderSystemState('completed')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-emerald-600 block">6. Certified Seal</span>
+        <span class="text-slate-500 text-[11px]">Geostamped audit receipt</span>
+      </button>
+    </div>
+
+    <!-- Active State Display Container -->
+    <div id="system-state-output" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl min-h-[120px] flex items-center justify-center text-center text-xs text-slate-500">
+      Click any state above to inspect live representation
+    </div>
+  </div>
+</div>
+
+<!-- Floating Toast Notification -->
+<div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- ========================================== -->
+<!-- CLIENT-SIDE ROUTER & REACTIVE APPLICATION ENGINE -->
+<!-- ========================================== -->

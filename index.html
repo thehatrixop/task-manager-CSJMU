@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" style="background-color: #f8fafc;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intelligent Campus Operations — CampusFlow</title>
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' },
+            surface: { DEFAULT: '#f8fafc', container: '#f1f5f9', 'container-lowest': '#ffffff', 'container-high': '#e2e8f0', 'container-highest': '#cbd5e1' },
+            'on-surface': '#0f172a',
+            'on-surface-variant': '#475569',
+            outline: '#cbd5e1',
+            'outline-variant': '#e2e8f0',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    html, body {
+      background-color: #f8fafc !important;
+      color: #0f172a;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen relative w-full" style="background-color: #f8fafc;">
+
+
+<!-- Public Header -->
+<header id="public-header" class="fixed top-0 inset-x-0 z-50 py-3 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="h-16 px-5 rounded-full bg-surface-container-lowest/90 backdrop-blur-xl border border-slate-200/80 shadow-[0_4px_6px_-1px_rgba(15,23,42,0.05),0_2px_4px_-2px_rgba(15,23,42,0.05)] flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-sm group-hover:bg-emerald-600 transition-colors">
+          <span class="material-symbols-outlined text-[20px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-lg font-bold tracking-tight text-on-surface">CampusFlow</span>
+          <span class="font-mono text-[9px] text-slate-500 uppercase tracking-widest leading-none">University Operations OS</span>
+        </div>
+      </a>
+      
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-medium">
+        <a href="index.html" class="text-emerald-600 font-bold transition-colors">Home</a>
+        <a href="pages/public/about.html" class="text-slate-600 hover:text-emerald-600 transition-colors">About</a>
+        <a href="pages/public/platform.html" class="text-slate-600 hover:text-emerald-600 transition-colors">Platform</a>
+        <a href="pages/public/how-it-works.html" class="text-slate-600 hover:text-emerald-600 transition-colors">How It Works</a>
+        <a href="pages/public/departments.html" class="text-slate-600 hover:text-emerald-600 transition-colors">Departments</a>
+        <a href="pages/public/analytics.html" class="text-slate-600 hover:text-emerald-600 transition-colors">Analytics</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="pages/public/login.html?mode=signin" class="font-medium text-sm px-4 py-2 text-slate-700 hover:text-emerald-600 hover:bg-slate-50 rounded-full transition-all" title="Sign In to Portal">Sign In</a>
+        <a href="pages/public/login.html?mode=signup" class="font-medium text-sm px-5 py-2 bg-slate-900 text-white rounded-full hover:bg-emerald-600 shadow-sm transition-all flex items-center gap-1.5" title="Create Institutional Account">
+          <span>Get Started</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Landing Page
+     ID: view-home
+     Location: frontend/src/pages/public/landing.html
+     ========================================================================= -->
+
+<div  class="pt-24 pb-16 flex-1 w-full relative z-10" style="background-color: #f8fafc;">
+  <!-- Top Ambient Glow -->
+  <div class="relative w-full overflow-hidden">
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[840px] h-[340px] bg-gradient-to-b from-slate-300/20 via-slate-200/20 to-transparent blur-3xl pointer-events-none rounded-full"></div>
+    
+    <!-- Hero Section -->
+    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-20">
+      <!-- Eyebrow Badge -->
+      <div class="flex items-center justify-center mb-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-slate-300 shadow-sm">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+          </span>
+          <span class="font-mono text-[11px] text-on-surface uppercase tracking-wider">Next-Gen University Infrastructure</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-xs font-semibold text-slate-900">Autonomous Dispatch & 30m SLA</span>
+        </div>
+      </div>
+      
+      <!-- Headline & Subtitle -->
+      <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-on-surface mb-6">
+          One Campus. Every Issue. <br/>
+          <span class="text-slate-950 underline decoration-emerald-500 decoration-wavy underline-offset-8">Intelligently Managed.</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-on-surface-variant max-w-2xl leading-relaxed mb-8">
+          A centralized university facility management platform connecting students, wardens, maintenance technicians, and administrators through automated verification, intelligent worker dispatch, and guaranteed sub-30-minute acceptance SLAs.
+        </p>
+        
+        <!-- CTAs -->
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a href="pages/public/login.html?mode=signin" class="px-8 py-3.5 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>
+        </div>
+      </div>
+
+      <!-- Live Operations Command Telemetry Preview -->
+      <div class="mt-14 relative max-w-6xl mx-auto">
+        <div class="absolute -inset-1.5 bg-gradient-to-b from-slate-400/20 to-transparent rounded-2xl blur-lg opacity-60"></div>
+        <div class="relative bg-surface-container-lowest border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden">
+          <!-- Terminal Header -->
+          <div class="px-5 py-3.5 bg-slate-950 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              </div>
+              <span class="font-mono text-slate-300 font-medium text-[11px] tracking-wide">CLUSTER::CAMPUS-MAIN-HUB [ACTIVE DISPATCH ENGINE]</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-900 text-white border border-slate-700 font-mono text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 6 DEPARTMENTS ONLINE
+              </span>
+              <span class="font-mono text-slate-400 text-[11px] hidden sm:inline">DISPATCH LATENCY: 1.8s</span>
+            </div>
+          </div>
+          
+          <!-- Real-Time Metrics Ribbon -->
+          <div class="grid grid-cols-2 md:grid-cols-4 bg-surface-container-lowest py-4 px-6 gap-4 border-b border-slate-200">
+            <div class="flex flex-col">
+              <span class="text-xs uppercase tracking-wider text-slate-500 font-medium">Campus SLA Rating</span>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold text-on-surface">98.4%</span>
+                <span class="font-mono text-emerald-600 font-semibold text-xs">↑ +1.2%</span>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs uppercase tracking-wider text-slate-500 font-medium">Avg Worker Acceptance</span>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold text-on-surface">18.2 min</span>
+                <span class="font-mono text-slate-600 text-xs">SLA &lt; 30m</span>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs uppercase tracking-wider text-slate-500 font-medium">Active Field Force</span>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold text-on-surface">42 Units</span>
+                <span class="font-mono text-slate-500 text-xs">9 Standby</span>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs uppercase tracking-wider text-slate-500 font-medium">Monthly Resolved</span>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold text-on-surface">1,369</span>
+                <span class="font-mono text-emerald-600 font-semibold text-xs">96% on-time</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Split Visual: Velocity & Department Breakdown -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+            <div class="lg:col-span-7 bg-surface-container-lowest border border-slate-200 p-6 rounded-xl shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-base font-semibold text-on-surface">30-Day Resolution Velocity</h3>
+                  <p class="text-xs text-on-surface-variant">Daily reported vs. successfully resolved maintenance work orders</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center gap-1.5 text-xs text-on-surface"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Resolved</span>
+                  <span class="flex items-center gap-1.5 text-xs text-on-surface-variant"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span> Reported</span>
+                </div>
+              </div>
+              <div class="w-full h-44 relative flex flex-col justify-end">
+                <svg class="w-full h-36 overflow-visible" fill="none" preserveAspectRatio="none" viewBox="0 0 500 150">
+                  <defs>
+                    <linearGradient id="chartGradientMono2" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#059669" stop-opacity="0.25"></stop>
+                      <stop offset="100%" stop-color="#059669" stop-opacity="0"></stop>
+                    </linearGradient>
+                  </defs>
+                  <line stroke="#f1f5f9" stroke-width="1.5" x1="0" x2="500" y1="30" y2="30"></line>
+                  <line stroke="#f1f5f9" stroke-width="1.5" x1="0" x2="500" y1="75" y2="75"></line>
+                  <line stroke="#f1f5f9" stroke-width="1.5" x1="0" x2="500" y1="120" y2="120"></line>
+                  <path d="M 0,110 Q 50,90 100,85 T 200,95 T 300,70 T 400,60 T 500,45 L 500,150 L 0,150 Z" fill="#cbd5e1" fill-opacity="0.25"></path>
+                  <path d="M 0,110 Q 50,90 100,85 T 200,95 T 300,70 T 400,60 T 500,45" stroke="#94a3b8" stroke-dasharray="4 4" stroke-width="2"></path>
+                  <path d="M 0,130 Q 50,110 100,95 T 200,80 T 300,50 T 400,35 T 500,20 L 500,150 L 0,150 Z" fill="url(#chartGradientMono2)"></path>
+                  <path d="M 0,130 Q 50,110 100,95 T 200,80 T 300,50 T 400,35 T 500,20" stroke="#059669" stroke-linecap="round" stroke-width="3"></path>
+                  <circle cx="300" cy="50" fill="#059669" r="4"></circle>
+                  <circle cx="500" cy="20" fill="#047857" r="5"></circle>
+                </svg>
+                <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 pt-2">
+                  <span>DAY 01</span><span>DAY 08</span><span>DAY 15</span><span>DAY 22</span><span>TODAY</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-surface-container-lowest border border-slate-200 p-6 rounded-xl shadow-sm flex flex-col justify-between">
+              <div>
+                <h3 class="text-base font-semibold text-on-surface">Departmental Load Split</h3>
+                <p class="text-xs text-on-surface-variant">Active workforce distribution across 6 trades</p>
+                <div class="mt-4 space-y-3">
+                  <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                      <span>Electrical Systems</span>
+                      <span class="font-mono text-slate-700">34% (485)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div class="bg-emerald-600 h-full rounded-full w-[34%]"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                      <span>HVAC & Climate Control</span>
+                      <span class="font-mono text-slate-700">26% (371)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div class="bg-teal-600 h-full rounded-full w-[26%]"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                      <span>Plumbing & Water Core</span>
+                      <span class="font-mono text-slate-700">18% (257)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div class="bg-blue-600 h-full rounded-full w-[18%]"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                      <span>Civil & Structural</span>
+                      <span class="font-mono text-slate-700">12% (171)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div class="bg-slate-700 h-full rounded-full w-[12%]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span class="text-slate-500">First-Dispatch Resolution</span>
+                <span class="font-mono text-emerald-700 font-bold">94.8% Pass Rate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Section 2: Platform Introduction & The Problems Addressed -->
+  <section class="w-full py-20 bg-surface-container-lowest border-y border-slate-200/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="font-mono text-xs uppercase tracking-widest text-emerald-700 font-semibold">THE CAMPUS PARADIGM SHIFT</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-on-surface mt-2">Why Universities Need CampusFlow</h2>
+        <p class="text-base text-on-surface-variant mt-3">
+          Traditional university maintenance relies on WhatsApp groups, physical registers, and unverified phone calls. CampusFlow replaces operational chaos with an immutable, transparent, intelligent lifecycle.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:shadow-md transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center mb-5">
+            <span class="material-symbols-outlined text-[24px]">cancel_schedule_send</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Eliminate Manual Blackholes</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Paper registers in hostels and lost maintenance chits delay critical repairs for weeks. Every issue in CampusFlow has an immutable digital identity from submission to resolution.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:shadow-md transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-5">
+            <span class="material-symbols-outlined text-[24px]">smart_toy</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Automated Skill Dispatch</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            No more manual calling lists. The algorithmic matching engine cross-references technician trade certifications, location proximity, active workload, and tool inventory instantly.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:shadow-md transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-5">
+            <span class="material-symbols-outlined text-[24px]">timer_30</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Guaranteed 30-Min SLA Window</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Assigned workers have exactly 30 minutes to accept dispatch on their terminal. If unanswered or declined, the engine automatically cascades the work order to secondary standby crews.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: The 5-Stage Automated Operations Lifecycle -->
+  <section class="w-full py-20 bg-slate-50/70 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="font-mono text-xs uppercase tracking-widest text-emerald-700 font-semibold">END-TO-END WORKFLOW</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-on-surface mt-2">The 5-Stage Automated Operations Lifecycle</h2>
+        <p class="text-base text-on-surface-variant mt-3">
+          Every maintenance request follows a strict, accountable trajectory ensuring full auditability and stakeholder transparency.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <!-- Step 1 -->
+        <div class="bg-surface-container-lowest border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col justify-between hover:border-slate-900 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-8 h-8 rounded-full bg-slate-900 text-white font-mono text-xs font-bold flex items-center justify-center">01</span>
+              <span class="material-symbols-outlined text-slate-600">add_a_photo</span>
+            </div>
+            <h4 class="font-semibold text-slate-900 text-sm mb-1.5">1. Report Issue</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Student/staff submits issue title, selects trade department, enters room description, priority, and attaches site photos.
+            </p>
+          </div>
+          <span class="mt-4 font-mono text-[11px] text-emerald-700 font-semibold">&lt; 45s Log Time</span>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-surface-container-lowest border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col justify-between hover:border-slate-900 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-8 h-8 rounded-full bg-slate-200 text-slate-800 font-mono text-xs font-bold flex items-center justify-center">02</span>
+              <span class="material-symbols-outlined text-slate-600">verified</span>
+            </div>
+            <h4 class="font-semibold text-slate-900 text-sm mb-1.5">2. Authority Verify</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Hostel Warden or Department HOD reviews the complaint, verifies legitimacy, and gives one-tap approval.
+            </p>
+          </div>
+          <span class="mt-4 font-mono text-[11px] text-emerald-700 font-semibold">Jurisdiction Filtered</span>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-surface-container-lowest border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col justify-between hover:border-slate-900 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-8 h-8 rounded-full bg-emerald-600 text-white font-mono text-xs font-bold flex items-center justify-center">03</span>
+              <span class="material-symbols-outlined text-emerald-600">psychology</span>
+            </div>
+            <h4 class="font-semibold text-slate-900 text-sm mb-1.5">3. Match Engine</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Intelligent algorithm ranks available technicians based on skill compatibility, current workload, and proximity.
+            </p>
+          </div>
+          <span class="mt-4 font-mono text-[11px] text-emerald-700 font-semibold">Autonomous Selection</span>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-surface-container-lowest border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col justify-between hover:border-slate-900 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-8 h-8 rounded-full bg-slate-200 text-slate-800 font-mono text-xs font-bold flex items-center justify-center">04</span>
+              <span class="material-symbols-outlined text-amber-600">timer</span>
+            </div>
+            <h4 class="font-semibold text-slate-900 text-sm mb-1.5">4. 30m Acceptance</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Worker receives terminal notification with countdown. If unanswered in 30 mins, automatic rerouting engages.
+            </p>
+          </div>
+          <span class="mt-4 font-mono text-[11px] text-amber-700 font-semibold">Guaranteed SLA</span>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="bg-surface-container-lowest border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col justify-between hover:border-slate-900 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-8 h-8 rounded-full bg-slate-900 text-white font-mono text-xs font-bold flex items-center justify-center">05</span>
+              <span class="material-symbols-outlined text-emerald-600">task_alt</span>
+            </div>
+            <h4 class="font-semibold text-slate-900 text-sm mb-1.5">5. Verified Close</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Technician executes repair, uploads photo proof of completion, and the ticket is formally signed off and archived.
+            </p>
+          </div>
+          <span class="mt-4 font-mono text-[11px] text-emerald-700 font-semibold">Geostamped Audit</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Departments Directory Preview Bento Grid -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <div>
+        <span class="font-mono text-xs uppercase tracking-widest text-slate-900 font-bold">CAMPUS TRADE ARCHITECTURE</span>
+        <h2 class="text-3xl font-bold text-on-surface mt-2">Specialized Maintenance Departments</h2>
+        <p class="text-sm text-on-surface-variant mt-2 max-w-xl">
+          Engineered for university scale with isolated department hierarchies, specialized skill certifications, and tool inventories.
+        </p>
+      </div>
+      <a href="#departments" onclick="navigateTo('departments', 'public')" class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-900 hover:text-emerald-600 transition-colors mt-4 md:mt-0">
+        <span>View all 6 departments</span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- 1. Electrical -->
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-2xl shadow-sm hover:border-slate-900 hover:shadow-md transition-all flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+              <span class="material-symbols-outlined">electrical_services</span>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 18 Technicians
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">Electrical & Power Systems</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Transformer substations, phase load balancers, backup diesel generators, classroom wiring faults, and switchboard hazards.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-500">AVG RESPONSE SLA</span>
+          <span class="font-bold text-slate-900">14.2 min</span>
+        </div>
+      </div>
+
+      <!-- 2. HVAC -->
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-2xl shadow-sm hover:border-slate-900 hover:shadow-md transition-all flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center">
+              <span class="material-symbols-outlined">mode_fan</span>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 12 Technicians
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">HVAC & Climate Control</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Central chiller plants, chilled-water coils, server room environmental units, and laboratory negative pressure ducting.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-500">AVG RESPONSE SLA</span>
+          <span class="font-bold text-slate-900">22.0 min</span>
+        </div>
+      </div>
+
+      <!-- 3. Plumbing -->
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-2xl shadow-sm hover:border-slate-900 hover:shadow-md transition-all flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+              <span class="material-symbols-outlined">plumbing</span>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 15 Technicians
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">Plumbing & Water Core</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Hydro-pneumatic pump towers, RO drinking water filtration, stormwater lines, and dormitory water pressure balancing.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-500">AVG RESPONSE SLA</span>
+          <span class="font-bold text-slate-900">19.5 min</span>
+        </div>
+      </div>
+
+      <!-- 4. Civil -->
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-2xl shadow-sm hover:border-slate-900 hover:shadow-md transition-all flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+              <span class="material-symbols-outlined">foundation</span>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 8 Field Units
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">Civil & Structural</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Masonry inspection, roof waterproofing, seismic joint monitoring, and walkway pavement integrity.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-500">AVG RESPONSE SLA</span>
+          <span class="font-bold text-slate-900">45.0 min</span>
+        </div>
+      </div>
+
+      <!-- 5. Carpentry -->
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-2xl shadow-sm hover:border-slate-900 hover:shadow-md transition-all flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center">
+              <span class="material-symbols-outlined">carpenter</span>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 6 Technicians
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">Carpentry & Locksmith</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Auditorium seating assemblies, fire exit door hinges, smart card electronic locks, and laboratory furniture.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-500">AVG RESPONSE SLA</span>
+          <span class="font-bold text-slate-900">28.4 min</span>
+        </div>
+      </div>
+
+      <!-- 6. General -->
+      <div class="p-6 bg-surface-container-lowest border border-slate-200 rounded-2xl shadow-sm hover:border-slate-900 hover:shadow-md transition-all flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <span class="material-symbols-outlined">cleaning_services</span>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 34 Personnel
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">General Services & Logistics</h3>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Waste divergence programs, hazardous material disposal, biohazard containment, and campus deep sanitation.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-500">AVG RESPONSE SLA</span>
+          <span class="font-bold text-slate-900">11.0 min</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: The 5 Platform Roles Showcase -->
+  <section class="w-full py-20 bg-surface-container-lowest border-y border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="font-mono text-xs uppercase tracking-widest text-emerald-700 font-semibold">ROLE-BASED GOVERNANCE</span>
+        <h2 class="text-3xl font-bold text-on-surface mt-2">Tailored Experiences for Every Campus Stakeholder</h2>
+        <p class="text-sm text-on-surface-variant mt-2">
+          CampusFlow separates operational authority into 5 distinct roles, ensuring high data security and focused ergonomics.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <!-- Role 1 -->
+        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">school</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm">1. User / Complainant</h4>
+            <p class="text-xs text-slate-600 mt-2">Students, faculty, researchers. Snap photo, report issue, track status timeline in real-time.</p>
+          </div>
+          <button onclick="loginAs('user')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Student Portal
+          </button>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">shield_person</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm">2. HOD / Warden</h4>
+            <p class="text-xs text-slate-600 mt-2">Department heads & hostel wardens. Verify claims, filter spam, approve with one-tap push.</p>
+          </div>
+          <button onclick="loginAs('authority')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Authority Queue
+          </button>
+        </div>
+
+        <!-- Role 3 -->
+        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">engineering</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm">3. Field Worker</h4>
+            <p class="text-xs text-slate-600 mt-2">Electricians, plumbers, HVAC crew. 30m countdown acceptance, progress logging, photo proof.</p>
+          </div>
+          <button onclick="loginAs('worker')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Worker App
+          </button>
+        </div>
+
+        <!-- Role 4 -->
+        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">tune</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm">4. Facilities Admin</h4>
+            <p class="text-xs text-slate-600 mt-2">Campus managers. Oversee 6 departments, manage 95 technicians, intervene in delayed tickets.</p>
+          </div>
+          <button onclick="loginAs('admin')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Admin Command
+          </button>
+        </div>
+
+        <!-- Role 5 -->
+        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">security</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm">5. Super Admin</h4>
+            <p class="text-xs text-slate-600 mt-2">Vice chancellors, IT directors. Configure assignment algorithm weights, audit logs, governance.</p>
+          </div>
+          <button onclick="loginAs('super')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Super Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Institutional Resilience Command Center Bento -->
+  <section class="w-full py-20 bg-surface-container-lowest border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-5">
+          <span class="font-mono text-xs uppercase tracking-widest text-slate-900 font-bold">ENTERPRISE RESILIENCE</span>
+          <h2 class="text-3xl font-bold text-on-surface mt-2">Engineered for Complex University Hierarchies</h2>
+          <p class="text-sm text-on-surface-variant mt-3 leading-relaxed">
+            Generic ticketing software fails in multi-tier university governance. CampusFlow natively mirrors the exact organizational authority chains across faculties, housing blocks, and central utilities.
+          </p>
+          <div class="mt-8 space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-[14px]">timer_10</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-slate-900">Automated 30-Minute Reassignment</h4>
+                <p class="text-xs text-slate-600">Tickets auto-escalate to secondary standby workers if primary crew does not acknowledge on terminal.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-[14px]">admin_panel_settings</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-slate-900">Role-Based Access Partitioning</h4>
+                <p class="text-xs text-slate-600">Distinct contextual interfaces for Students, Wardens, Deans, Dispatchers, and Field Technicians.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-[14px]">pin_drop</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-slate-900">Descriptive Room Telemetry</h4>
+                <p class="text-xs text-slate-600">Clear textual location fields avoid confusing GPS drift inside multi-story concrete structures.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-[14px]">shield</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-slate-900">Immutable Institutional Audit Log</h4>
+                <p class="text-xs text-slate-600">Full chain-of-custody timestamping with photo verification for state and board accreditation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl text-white">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="font-mono text-xs text-slate-300 uppercase tracking-wider">CENTRAL OPERATIONS COMMAND :: NODE 01</span>
+              </div>
+              <span class="font-mono text-xs text-emerald-400">SOC2 & FERPA CERTIFIED</span>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-3 mb-4">
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
+                <span class="font-mono text-2xl font-bold text-white block">99.98%</span>
+                <span class="text-[11px] text-slate-400">System Availability</span>
+              </div>
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
+                <span class="font-mono text-2xl font-bold text-white block">18.4 min</span>
+                <span class="text-[11px] text-slate-400">Avg Resolution Time</span>
+              </div>
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
+                <span class="font-mono text-2xl font-bold text-white block">42 Units</span>
+                <span class="text-[11px] text-slate-400">Active Field Units</span>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-2">Live Automated Dispatch Feed</span>
+              <div class="space-y-2 text-xs font-mono">
+                <div class="flex items-center justify-between text-slate-300">
+                  <span class="text-emerald-400">[DISPATCH]</span>
+                  <span>CF-2026-00124 (Electrical)</span>
+                  <span>→ Rajesh Kumar (WRK-0018)</span>
+                  <span class="text-slate-500">28m SLA</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-300">
+                  <span class="text-blue-400">[VERIFIED]</span>
+                  <span>CF-2026-00125 (HVAC)</span>
+                  <span>Approved by Warden Sharma</span>
+                  <span class="text-slate-500">Just now</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-300">
+                  <span class="text-amber-400">[RESOLVED]</span>
+                  <span>CF-2026-00123 (Plumbing)</span>
+                  <span>Photo Signed Off (Hostel A)</span>
+                  <span class="text-slate-500">4m ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center relative z-10">
+    <div class="bg-slate-900 text-white rounded-3xl p-10 sm:p-14 lg:p-16 shadow-2xl relative overflow-hidden border border-slate-800" style="background-color: #0f172a;">
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      <h2 class="text-3xl sm:text-5xl font-bold tracking-tight mb-4">Make Your Campus Smarter, Starting Today.</h2>
+      <p class="text-slate-300 max-w-2xl mx-auto text-base sm:text-lg mb-8 leading-relaxed">
+        Empower your students, accelerate technician response, and maintain complete institutional accountability with CampusFlow.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <div class="inline-flex flex-wrap items-center justify-center gap-3 p-1.5 rounded-full bg-slate-950/80 border border-slate-800 shadow-xl">
+          <a href="pages/public/login.html?mode=signup" class="px-8 py-3.5 bg-emerald-500 text-slate-950 font-bold rounded-full hover:bg-emerald-400 transition-colors shadow-lg flex items-center gap-2">
+            <span>Get Started</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </a>
+          <a href="pages/public/login.html?mode=signin" class="px-8 py-3.5 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-700 transition-colors border border-slate-700 inline-block">
+            Explore Live Demo
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Floating SLA Badge under card -->
+    <div class="flex justify-center -mt-3.5 relative z-20">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-950 text-slate-300 border border-slate-700/80 text-xs font-mono shadow-md" style="background-color: #020617;">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Enterprise SLA Guaranteed • Sub-30m Dispatch</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Operations Status Ribbon / Divider -->
+  <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 relative z-10">
+    <div class="h-3 sm:h-3.5 w-full bg-slate-900 rounded-full border border-slate-800 shadow-inner flex items-center justify-between px-3 overflow-hidden" style="background-color: #0f172a;">
+      <div class="h-1.5 w-1/3 bg-gradient-to-r from-emerald-500 via-blue-500 to-transparent rounded-full animate-pulse"></div>
+      <div class="flex items-center gap-2 text-[9px] font-mono text-slate-400 uppercase tracking-widest hidden sm:flex">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>Autonomous Core Active</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Public Footer -->
+<footer id="public-footer" class="w-full text-slate-400 py-16 border-t border-slate-900 mt-auto relative z-30" style="background-color: #020617 !important;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <!-- Col 1: Institutional Seal & Campus Security -->
+      <div class="flex flex-col justify-between space-y-6">
+        <div class="flex flex-col items-start">
+          <div class="w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border border-slate-700/80 shadow-2xl flex flex-col items-center justify-center p-4 relative group">
+            <div class="absolute inset-1 rounded-full border border-emerald-500/20"></div>
+            <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-2 shadow-sm">
+              <span class="material-symbols-outlined text-[26px]">account_balance</span>
+            </div>
+            <span class="font-bold text-white text-xs tracking-wider uppercase font-mono text-center">CampusFlow</span>
+            <span class="text-[10px] text-slate-400 font-mono tracking-widest">VERIFIED CORE</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold font-mono text-white uppercase tracking-widest mb-3">Campus Security</h4>
+          <p class="text-xs text-slate-400 leading-relaxed mb-3">
+            SOC2 Type II Certified, FERPA Compliant, SHA-256 Tamper-Proof Audit Logging.
+          </p>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>99.98% System Uptime SLA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 2: Brand & Actions -->
+      <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">account_balance</span>
+            </div>
+            <span class="text-white font-bold text-lg tracking-tight">CampusFlow</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed mb-6">
+            Centralized university facility management and autonomous workforce dispatch platform.
+          </p>
+        </div>
+        <div class="pt-4 border-t border-slate-800/80">
+          <div class="inline-flex items-center gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
+            <a href="pages/public/login.html?mode=signup" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shadow-sm">Get Started Free</a>
+            <a href="pages/public/login.html?mode=signin" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors border border-slate-700">Sign In</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 3: Platform Links -->
+      <div class="p-4">
+        <h4 class="text-xs font-bold font-mono text-white uppercase tracking-widest mb-4">Platform Pages</h4>
+        <ul class="space-y-2.5 text-xs text-slate-400">
+          <li><a href="index.html" class="hover:text-emerald-400 transition-colors">Home Landing</a></li>
+          <li><a href="pages/public/about.html" class="hover:text-emerald-400 transition-colors">About Mission</a></li>
+          <li><a href="pages/public/platform.html" class="hover:text-emerald-400 transition-colors">Cloud Architecture</a></li>
+          <li><a href="pages/public/how-it-works.html" class="hover:text-emerald-400 transition-colors">How It Works</a></li>
+          <li><a href="pages/public/departments.html" class="hover:text-emerald-400 transition-colors">Departments Bento</a></li>
+          <li><a href="pages/public/analytics.html" class="hover:text-emerald-400 transition-colors">Operations Analytics</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Role Portals -->
+      <div class="p-4">
+        <h4 class="text-xs font-bold font-mono text-white uppercase tracking-widest mb-4">Portals</h4>
+        <ul class="space-y-2.5 text-xs text-slate-400">
+          <li><a href="pages/public/login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Student / Complainant Portal</a></li>
+          <li><a href="pages/public/login.html?mode=signin" class="hover:text-emerald-400 transition-colors">HOD / Warden Verification Queue</a></li>
+          <li><a href="pages/public/login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Field Technician Cockpit (30m SLA)</a></li>
+          <li><a href="pages/public/login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Campus Facilities Administration</a></li>
+          <li><a href="pages/public/login.html?mode=signin" class="hover:text-emerald-400 transition-colors">Super Admin Global Control</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+      <p>© 2026 CampusFlow Technologies Inc. All rights reserved.</p>
+      <div class="flex items-center gap-6">
+        <a href="pages/public/about.html" class="hover:text-slate-400 transition-colors">Privacy Policy</a>
+        <a href="pages/public/about.html" class="hover:text-slate-400 transition-colors">Terms of Service</a>
+        <a href="pages/public/about.html" class="hover:text-slate-400 transition-colors">Security Architecture</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

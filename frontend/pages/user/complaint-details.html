@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" style="background-color: #f8fafc;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Tracker — USER PORTAL — CampusFlow</title>
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' },
+            surface: { DEFAULT: '#f8fafc', container: '#f1f5f9', 'container-lowest': '#ffffff', 'container-high': '#e2e8f0', 'container-highest': '#cbd5e1' },
+            'on-surface': '#0f172a',
+            'on-surface-variant': '#475569',
+            outline: '#cbd5e1',
+            'outline-variant': '#e2e8f0',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    html, body {
+      background-color: #f8fafc !important;
+      color: #0f172a;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen relative w-full" style="background-color: #f8fafc;">
+
+<div class="flex-1 flex w-full min-h-screen bg-slate-50">
+  <!-- Sidebar -->
+  <aside id="auth-sidebar" class="w-64 bg-slate-950 text-white shrink-0 hidden md:flex flex-col justify-between p-4 border-r border-slate-900">
+    <div>
+      <a href="../../index.html" class="flex items-center gap-3 px-2 py-3 mb-6">
+        <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-[18px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-base tracking-tight text-white leading-none">CampusFlow</span>
+          <span class="font-mono text-[9px] text-slate-400 uppercase tracking-widest mt-1">USER PORTAL</span>
+        </div>
+      </a>
+      <nav class="space-y-1 text-xs">
+        <a href="overview.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">dashboard</span><span>Overview</span></a>
+        <a href="report-issue.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">add_circle</span><span>Report New Issue</span></a>
+        <a href="my-complaints.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>My Complaints</span></a>
+        <a href="complaint-details.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white bg-slate-900 border border-slate-800 font-bold"><span class="material-symbols-outlined text-[18px]">timeline</span><span>Complaint Tracker</span></a>
+        <a href="history.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">history</span><span>Complaint History</span></a>
+        <a href="notifications.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">notifications</span><span>Notifications</span></a>
+        <a href="profile.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">account_circle</span><span>Profile & Settings</span></a>
+      </nav>
+    </div>
+
+    <div class="pt-4 border-t border-slate-800/80">
+      <div class="flex items-center gap-3 px-2 py-2 mb-2">
+        <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-mono font-bold text-xs">
+          AP
+        </div>
+        <div class="flex flex-col truncate">
+          <span class="text-xs font-bold text-white truncate">Aarav Patel</span>
+          <span class="text-[10px] text-slate-400 font-mono truncate">Student / Complainant (2024-ENG-0142)</span>
+        </div>
+      </div>
+      <a href="../../index.html" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-[16px]">logout</span>
+        <span>Exit to Public Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Canvas -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Topbar -->
+    <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-600 hover:text-slate-900">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-500">
+          <span class="font-semibold text-slate-900">USER PORTAL</span>
+          <span>/</span>
+          <span class="text-slate-600">Complaint Tracker</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-xs text-slate-500">
+          <span class="material-symbols-outlined text-[16px]">search</span>
+          <span>Search records...</span>
+        </div>
+        <a href="../public/login.html?mode=signin" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">switch_account</span>
+          <span>Switch Role</span>
+        </a>
+        <a href="../../index.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">logout</span>
+          <span class="hidden sm:inline">Sign Out</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Content Outlet -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Complaint Live Lifecycle Tracker
+     ID: view-user-complaint-details
+     Location: frontend/src/pages/user/complaint-details.html
+     ========================================================================= -->
+
+<div  class="w-full">
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <button onclick="navigateTo('user-complaints', 'user')" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 mb-2">
+          <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span>Back to Complaints</span>
+        </button>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-bold text-slate-900">CF-2026-00124</h1>
+          <span class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono text-xs font-bold">In Progress</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 font-mono text-xs font-bold">High Priority</span>
+        </div>
+      </div>
+      <div class="text-right font-mono text-xs text-slate-500">
+        Logged: Nov 10, 2026 09:30 AM
+      </div>
+    </div>
+
+    <!-- Timeline Progress Bar -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-6">
+      <h3 class="text-xs font-mono uppercase text-slate-500 font-bold mb-4">7-Stage Operational Lifecycle</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-center text-xs">
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">01</div>
+          <span>Submitted</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">02</div>
+          <span>Warden Review</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">03</div>
+          <span>Approved</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">04</div>
+          <span>Match Engine</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">05</div>
+          <span>Worker Accepted</span>
+        </div>
+        <div class="p-2 rounded-lg bg-blue-100 text-blue-900 font-bold border border-blue-300 animate-pulse">
+          <div class="font-mono text-[10px] text-blue-700">06 ACTIVE</div>
+          <span>Work In Progress</span>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-50 text-slate-400 font-medium border border-slate-200">
+          <div class="font-mono text-[10px]">07</div>
+          <span>Signed Close</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 Column Details -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Main Content (2 cols) -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-900 mb-2">Issue Description</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Main laboratory switchboard in Room 204 experienced intermittent sparking when high-draw oscilloscopes were activated. Faint burning odor noted near circuit breaker #4. Power isolated locally at emergency switch.
+          </p>
+          <div class="mt-4 pt-4 border-t border-slate-100">
+            <span class="text-xs font-mono uppercase text-slate-500 block mb-1">Descriptive Room Location</span>
+            <p class="text-xs font-semibold text-slate-900 font-mono">Academic Block B, Second Floor, Room 204, Near Laboratory Entrance</p>
+          </div>
+        </div>
+
+        <!-- Verification & Authority Note -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-900 mb-3">Institutional Authority Verification</h3>
+          <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-start gap-3">
+            <span class="material-symbols-outlined text-emerald-700">verified_user</span>
+            <div>
+              <div class="text-xs font-bold text-slate-900">Verified by Dr. Ramesh Sharma (HOD Electrical / Academic Block B Warden)</div>
+              <p class="text-xs text-slate-600 mt-1">"Verified laboratory hazard. High priority dispatch authorized to avoid academic interruption."</p>
+              <span class="text-[10px] font-mono text-slate-500 mt-1 block">Approved at Nov 10, 2026 • 09:42 AM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Metadata (1 col) -->
+      <div class="space-y-6">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-900 mb-4">Assigned Field Unit</h3>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold font-mono">
+              RK
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-900">Rajesh Kumar</div>
+              <span class="text-[11px] font-mono text-slate-500">WRK-0018 • Senior Electrician</span>
+            </div>
+          </div>
+          <div class="space-y-2 text-xs font-mono text-slate-600 pt-3 border-t border-slate-100">
+            <div class="flex justify-between"><span>Accepted:</span><span class="font-bold text-slate-900">09:44 AM (1.8m)</span></div>
+            <div class="flex justify-between"><span>SLA Countdown:</span><span class="font-bold text-emerald-600">Passed</span></div>
+            <div class="flex justify-between"><span>Phone:</span><span class="font-bold text-slate-900">+91 98231 44102</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 14: COMPLAINT HISTORY (user-history) -->
+
+    </main>
+  </div>
+</div>
+
+<!-- SHARED MODALS & SYSTEM STATES -->
+<!-- ========================================== -->
+
+<!-- Modal 1: Complaint Submission Success -->
+<div id="modal-submit-success" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-4 fade-in">
+    <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">task_alt</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Complaint Submitted Successfully</h3>
+    <p class="text-xs text-slate-600">
+      Your ticket has been generated with ID <span class="font-mono font-bold text-slate-900" id="success-ticket-id">CF-2026-00128</span>. It has been routed to your hostel warden / department HOD for immediate verification.
+    </p>
+    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-700">
+      Status: <span class="text-amber-600 font-bold">Pending Authority Verification</span>
+    </div>
+    <div class="flex gap-3 pt-2">
+      <button onclick="closeModal('modal-submit-success'); navigateTo('user-complaints', 'user')" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">
+        Track in My Complaints
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Authority Approval Confirmation -->
+<div id="modal-approve-confirm" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-4 fade-in">
+    <div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">smart_toy</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Authority Verification Approved</h3>
+    <p class="text-xs text-slate-600">
+      Ticket <span class="font-mono font-bold text-slate-900" id="approved-ticket-id">CF-2026-00124</span> is verified. The intelligent assignment engine is now scanning available technicians.
+    </p>
+    <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs font-mono text-blue-800">
+      Dispatching Candidate: <span class="font-bold">Rajesh Kumar (WRK-0018)</span> (Score 96.4%)
+    </div>
+    <button onclick="closeModal('modal-approve-confirm')" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">
+      Done
+    </button>
+  </div>
+</div>
+
+<!-- Modal 3: Authority Rejection Reason -->
+<div id="modal-reject-reason" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Reject Maintenance Request</h3>
+    <p class="text-xs text-slate-600">Provide an administrative justification for declining this request. The complainant will receive this reason.</p>
+    <textarea id="reject-reason-text" rows="3" placeholder="e.g. Duplicate report, user-damage not covered, or incorrect department selection..." class="w-full p-3 border border-slate-300 rounded-xl text-xs focus:border-red-600 focus:outline-none"></textarea>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-reject-reason')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmRejectSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 4: Request Additional Info -->
+<div id="modal-request-info" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Request Information from Complainant</h3>
+    <p class="text-xs text-slate-600">Ask the student or staff member for clarification regarding the room number or symptom.</p>
+    <textarea id="request-info-text" rows="3" placeholder="e.g. Please clarify which sub-bench in Lab 204 is sparking..." class="w-full p-3 border border-slate-300 rounded-xl text-xs focus:border-blue-600 focus:outline-none"></textarea>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-request-info')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmRequestInfoSubmit()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600">Send Clarification Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5: Worker Decline Reason & Auto-Reassignment -->
+<div id="modal-worker-decline" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Decline Job Dispatch</h3>
+    <p class="text-xs text-slate-600">Select reason. The system will automatically reroute this ticket to the next eligible technician without delay.</p>
+    <select id="worker-decline-reason" class="w-full h-10 px-3 border border-slate-300 rounded-xl text-xs bg-white">
+      <option>Handling active emergency job elsewhere</option>
+      <option>Missing specialized high-voltage tools</option>
+      <option>Physical injury / medical relief needed</option>
+      <option>Shift concluding within 15 minutes</option>
+    </select>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-worker-decline')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmWorkerDeclineSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700">Decline & Reassign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 6: Admin Manual Intervention / Reassignment -->
+<div id="modal-admin-intervention" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Manual Administrative Reassignment</h3>
+    <p class="text-xs text-slate-600">Override the automated assignment engine and manually assign a certified technician.</p>
+    <div>
+      <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Select Technician</label>
+      <select id="override-worker-select" class="w-full h-10 px-3 border border-slate-300 rounded-xl text-xs bg-white">
+        <option value="WRK-0018">WRK-0018: Rajesh Kumar (Available)</option>
+        <option value="WRK-0019">WRK-0019: Vikram Singh (Standby)</option>
+        <option value="WRK-0020">WRK-0020: Priya Nair (Available)</option>
+      </select>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-admin-intervention')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmInterventionSubmit()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600">Force Reassign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 7: System States Showcase -->
+<div id="modal-system-states" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 fade-in">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+      <h3 class="text-lg font-bold text-slate-900">System States Inspector</h3>
+      <button onclick="closeModal('modal-system-states')" class="text-slate-400 hover:text-slate-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <p class="text-xs text-slate-600">Trigger standard application operational states for QA inspection:</p>
+    
+    <div class="grid grid-cols-2 gap-2 text-xs">
+      <button onclick="renderSystemState('empty')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">1. Empty Data State</span>
+        <span class="text-slate-500 text-[11px]">No active work orders</span>
+      </button>
+      <button onclick="renderSystemState('loading')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">2. Skeleton Loading</span>
+        <span class="text-slate-500 text-[11px]">Asynchronous data fetch</span>
+      </button>
+      <button onclick="renderSystemState('timeout')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-red-600 block">3. 30m SLA Expiry</span>
+        <span class="text-slate-500 text-[11px]">Auto-cascade state</span>
+      </button>
+      <button onclick="renderSystemState('unauthorized')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">4. 403 Forbidden</span>
+        <span class="text-slate-500 text-[11px]">Jurisdiction boundary</span>
+      </button>
+      <button onclick="renderSystemState('offline')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">5. Offline Cache</span>
+        <span class="text-slate-500 text-[11px]">Basement plant room mode</span>
+      </button>
+      <button onclick="renderSystemState('completed')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-emerald-600 block">6. Certified Seal</span>
+        <span class="text-slate-500 text-[11px]">Geostamped audit receipt</span>
+      </button>
+    </div>
+
+    <!-- Active State Display Container -->
+    <div id="system-state-output" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl min-h-[120px] flex items-center justify-center text-center text-xs text-slate-500">
+      Click any state above to inspect live representation
+    </div>
+  </div>
+</div>
+
+<!-- Floating Toast Notification -->
+<div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- ========================================== -->
+<!-- CLIENT-SIDE ROUTER & REACTIVE APPLICATION ENGINE -->
+<!-- ========================================== -->
+
+
+<script src="../../js/app.js"></script>
+
+</body>
+</html>

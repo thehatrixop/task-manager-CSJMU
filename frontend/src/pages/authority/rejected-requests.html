@@ -1,0 +1,37 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Rejected Requests
+     ID: view-authority-rejected
+     Location: frontend/src/pages/authority/rejected-requests.html
+     ========================================================================= -->
+
+<div id="view-authority-rejected" class="auth-view hidden">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Rejected Requests Log</h1>
+    <p class="text-xs text-slate-600">History of declined maintenance complaints with recorded justification</p>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="py-3.5 px-4">Ticket</th>
+          <th class="py-3.5 px-4">Issue</th>
+          <th class="py-3.5 px-4">Complainant</th>
+          <th class="py-3.5 px-4">Rejected Date</th>
+          <th class="py-3.5 px-4">Rejection Reason</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr class="hover:bg-slate-50">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">CF-2026-00119</td>
+          <td class="py-3.5 px-4 font-medium text-slate-900">Classroom 201 Projector Cable Missing</td>
+          <td class="py-3.5 px-4 text-slate-600">Rohan K. (Student)</td>
+          <td class="py-3.5 px-4 font-mono text-slate-500">Nov 06, 2026</td>
+          <td class="py-3.5 px-4 text-red-600 font-medium">Duplicate entry — already being handled under ticket CF-2026-00118.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE 22: ACTIVE MAINTENANCE (authority-active) -->

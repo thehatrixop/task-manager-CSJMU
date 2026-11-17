@@ -1,0 +1,70 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Global Multi-Role User Directory
+     ID: view-super-users
+     Location: frontend/src/pages/super/user-directory.html
+     ========================================================================= -->
+
+<div id="view-super-users" class="auth-view hidden">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Global Account Directory</h1>
+      <p class="text-xs text-slate-600">Cross-platform user management for all 5 roles</p>
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="py-3.5 px-4">User ID</th>
+          <th class="py-3.5 px-4">Name & Email</th>
+          <th class="py-3.5 px-4">Role</th>
+          <th class="py-3.5 px-4">Jurisdiction / Dept</th>
+          <th class="py-3.5 px-4">Status</th>
+          <th class="py-3.5 px-4 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr class="hover:bg-slate-50">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">USR-1042</td>
+          <td class="py-3.5 px-4">
+            <div class="font-semibold text-slate-900">Aarav Patel</div>
+            <div class="text-[10px] text-slate-400 font-mono">aarav.patel@eng.university.edu</div>
+          </td>
+          <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-blue-50 text-blue-800 rounded font-mono text-[10px]">User (Student)</span></td>
+          <td class="py-3.5 px-4 text-slate-600">Hostel Block D, Rm 312</td>
+          <td class="py-3.5 px-4"><span class="text-emerald-600 font-bold font-mono">Active</span></td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="navigateTo('super-user-details', 'super')" class="text-blue-600 hover:underline font-semibold font-mono">Inspect</button>
+          </td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">AUT-0024</td>
+          <td class="py-3.5 px-4">
+            <div class="font-semibold text-slate-900">Dr. Ramesh Sharma</div>
+            <div class="text-[10px] text-slate-400 font-mono">ramesh.sharma@faculty.university.edu</div>
+          </td>
+          <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded font-mono text-[10px]">HOD / Warden</span></td>
+          <td class="py-3.5 px-4 text-slate-600">Academic Block B & Labs</td>
+          <td class="py-3.5 px-4"><span class="text-emerald-600 font-bold font-mono">Active</span></td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="navigateTo('super-user-details', 'super')" class="text-blue-600 hover:underline font-semibold font-mono">Inspect</button>
+          </td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">WRK-0018</td>
+          <td class="py-3.5 px-4">
+            <div class="font-semibold text-slate-900">Rajesh Kumar</div>
+            <div class="text-[10px] text-slate-400 font-mono">+91 98231 44102</div>
+          </td>
+          <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded font-mono text-[10px]">Worker</span></td>
+          <td class="py-3.5 px-4 text-slate-600">Electrical & Power Systems</td>
+          <td class="py-3.5 px-4"><span class="text-emerald-600 font-bold font-mono">Active</span></td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="navigateTo('super-user-details', 'super')" class="text-blue-600 hover:underline font-semibold font-mono">Inspect</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
