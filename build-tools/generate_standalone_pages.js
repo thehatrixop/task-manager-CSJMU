@@ -132,12 +132,12 @@ function toggleWorkerAvailability() {
   const btn = document.getElementById('worker-status-btn');
   if (label && label.textContent.includes('ONLINE')) {
     label.textContent = 'STATUS: OFFLINE';
-    label.className = 'font-mono text-xs px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 font-bold';
+    label.className = 'font-mono text-xs px-2.5 py-1 rounded-md bg-slate-200 text-slate-700 font-bold border border-slate-300';
     if (btn) btn.textContent = 'Go Online';
     showToast('Status set to OFFLINE. Incoming dispatches paused.', 'warning');
   } else if (label) {
     label.textContent = 'STATUS: ONLINE (ACCEPTING JOBS)';
-    label.className = 'font-mono text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold';
+    label.className = 'font-mono text-xs px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 font-bold border border-emerald-300';
     if (btn) btn.textContent = 'Go Offline';
     showToast('Status set to ONLINE. Ready for dispatch.', 'success');
   }
@@ -241,9 +241,9 @@ function getPublicHeader(activeFile, isRoot = false) {
 <!-- Public Header -->
 <header id="public-header" class="fixed top-0 inset-x-0 z-50 py-3 transition-all duration-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="h-16 px-5 rounded-full bg-surface-container-lowest/90 backdrop-blur-xl border border-slate-200/80 shadow-[0_4px_6px_-1px_rgba(15,23,42,0.05),0_2px_4px_-2px_rgba(15,23,42,0.05)] flex items-center justify-between">
+    <div class="h-16 px-6 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-md border border-slate-200/90 shadow-[0_4px_6px_-1px_rgba(15,23,42,0.05),0_2px_4px_-2px_rgba(15,23,42,0.05)] flex items-center justify-between">
       <a href="${homeLink}" class="flex items-center gap-3 group">
-        <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-sm group-hover:bg-emerald-600 transition-colors">
+        <div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-sm group-hover:bg-emerald-600 transition-colors">
           <span class="material-symbols-outlined text-[20px]">account_balance</span>
         </div>
         <div class="flex flex-col">
@@ -262,8 +262,8 @@ function getPublicHeader(activeFile, isRoot = false) {
       </nav>
 
       <div class="flex items-center gap-3">
-        <a href="${signinLink}" class="font-medium text-sm px-4 py-2 text-slate-700 hover:text-emerald-600 hover:bg-slate-50 rounded-full transition-all" title="Sign In to Portal">Sign In</a>
-        <a href="${signupLink}" class="font-medium text-sm px-5 py-2 bg-slate-900 text-white rounded-full hover:bg-emerald-600 shadow-sm transition-all flex items-center gap-1.5" title="Create Institutional Account">
+        <a href="${signinLink}" class="font-semibold text-sm px-4 py-2 text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-lg transition-all" title="Sign In to Portal">Sign In</a>
+        <a href="${signupLink}" class="font-semibold text-sm px-5 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 shadow-sm border border-slate-950/20 transition-all flex items-center gap-1.5 active:translate-y-[0.5px]" title="Create Institutional Account">
           <span>Get Started</span>
           <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
         </a>
@@ -307,7 +307,7 @@ function getPublicFooter(isRoot = false) {
           <p class="text-xs text-slate-400 leading-relaxed mb-3">
             SOC2 Type II Certified, FERPA Compliant, SHA-256 Tamper-Proof Audit Logging.
           </p>
-          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 font-mono">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-900/90 border border-slate-800 text-xs text-slate-300 font-mono">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>99.98% System Uptime SLA</span>
           </div>
@@ -318,7 +318,7 @@ function getPublicFooter(isRoot = false) {
       <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl flex flex-col justify-between">
         <div>
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shadow-sm">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shadow-sm">
               <span class="material-symbols-outlined text-[20px]">account_balance</span>
             </div>
             <span class="text-white font-bold text-lg tracking-tight">CampusFlow</span>
@@ -329,7 +329,7 @@ function getPublicFooter(isRoot = false) {
         </div>
         <div class="pt-4 border-t border-slate-800/80">
           <div class="inline-flex items-center gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
-            <a href="${signupLink}" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shadow-sm">Get Started Free</a>
+            <a href="${signupLink}" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm border border-emerald-500">Get Started Free</a>
             <a href="${signinLink}" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors border border-slate-700">Sign In</a>
           </div>
         </div>
@@ -427,11 +427,11 @@ publicPages.forEach(p => {
     // Fix button inside CTA card and clean tags
     rawContent = rawContent.replace(
       / <button\ s+ onclick="loginAs\('user'\)"[^>] *> [\s\S] *?<\/button>/g,
-      `<a href="login.html?mode=signin" class="px-8 py-3.5 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
+      `<a href="login.html?mode=signin" class="px-7 py-3 bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
     );
     rawContent = rawContent.replace(
       /<a href="login\.html\?mode=signin"[^>]*>[\s\S]*?<\/button>/g,
-      `<a href="login.html?mode=signin" class="px-8 py-3.5 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
+      `<a href="login.html?mode=signin" class="px-7 py-3 bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
     );
   }
 
@@ -493,11 +493,11 @@ landingSrc = landingSrc.replace(
 // Fix broken CTA button
 landingSrc = landingSrc.replace(
   / <button\ s+ onclick="loginAs\('user'\)"[\s\S]*?<\/button>/g,
-  `<a href="pages/public/login.html?mode=signin" class="px-8 py-3.5 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
+  `<a href="pages/public/login.html?mode=signin" class="px-7 py-3 bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
 );
 landingSrc = landingSrc.replace(
   /<a href="pages\/public\/login\.html\?mode=signin"[^>]*>[\s\S]*?<\/button>/g,
-  `<a href="pages/public/login.html?mode=signin" class="px-8 py-3.5 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
+  `<a href="pages/public/login.html?mode=signin" class="px-7 py-3 bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-700 transition-colors border border-slate-700 inline-block">Explore Live Demo</a>`
 );
 
 // Fix CTA card container styling
@@ -652,7 +652,7 @@ Object.keys(rolesConfig).forEach(roleKey => {
   <aside id="auth-sidebar" class="w-64 bg-slate-950 text-white shrink-0 hidden md:flex flex-col justify-between p-4 border-r border-slate-900">
     <div>
       <a href="../../index.html" class="flex items-center gap-3 px-2 py-3 mb-6">
-        <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
           <span class="material-symbols-outlined text-[18px]">account_balance</span>
         </div>
         <div class="flex flex-col">
@@ -667,7 +667,7 @@ Object.keys(rolesConfig).forEach(roleKey => {
 
     <div class="pt-4 border-t border-slate-800/80">
       <div class="flex items-center gap-3 px-2 py-2 mb-2">
-        <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-mono font-bold text-xs">
+        <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center font-mono font-bold text-xs">
           ${role.avatar}
         </div>
         <div class="flex flex-col truncate">

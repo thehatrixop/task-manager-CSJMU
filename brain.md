@@ -13,23 +13,27 @@
 
 ---
 
-## 2. Design System Tokens (from DESIGN.md)
+## 2. Design System Tokens & High-Craft Button Architecture (Anti-AI Slop)
 - **Palette**:
-  - Canvas / Surface: `#f8fafc` (`bg-surface`)
+  - Canvas / Surface: Grounded Slate Canvas `#f8fafc` (`bg-surface`)
   - Primary Surface Containers: Optical White (`#ffffff`) with 1px border `rgba(15, 23, 42, 0.08)`
   - Primary Typography / Brand: Executive Midnight Slate (`#0f172a`)
-  - Secondary Accent: Cobalt Blue (`#2563eb`) & Emerald Green (`#059669`)
   - Semantic Status:
-    - Active / Resolved: `#059669` (Emerald) with soft container `#ecfdf5`
-    - High Priority / In Progress: `#2563eb` (Cobalt) with container `#eff6ff`
-    - Warning / Verification: `#d97706` (Amber) with container `#fffbeb`
-    - Critical / 30m SLA Expiry: `#dc2626` (Crimson) with container `#fef2f2`
-- **Typography**:
-  - `Geist`: Headlines, structural framing, and body prose. Kerning `-0.02em` to `-0.035em`.
-  - `JetBrains Mono` (`metric-mono`): Numerical IDs (`CF-2026-00124`, `WRK-0018`), timestamps, and 30-minute countdown timers.
-- **Components**:
-  - Full-pill floating navigation shells (`rounded-full`) with `backdrop-filter: blur(12px)`.
-  - High-density data tables with 44px–56px row height and micro-dot status badges.
+    - Active / Resolved: Deep Hunter Emerald (`#047857` / `#059669`) with structured badge `#ecfdf5`
+    - High Priority / In Progress: Institutional Cobalt (`#1d4ed8` / `#2563eb`) with container `#eff6ff`
+    - Warning / Verification: Amber Warning (`#d97706`) with container `#fffbeb`
+    - Critical / 30m SLA Expiry: Crimson Alert (`#dc2626`) with container `#fef2f2`
+- **Elimination of AI Slop Tropes**:
+  - **No Generic 9999px Pills (`rounded-full`) on interactive controls**: Replaced with engineered `rounded-lg` (8px) and `rounded-md` (6px).
+  - **No Saturated Gradient Fills**: Eliminated garish purple-to-indigo/cyan gradient fills on buttons in favor of solid high-contrast executive slate (`#0f172a`) and deep institutional emerald (`#059669`).
+  - **No Diffuse Glowing Halos**: Eliminated blurry ambient colored glows (`blur-2xl`, `blur-3xl`, neon drop-shadows) in favor of crisp 1px borders and layered micro-shadows (`shadow-[0_1px_2px_rgba(0,0,0,0.05)]`).
+  - **Tactile Feedback**: Replaced floaty hover effects with physical active depression (`active:translate-y-[0.5px]`).
+- **Button & Component Geometry**:
+  - **Primary Action**: `rounded-lg` (8px), `bg-slate-900 text-white font-semibold border border-slate-950/20 shadow-sm active:translate-y-[0.5px]`.
+  - **Accent / Hero Action**: `rounded-lg` (8px), `bg-emerald-600 text-white font-semibold border border-emerald-700/60 shadow-sm hover:bg-emerald-700 active:translate-y-[0.5px]`.
+  - **Secondary Action**: `rounded-lg` (8px), `bg-white text-slate-800 font-semibold border border-slate-300 shadow-sm hover:bg-slate-50 active:bg-slate-100`.
+  - **Floating Navigation Shell**: Modern architectural bar `rounded-2xl` (16px) with `border border-slate-200/90 shadow-sm backdrop-blur-md` (replacing the AI-slop floating capsule).
+  - **Status & Telemetry Badges**: Engineered status chips `rounded-md` (6px) with `font-mono text-[10px] sm:text-[11px] px-2.5 py-0.5 border`.
 
 ---
 
