@@ -88,10 +88,13 @@
         <div>
           <div class="flex justify-between items-center mb-1.5">
             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">4. Password</label>
-            <a href="#account-recovery" onclick="navigateTo('account-recovery', 'public')" class="text-xs text-blue-600 hover:underline font-medium">Forgot password?</a>
+            <div class="flex items-center gap-2">
+              <span id="default-pass-hint" class="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Default: Campus@2026</span>
+              <a href="#account-recovery" onclick="navigateTo('account-recovery', 'public')" class="text-xs text-blue-600 hover:underline font-medium">Forgot?</a>
+            </div>
           </div>
           <div class="relative">
-            <input type="password" id="login-password" required value="••••••••••••" class="w-full h-11 px-3.5 pl-10 pr-10 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-medium text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all"/>
+            <input type="password" id="login-password" required value="Campus@2026" class="w-full h-11 px-3.5 pl-10 pr-10 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-medium text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all"/>
             <span class="material-symbols-outlined absolute left-3 top-3 text-slate-400 pointer-events-none text-[18px]">lock</span>
             <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none">
               <span class="material-symbols-outlined text-[18px]">visibility</span>

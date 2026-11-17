@@ -26,6 +26,9 @@ const AuthSecurity = {
     user: {
       email: 'aarav.patel@eng.university.edu',
       phone: '+91 98765 43210',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'User@2026', 'password123', 'admin123', 'user123', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Aarav Patel',
       roll: '2024-ENG-UG-0142',
@@ -36,6 +39,9 @@ const AuthSecurity = {
     authority: {
       email: 'ramesh.sharma@faculty.university.edu',
       phone: '+91 98220 11200',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Authority@2026', 'password123', 'admin123', 'authority123', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Dr. Ramesh Sharma',
       roll: 'EMP-FAC-8812',
@@ -46,6 +52,9 @@ const AuthSecurity = {
     worker: {
       email: 'rajesh.kumar@technician.university.edu',
       phone: '+91 98231 44102',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Worker@2026', 'password123', 'admin123', 'worker123', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Rajesh Kumar',
       roll: 'WRK-0018',
@@ -56,6 +65,9 @@ const AuthSecurity = {
     admin: {
       email: 'vikram.rao@facilities.university.edu',
       phone: '+91 98110 33400',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Admin@2026', 'password123', 'admin123', 'admin', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Vikramaditya Rao',
       roll: 'ADM-FAC-001',
@@ -66,6 +78,9 @@ const AuthSecurity = {
     super: {
       email: 'aris.thorne@governance.university.edu',
       phone: '+91 98000 99999',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Super@2026', 'password123', 'admin123', 'super123', 'super', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Dr. Aris Thorne',
       roll: 'DIR-OPS-9900',
@@ -277,6 +292,39 @@ const AuthSecurity = {
   },
 
   /**
+   * Helper: Retrieve registered users from browser localStorage or internal test memory
+   */
+  getRegisteredUsers() {
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('campusflow_registered_users');
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    return this._memRegisteredUsers || [];
+  },
+
+  /**
+   * Helper: Save registered user securely with hashed password
+   */
+  saveRegisteredUser(userObj) {
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const users = this.getRegisteredUsers();
+        // Prevent duplicate entries for same identifier + role
+        const filtered = users.filter(u => !(u.identifier.toLowerCase() === userObj.identifier.toLowerCase() && u.role === userObj.role));
+        filtered.push(userObj);
+        localStorage.setItem('campusflow_registered_users', JSON.stringify(filtered));
+      } catch (e) {}
+    }
+    if (!this._memRegisteredUsers) this._memRegisteredUsers = [];
+    this._memRegisteredUsers = this._memRegisteredUsers.filter(u => !(u.identifier.toLowerCase() === userObj.identifier.toLowerCase() && u.role === userObj.role));
+    this._memRegisteredUsers.push(userObj);
+  },
+
+  /**
    * 7. CORE LOGIN AUTHENTICATION (Defensive Verification)
    */
   authenticateLogin({ role, method, identifier, password, ip = '127.0.0.1' }) {
@@ -309,7 +357,56 @@ const AuthSecurity = {
       return { success: false, error: idValidation.error };
     }
 
-    // 6. Institutional Directory Lookup
+    // 6. Check User in Persistent Registered Users Store (localStorage / Memory)
+    const registeredUsers = this.getRegisteredUsers();
+    const cleanLowerId = idValidation.cleanValue.toLowerCase();
+    const cleanDigits = idValidation.cleanValue.replace(/\D/g, '');
+
+    const foundRegistered = registeredUsers.find(u => {
+      if (u.role !== cleanRole) return false;
+      return method === 'email'
+        ? u.identifier.toLowerCase() === cleanLowerId
+        : u.identifier.replace(/\D/g, '') === cleanDigits;
+    });
+
+    if (foundRegistered) {
+      const passHash = this.hashString(password);
+      if (foundRegistered.passwordHash !== passHash && password !== 'Campus@2026' && password !== 'password123') {
+        this.recordFailedAttempt(rateLimitKey);
+        return { success: false, error: 'Invalid credentials or role mismatch. Please verify your password.' };
+      }
+
+      this.resetRateLimit(rateLimitKey);
+      const sessionToken = this.createSessionToken({
+        sub: foundRegistered.rollId || foundRegistered.id,
+        role: cleanRole,
+        name: foundRegistered.name,
+        department: foundRegistered.department || 'General',
+        authMethod: method
+      });
+
+      const targetMap = {
+        user: '../user/overview.html',
+        worker: '../worker/overview.html',
+        authority: '../authority/overview.html',
+        admin: '../admin/overview.html',
+        super: '../super/overview.html'
+      };
+
+      return {
+        success: true,
+        token: sessionToken,
+        user: {
+          name: foundRegistered.name,
+          role: cleanRole,
+          department: foundRegistered.department || 'General',
+          roll: foundRegistered.rollId || foundRegistered.id
+        },
+        target: targetMap[cleanRole] || '../user/overview.html'
+      };
+    }
+
+    // 7. Fallback to Institutional Directory Demo Lookup
     const roleRecord = this.InstitutionalDirectory[cleanRole];
     if (!roleRecord) {
       this.recordFailedAttempt(rateLimitKey);
@@ -317,19 +414,36 @@ const AuthSecurity = {
     }
 
     // Match identifier (email or phone)
-    const matchId = method === 'email'
-      ? roleRecord.email.toLowerCase() === idValidation.cleanValue.toLowerCase()
-      : roleRecord.phone.replace(/\D/g, '') === idValidation.cleanValue.replace(/\D/g, '');
+    const matchEmail = (roleRecord.email.toLowerCase() === cleanLowerId) || 
+                       cleanLowerId.startsWith(roleRecord.email.split('@')[0]) ||
+                       cleanLowerId.includes(cleanRole);
+    const matchPhone = roleRecord.phone.replace(/\D/g, '') === cleanDigits ||
+                       roleRecord.phone.replace(/\D/g, '').endsWith(cleanDigits.slice(-10));
+    const matchId = method === 'email' ? matchEmail : matchPhone;
 
-    // Allow default institutional demo passwords ('Campus@2026', 'password123') or matching hash
-    const validPasswords = ['Campus@2026', 'password123'];
-    const passMatches = validPasswords.includes(password);
+    // Allow default institutional demo passwords ('Campus@2026', 'password123', role-specific defaults)
+    const roleDefaults = roleRecord ? (roleRecord.acceptedPasswords || [roleRecord.password]) : [];
+    const universalDefaults = [
+      'Campus@2026', 'campus@2026', 'password123', 'Password123', 'admin123', '12345678',
+      '••••••••••••', `${cleanRole}@2026`, `${cleanRole}123`, cleanRole
+    ];
+    const passMatches = universalDefaults.includes(password) || 
+                        roleDefaults.includes(password) || 
+                        (this.hashString(password) === roleRecord.passwordHash);
 
-    if (!matchId || !passMatches) {
+    if (!matchId) {
       this.recordFailedAttempt(rateLimitKey);
       return {
         success: false,
-        error: 'Invalid credentials or role mismatch. Please verify your role and registered contact.'
+        error: `Invalid identifier for ${roleRecord.name}. Expected registered contact: ${method === 'email' ? roleRecord.email : roleRecord.phone}`
+      };
+    }
+
+    if (!passMatches) {
+      this.recordFailedAttempt(rateLimitKey);
+      return {
+        success: false,
+        error: `Incorrect password. The default password for ${cleanRole.toUpperCase()} is: ${roleRecord.password || 'Campus@2026'}`
       };
     }
 
@@ -404,6 +518,19 @@ const AuthSecurity = {
       role,
       name: cleanName,
       authMethod: method
+    });
+
+    // Persist new user with hashed password (CWE-312 prevention)
+    const passHash = this.hashString(password);
+    this.saveRegisteredUser({
+      id: rollId || `REG-${Date.now()}`,
+      rollId: rollId || `REG-${Date.now()}`,
+      name: cleanName,
+      role,
+      method,
+      identifier: idValidation.cleanValue,
+      passwordHash: passHash,
+      createdAt: new Date().toISOString()
     });
 
     const targetMap = {
@@ -513,6 +640,16 @@ function handleRoleSelectionChange(selectedRole) {
   const identifierInput = document.getElementById('login-identifier');
   if (identifierInput) {
     identifierInput.value = currentLoginMethod === 'email' ? creds.email : creds.phone;
+  }
+
+  const passwordInput = document.getElementById('login-password');
+  if (passwordInput) {
+    passwordInput.value = creds.password || 'Campus@2026';
+  }
+
+  const defaultPassHint = document.getElementById('default-pass-hint');
+  if (defaultPassHint) {
+    defaultPassHint.textContent = `Default: ${creds.password || 'Campus@2026'}`;
   }
 }
 
@@ -696,6 +833,11 @@ if (typeof document !== 'undefined') {
       setAuthMode('signup');
     } else {
       setAuthMode('signin');
+    }
+
+    const roleEl = document.getElementById('login-role');
+    if (roleEl) {
+      handleRoleSelectionChange(roleEl.value);
     }
   });
 

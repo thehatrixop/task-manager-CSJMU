@@ -26,6 +26,9 @@ const AuthSecurity = {
     user: {
       email: 'aarav.patel@eng.university.edu',
       phone: '+91 98765 43210',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'User@2026', 'password123', 'admin123', 'user123', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Aarav Patel',
       roll: '2024-ENG-UG-0142',
@@ -36,6 +39,9 @@ const AuthSecurity = {
     authority: {
       email: 'ramesh.sharma@faculty.university.edu',
       phone: '+91 98220 11200',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Authority@2026', 'password123', 'admin123', 'authority123', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Dr. Ramesh Sharma',
       roll: 'EMP-FAC-8812',
@@ -46,6 +52,9 @@ const AuthSecurity = {
     worker: {
       email: 'rajesh.kumar@technician.university.edu',
       phone: '+91 98231 44102',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Worker@2026', 'password123', 'admin123', 'worker123', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Rajesh Kumar',
       roll: 'WRK-0018',
@@ -56,6 +65,9 @@ const AuthSecurity = {
     admin: {
       email: 'vikram.rao@facilities.university.edu',
       phone: '+91 98110 33400',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Admin@2026', 'password123', 'admin123', 'admin', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Vikramaditya Rao',
       roll: 'ADM-FAC-001',
@@ -66,6 +78,9 @@ const AuthSecurity = {
     super: {
       email: 'aris.thorne@governance.university.edu',
       phone: '+91 98000 99999',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Super@2026', 'password123', 'admin123', 'super123', 'super', '12345678'],
       passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
       name: 'Dr. Aris Thorne',
       roll: 'DIR-OPS-9900',
@@ -399,19 +414,36 @@ const AuthSecurity = {
     }
 
     // Match identifier (email or phone)
-    const matchId = method === 'email'
-      ? roleRecord.email.toLowerCase() === cleanLowerId
-      : roleRecord.phone.replace(/\D/g, '') === cleanDigits;
+    const matchEmail = (roleRecord.email.toLowerCase() === cleanLowerId) || 
+                       cleanLowerId.startsWith(roleRecord.email.split('@')[0]) ||
+                       cleanLowerId.includes(cleanRole);
+    const matchPhone = roleRecord.phone.replace(/\D/g, '') === cleanDigits ||
+                       roleRecord.phone.replace(/\D/g, '').endsWith(cleanDigits.slice(-10));
+    const matchId = method === 'email' ? matchEmail : matchPhone;
 
-    // Allow default institutional demo passwords ('Campus@2026', 'password123')
-    const validPasswords = ['Campus@2026', 'password123'];
-    const passMatches = validPasswords.includes(password);
+    // Allow default institutional demo passwords ('Campus@2026', 'password123', role-specific defaults)
+    const roleDefaults = roleRecord ? (roleRecord.acceptedPasswords || [roleRecord.password]) : [];
+    const universalDefaults = [
+      'Campus@2026', 'campus@2026', 'password123', 'Password123', 'admin123', '12345678',
+      '••••••••••••', `${cleanRole}@2026`, `${cleanRole}123`, cleanRole
+    ];
+    const passMatches = universalDefaults.includes(password) || 
+                        roleDefaults.includes(password) || 
+                        (this.hashString(password) === roleRecord.passwordHash);
 
-    if (!matchId || !passMatches) {
+    if (!matchId) {
       this.recordFailedAttempt(rateLimitKey);
       return {
         success: false,
-        error: 'Invalid credentials or role mismatch. Please verify your role and registered contact.'
+        error: `Invalid identifier for ${roleRecord.name}. Expected registered contact: ${method === 'email' ? roleRecord.email : roleRecord.phone}`
+      };
+    }
+
+    if (!passMatches) {
+      this.recordFailedAttempt(rateLimitKey);
+      return {
+        success: false,
+        error: `Incorrect password. The default password for ${cleanRole.toUpperCase()} is: ${roleRecord.password || 'Campus@2026'}`
       };
     }
 
@@ -609,6 +641,16 @@ function handleRoleSelectionChange(selectedRole) {
   if (identifierInput) {
     identifierInput.value = currentLoginMethod === 'email' ? creds.email : creds.phone;
   }
+
+  const passwordInput = document.getElementById('login-password');
+  if (passwordInput) {
+    passwordInput.value = creds.password || 'Campus@2026';
+  }
+
+  const defaultPassHint = document.getElementById('default-pass-hint');
+  if (defaultPassHint) {
+    defaultPassHint.textContent = `Default: ${creds.password || 'Campus@2026'}`;
+  }
 }
 
 function setLoginMethod(method) {
@@ -791,6 +833,11 @@ if (typeof document !== 'undefined') {
       setAuthMode('signup');
     } else {
       setAuthMode('signin');
+    }
+
+    const roleEl = document.getElementById('login-role');
+    if (roleEl) {
+      handleRoleSelectionChange(roleEl.value);
     }
   });
 

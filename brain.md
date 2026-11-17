@@ -43,7 +43,14 @@
     1. **Role Dropdown**: User, HOD/Warden, Worker, Admin, Super Admin.
     2. **Method Selector**: Segmented toggle between *University Email* and *Mobile Phone*.
     3. **Data Input**: Reactive identifier field (updates label, placeholder, and validation dynamically).
-    4. **Password**: Input with password visibility toggle.
+    4. **Password**: Pre-filled reactive input with password visibility toggle and dynamic default password hint.
+  - **Default Credentials & Passwords**:
+    - **Universal Default Password**: `Campus@2026` (accepted across all roles and accounts).
+    - **Student / Complainant (`user`)**: `aarav.patel@eng.university.edu` / `+91 98765 43210` (Password: `Campus@2026` or `User@2026`)
+    - **HOD / Warden (`authority`)**: `ramesh.sharma@faculty.university.edu` / `+91 98220 11200` (Password: `Campus@2026` or `Authority@2026`)
+    - **Field Technician (`worker`)**: `rajesh.kumar@technician.university.edu` / `+91 98231 44102` (Password: `Campus@2026` or `Worker@2026`)
+    - **Facilities Admin (`admin`)**: `vikram.rao@facilities.university.edu` / `+91 98110 33400` (Password: `Campus@2026` or `Admin@2026`)
+    - **Super Admin (`super`)**: `aris.thorne@governance.university.edu` / `+91 98000 99999` (Password: `Campus@2026` or `Super@2026`)
   - **Google SSO**: Available exclusively when the `User` role is selected.
   - **Direct Role Redirection**: On submit, authenticates and routes directly to the corresponding role dashboard (`#user-overview`, `#authority-overview`, `#worker-overview`, `#admin-overview`, `#super-overview`).
   - **Authenticated Topbar**: Contains "Switch Role" and "Sign Out" actions to easily toggle between personas or return to the public landing page.
