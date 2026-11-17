@@ -35,7 +35,7 @@
       </div>
 
       <!-- ================= LOGIN FORM ================= -->
-      <form id="campusflow-login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+      <form id="campusflow-login-form" onsubmit="return handleLoginSubmit(event)" class="space-y-4">
         <!-- FIELD 1: ROLE SELECTION DROPDOWN -->
         <div>
           <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
@@ -132,7 +132,7 @@
           </label>
         </div>
 
-        <button type="submit" class="w-full h-12 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition-all shadow-md flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+        <button type="button" id="login-submit-btn" onclick="handleLoginSubmit(event)" class="w-full h-12 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition-all shadow-md flex items-center justify-center gap-2 transform hover:-translate-y-0.5 cursor-pointer">
           <span id="login-btn-label">Sign In & Enter Dashboard</span>
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
