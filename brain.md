@@ -128,8 +128,8 @@ The application has been decomposed into individual, standalone HTML files so `i
 - **Shared Assets**:
   - `css/style.css` (Design system styles, solid opaque `#f8fafc` canvas background).
   - `js/auth.js` (4-field login logic, role selector, Google SSO, and redirects).
-  - `js/dispatch.js` (30-minute SLA countdown timer).
-  - `js/app.js` (Toast system, modals, mobile sidebar toggle).
+  - `js/dispatch.js` (30-minute SLA countdown timer with dual selector update & tactile status badges).
+  - `js/app.js` (Universal `navigateTo` dispatcher, full 5-role action suite, toast system, modals, interactive table filters, and mobile sidebar toggle).
 - **Lower Layout & Footer**:
   - **Ghost Wireframe Resolution**: Completely eliminated Google Stitch template ghost shapes (underlying wireframe pills, horizontal bars, and empty circle placeholder) by fully integrating them into intentional, high-fidelity UI components.
   - **CTA Section**: Enclosed `Get Started` and `Explore Live Demo` in a pill container (`p-1.5 rounded-full bg-slate-950/80 border border-slate-800`), masked the bottom edge with a floating `Enterprise SLA Guaranteed • Sub-30m Dispatch` pill badge (`-mt-3.5 relative z-20`), and added an animated `Live Operations Status Ribbon` with pulsing gradient telemetry beam.
@@ -156,6 +156,22 @@ The application has been decomposed into individual, standalone HTML files so `i
 - **4 Custom Enums**: `user_role`, `ticket_priority`, `complaint_status`, `assignment_status`.
 - **Row Level Security (RLS)**: Enabled across all entities with scoped read/write policies.
 - **Client SDK Integration**: [`lib/supabaseClient.js`](lib/supabaseClient.js) configured for both browser and Node.js.
+
+---
+
+## 9. Universal Client Navigation & Dashboard Interaction Architecture
+- **Root Cause of Dead Buttons**: Standalone pages in `pages/*/*.html` relied on inline `onclick="navigateTo(...)"` and action handlers (`confirmRejectSubmit()`, `handleUserComplaintSubmit()`, `approveComplaint()`, etc.) that only existed in prototype single-page scripts and were absent from `js/app.js`, throwing `ReferenceError: navigateTo is not defined` in browser runtimes.
+- **Universal Route Map**: Configured comprehensive `ROUTE_MAP` dictionary in `js/app.js` mapping all 57 view tokens to their standalone files across all 5 roles (`user`, `authority`, `worker`, `admin`, `super`) and public pages.
+- **Context-Aware Path Resolution**: Evaluates `window.location.pathname` to construct relative target paths seamlessly whether accessed from `/pages/<role>/`, `/frontend/pages/<role>/`, local server root, or single-page view DOM containers.
+- **Complete Action Suite Implemented**:
+  - **User**: `handleUserComplaintSubmit` (form submit with dynamic ticket ID generation and success modal), `handleMockFileSelect`, `removeMockFile`.
+  - **Authority**: `approveComplaint` (verification sign-off modal and dispatch notification), `openRejectModal` / `confirmRejectSubmit` (administrative justification log), `openRequestInfoModal` / `confirmRequestInfoSubmit` (student clarification query).
+  - **Worker**: `acceptJobWorker` (shift queue lock-in and navigation to active job), `openWorkerDeclineModal` / `confirmWorkerDeclineSubmit` (cascade to secondary technician WRK-0019), `handleWorkerProgressSubmit` (milestone broadcast), `handleWorkerPhotoSelect`, `handleWorkerCompleteSubmit` (cryptographic seal), `toggleWorkerAvailability` (responsive Online/Offline switch with tactile status chips).
+  - **Admin**: `openInterventionModal` / `confirmInterventionSubmit` (manual workforce override), `handleCreateWorkerSubmit` (technician account provisioning and directory redirect).
+  - **Super Admin**: `updateWeights` (reactive 4-parameter scoring sliders), `updateTimeoutVal` (acceptance SLA slider), `saveAssignmentWeights` (telemetry hot-reload toast).
+  - **System States QA Inspector**: `openSystemStatesModal`, `renderSystemState` (dynamic interactive previews for empty, loading, timeout, unauthorized, offline, and completed states).
+  - **Real-Time Telemetry & Search**: `startSLACountdown` (synchronized 30m ticking countdown timer), `initInteractiveFilters` (dynamic live table search and department/status filtering).
+
 
 
 
