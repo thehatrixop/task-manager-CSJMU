@@ -159,8 +159,20 @@ The application has been decomposed into individual, standalone HTML files so `i
 
 ---
 
-## 9. Universal Client Navigation & Dashboard Interaction Architecture
-- **Root Cause of Dead Buttons**: Standalone pages in `pages/*/*.html` relied on inline `onclick="navigateTo(...)"` and action handlers (`confirmRejectSubmit()`, `handleUserComplaintSubmit()`, `approveComplaint()`, etc.) that only existed in prototype single-page scripts and were absent from `js/app.js`, throwing `ReferenceError: navigateTo is not defined` in browser runtimes.
+## 9. Universal Client Navigation & Connected Multi-Role Real-Time State Engine
+- **Connected Multi-Role Data Flow**:
+  - Central reactive store (`campusflow_complaints_v3` & `campusflow_audit_logs_v3`) synchronizes complaints, approvals, dispatches, and resolutions across all 5 roles.
+  - Cross-tab reactivity powered by `BroadcastChannel('campusflow_bus')` and `window.addEventListener('storage', ...)`.
+  - Submitting an issue in the **Student Portal** (`report-issue.html`):
+    - Automatically adds the new complaint to state and calls `POST /api/complaints`.
+    - Automatically increments the **Warden's** `Awaiting Verification` count and renders the ticket in the `Immediate Verification Queue` on `pages/authority/overview.html` and `pages/authority/verification-queue.html`.
+    - Automatically increments the **Director's** `Pending Authority` KPI count and displays the ticket in `pages/admin/complaints-master.html`.
+  - When the **Warden** approves the complaint (`approveComplaint`):
+    - Status updates to `VERIFIED_DISPATCHED`.
+    - Technician `Rajesh Kumar (WRK-0018)` is assigned.
+    - **Worker's** `incoming-dispatch.html` displays the active dispatch ticket with the 30-minute ticking timer.
+    - **Director's** `admin/overview.html` telemetry table updates to show active SLA response tracking.
+    - **Student's** `my-complaints.html` reflects status `Dispatched (Rajesh K.)`.
 - **Universal Route Map**: Configured comprehensive `ROUTE_MAP` dictionary in `js/app.js` mapping all 57 view tokens to their standalone files across all 5 roles (`user`, `authority`, `worker`, `admin`, `super`) and public pages.
 - **Context-Aware Path Resolution**: Evaluates `window.location.pathname` to construct relative target paths seamlessly whether accessed from `/pages/<role>/`, `/frontend/pages/<role>/`, local server root, or single-page view DOM containers.
 - **Complete Action Suite Implemented**:

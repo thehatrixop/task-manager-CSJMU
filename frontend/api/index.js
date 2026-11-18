@@ -143,8 +143,8 @@ app.get(['/complaints', '/api/complaints'], (req, res) => {
 });
 
 app.post(['/complaints', '/api/complaints'], (req, res) => {
-  const { title, department, locationDesc, priority, description } = req.body;
-  const newId = `CF-2026-00${Math.floor(100 + Math.random() * 900)}`;
+  const { id, title, department, locationDesc, priority, description, complainant } = req.body;
+  const newId = id || `CF-2026-00${Math.floor(127 + Math.random() * 80)}`;
 
   const newTicket = {
     id: newId,
@@ -153,7 +153,8 @@ app.post(['/complaints', '/api/complaints'], (req, res) => {
     location: locationDesc || 'Campus Grounds',
     priority: priority || 'MEDIUM',
     status: 'PENDING_VERIFICATION',
-    assignedWorker: 'Pending Dispatch Engine',
+    assignedWorker: 'Pending Authority Approval',
+    complainant: complainant || 'Aarav Patel (Student)',
     createdAt: new Date().toISOString()
   };
 
@@ -166,6 +167,11 @@ app.post(['/complaints', '/api/complaints'], (req, res) => {
 // ==========================================
 app.post(['/dispatch/accept', '/api/dispatch/accept'], (req, res) => {
   const { ticketId, workerId } = req.body;
+  const t = mockComplaints.find(c => c.id === ticketId);
+  if (t) {
+    t.status = 'ACTIVE_IN_PROGRESS';
+    t.assignedWorker = workerId || 'Rajesh Kumar (WRK-0018)';
+  }
   res.json({
     status: 'ACCEPTED',
     ticketId: ticketId || 'CF-2026-00124',

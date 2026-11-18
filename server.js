@@ -27,43 +27,55 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
   let parsedUrl = req.url.split('?')[0].split('#')[0];
 
-  // 1. Forward /api/* requests to internal backend service via bound BACKEND_URL
-  if (parsedUrl.startsWith('/api/')) {
-    const backendBase = process.env.BACKEND_URL || 'http://localhost:4000';
-    try {
-      const targetUrl = new URL(req.url, backendBase);
-      const client = targetUrl.protocol === 'https:' ? https : http;
+  // 1. Handle /api requests (via local serverless Express gateway or bound BACKEND_URL)
+  if (parsedUrl === '/api' || parsedUrl.startsWith('/api/')) {
+    if (process.env.BACKEND_URL) {
+      const backendBase = process.env.BACKEND_URL;
+      try {
+        const targetUrl = new URL(req.url, backendBase);
+        const client = targetUrl.protocol === 'https:' ? https : http;
 
-      const proxyReq = client.request(
-        targetUrl,
-        {
-          method: req.method,
-          headers: {
-            ...req.headers,
-            host: targetUrl.host
+        const proxyReq = client.request(
+          targetUrl,
+          {
+            method: req.method,
+            headers: {
+              ...req.headers,
+              host: targetUrl.host
+            }
+          },
+          (proxyRes) => {
+            res.writeHead(proxyRes.statusCode, proxyRes.headers);
+            proxyRes.pipe(res);
           }
-        },
-        (proxyRes) => {
-          res.writeHead(proxyRes.statusCode, proxyRes.headers);
-          proxyRes.pipe(res);
-        }
-      );
+        );
 
-      proxyReq.on('error', (err) => {
-        console.error(`[App -> Backend Binding Error] ${err.message}`);
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          error: 'Bad Gateway',
-          message: 'Unable to connect to internal backend service via BACKEND_URL binding.',
-          target: backendBase,
-          details: err.message
-        }));
-      });
+        proxyReq.on('error', (err) => {
+          console.error(`[App -> Backend Binding Error] ${err.message}`);
+          res.writeHead(502, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            error: 'Bad Gateway',
+            message: 'Unable to connect to internal backend service via BACKEND_URL binding.',
+            target: backendBase,
+            details: err.message
+          }));
+        });
 
-      req.pipe(proxyReq);
-      return;
-    } catch (err) {
-      console.error('[Proxy Error]', err);
+        req.pipe(proxyReq);
+        return;
+      } catch (err) {
+        console.error('[Proxy Error]', err);
+      }
+    } else {
+      try {
+        const apiApp = require('./api/index');
+        return apiApp(req, res);
+      } catch (err) {
+        console.error('[API Gateway Error]', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal API Gateway Error', details: err.message }));
+        return;
+      }
     }
   }
 

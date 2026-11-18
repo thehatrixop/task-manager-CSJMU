@@ -244,19 +244,270 @@ function togglePasswordVisibility(id) {
 }
 
 /**
+ * =========================================================================
+ * REAL-TIME MULTI-ROLE SYNCHRONIZATION & SHARED STATE ENGINE
+ * Automatically synchronizes complaints, warden verifications, technician
+ * dispatches, and administrative oversight across all role portals.
+ * =========================================================================
+ */
+
+const CF_STORAGE_KEY = 'campusflow_complaints_v3';
+const CF_AUDIT_KEY = 'campusflow_audit_logs_v3';
+
+const BASELINE_COMPLAINTS = [
+  {
+    id: 'CF-2026-00124',
+    title: 'Switchboard Malfunction & Sparking',
+    department: 'Electrical',
+    category: 'Hazardous / Sparking',
+    location: 'Academic Block B, Rm 204',
+    priority: 'High',
+    description: 'Main laboratory switchboard in Room 204 experienced intermittent sparking when high-draw oscilloscopes were activated.',
+    status: 'ACTIVE_IN_PROGRESS',
+    complainant: 'Aarav Patel (Student)',
+    complainantId: '2024-ENG-UG-0142',
+    warden: 'Dr. Ramesh Sharma',
+    worker: 'Rajesh Kumar (WRK-0018)',
+    submittedTime: '18 min ago',
+    timestamp: Date.now() - 18 * 60 * 1000
+  },
+  {
+    id: 'CF-2026-00125',
+    title: 'HVAC Chiller Condensate Leak',
+    department: 'HVAC',
+    category: 'Leakage / Burst',
+    location: 'Academic Block B, Server Rm 102',
+    priority: 'High',
+    description: 'Condensate pan overflowing in Server Room 102. Moisture detected near floor raceways.',
+    status: 'PENDING_VERIFICATION',
+    complainant: 'Prof. Ananya Sen (Faculty)',
+    complainantId: 'FAC-ENG-089',
+    warden: 'Dr. Ramesh Sharma',
+    worker: 'Pending Dispatch Engine',
+    submittedTime: '45 min ago',
+    timestamp: Date.now() - 45 * 60 * 1000
+  },
+  {
+    id: 'CF-2026-00126',
+    title: 'Water Pressure Loss in Common Restrooms',
+    department: 'Plumbing',
+    category: 'Equipment Failure',
+    location: 'Hostel Block C, Ground Floor Washrooms',
+    priority: 'Medium',
+    description: 'Water pressure dropped completely in ground floor washrooms during peak morning hours.',
+    status: 'PENDING_VERIFICATION',
+    complainant: 'Kabir Mehta (Student)',
+    complainantId: '2023-CIV-UG-0081',
+    warden: 'Dr. Ramesh Sharma',
+    worker: 'Pending Dispatch Engine',
+    submittedTime: '1 hr ago',
+    timestamp: Date.now() - 60 * 60 * 1000
+  },
+  {
+    id: 'CF-2026-00122',
+    title: 'Library 3rd Floor Water Cooler Low Pressure',
+    department: 'Plumbing',
+    category: 'Routine Maintenance',
+    location: 'Central Library, 3F',
+    priority: 'Low',
+    description: 'Filter replacement and flow valve tuning required.',
+    status: 'COMPLETED_RESOLVED',
+    complainant: 'Aarav Patel (Student)',
+    complainantId: '2024-ENG-UG-0142',
+    warden: 'Dr. Ramesh Sharma',
+    worker: 'Vikram Singh (WRK-0019)',
+    submittedTime: 'Nov 07, 2026',
+    timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000
+  }
+];
+
+function getStoredComplaints() {
+  try {
+    const raw = localStorage.getItem(CF_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.error('[CampusStore] Error reading complaints:', e);
+  }
+  localStorage.setItem(CF_STORAGE_KEY, JSON.stringify(BASELINE_COMPLAINTS));
+  return BASELINE_COMPLAINTS;
+}
+
+function saveStoredComplaints(complaints) {
+  try {
+    localStorage.setItem(CF_STORAGE_KEY, JSON.stringify(complaints));
+  } catch (e) {
+    console.error('[CampusStore] Error saving complaints:', e);
+  }
+
+  // Cross-tab broadcast
+  if (typeof BroadcastChannel !== 'undefined') {
+    try {
+      const bc = new BroadcastChannel('campusflow_bus');
+      bc.postMessage({ type: 'STATE_CHANGED', timestamp: Date.now() });
+      bc.close();
+    } catch (err) {}
+  }
+  window.dispatchEvent(new CustomEvent('campusflow:state_changed', { detail: { complaints } }));
+}
+
+function getStoredAuditLogs() {
+  try {
+    const raw = localStorage.getItem(CF_AUDIT_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  const defaults = [
+    { id: 'EVT-90412', actor: 'Rajesh Kumar', role: 'Worker', action: 'ACCEPT_DISPATCH', entity: 'CF-2026-00124', transition: 'DISPATCHED → ACTIVE', time: '09:44:12 AM' },
+    { id: 'EVT-90411', actor: 'SYSTEM_ENGINE', role: 'Autonomous', action: 'DISPATCH_WORKER', entity: 'CF-2026-00124', transition: 'VERIFIED → DISPATCHED', time: '09:42:26 AM' },
+    { id: 'EVT-90410', actor: 'Dr. Ramesh Sharma', role: 'Authority', action: 'APPROVE_TICKET', entity: 'CF-2026-00124', transition: 'PENDING → VERIFIED', time: '09:42:15 AM' }
+  ];
+  localStorage.setItem(CF_AUDIT_KEY, JSON.stringify(defaults));
+  return defaults;
+}
+
+function addAuditLog(actor, role, action, entity, transition) {
+  const logs = getStoredAuditLogs();
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const eventId = 'EVT-' + Math.floor(90413 + logs.length);
+  logs.unshift({ id: eventId, actor, role, action, entity, transition, time: timeStr });
+  localStorage.setItem(CF_AUDIT_KEY, JSON.stringify(logs.slice(0, 50)));
+}
+
+function getStatusBadgeHtml(status, workerName) {
+  switch (status) {
+    case 'PENDING_VERIFICATION':
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 font-mono text-[10px] font-semibold border border-amber-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending Authority
+      </span>`;
+    case 'VERIFIED_DISPATCHED':
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-mono text-[10px] font-semibold border border-indigo-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span> Dispatched (Searching...)
+      </span>`;
+    case 'ACTIVE_IN_PROGRESS':
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-mono text-[10px] font-semibold border border-blue-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> In Progress (${workerName || 'Rajesh K.'})
+      </span>`;
+    case 'COMPLETED_RESOLVED':
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 font-mono text-[10px] font-semibold border border-emerald-200">
+        <span class="material-symbols-outlined text-[12px] text-emerald-600">check</span> Resolved
+      </span>`;
+    case 'REJECTED':
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-red-50 text-red-700 font-mono text-[10px] font-semibold border border-red-200">
+        <span class="material-symbols-outlined text-[12px] text-red-600">cancel</span> Rejected
+      </span>`;
+    default:
+      return `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono text-[10px]">${status}</span>`;
+  }
+}
+
+function getPriorityBadgeHtml(priority) {
+  const p = (priority || 'Medium').toLowerCase();
+  if (p === 'emergency' || p === 'critical') {
+    return `<span class="px-2 py-0.5 bg-red-100 text-red-800 rounded font-mono text-[10px] font-bold border border-red-200 animate-pulse">Emergency</span>`;
+  } else if (p === 'high') {
+    return `<span class="px-2 py-0.5 bg-red-50 text-red-700 rounded font-mono text-[10px] font-bold border border-red-200">High</span>`;
+  } else if (p === 'medium') {
+    return `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded font-mono text-[10px] font-semibold border border-amber-200">Medium</span>`;
+  }
+  return `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded font-mono text-[10px]">Low</span>`;
+}
+
+function getDeptBadgeHtml(dept) {
+  const d = (dept || 'General').toLowerCase();
+  let color = 'bg-slate-100 text-slate-700';
+  if (d.includes('elect')) color = 'bg-amber-50 text-amber-800 border-amber-200';
+  else if (d.includes('plumb')) color = 'bg-blue-50 text-blue-800 border-blue-200';
+  else if (d.includes('hvac')) color = 'bg-teal-50 text-teal-800 border-teal-200';
+  else if (d.includes('civil')) color = 'bg-stone-50 text-stone-800 border-stone-200';
+  else if (d.includes('carpent')) color = 'bg-orange-50 text-orange-800 border-orange-200';
+  return `<span class="px-2 py-0.5 ${color} rounded font-mono text-[10px] border">${dept || 'General'}</span>`;
+}
+
+/**
  * Complainant / User Portal Actions
  */
 function handleUserComplaintSubmit(e) {
   if (e && e.preventDefault) e.preventDefault();
+
   const titleEl = document.getElementById('report-title');
-  const title = titleEl ? titleEl.value : 'Facility Issue';
-  
-  const newTicketId = 'CF-2026-00' + (124 + Math.floor(Math.random() * 80));
+  const deptEl = document.getElementById('report-dept');
+  const catEl = document.getElementById('report-category');
+  const locEl = document.getElementById('report-location');
+  const descEl = document.getElementById('report-desc');
+  const prioEl = document.querySelector('input[name="report-priority"]:checked');
+
+  const title = titleEl && titleEl.value.trim() ? titleEl.value.trim() : 'Facility Issue';
+  const dept = deptEl ? deptEl.value : 'General';
+  const category = catEl ? catEl.value : 'Hazardous / Sparking';
+  const location = locEl && locEl.value.trim() ? locEl.value.trim() : 'Academic Block B, Rm 204';
+  const description = descEl && descEl.value.trim() ? descEl.value.trim() : 'Reported issue by student.';
+  const priority = prioEl ? prioEl.value : 'High';
+
+  const complaints = getStoredComplaints();
+  let maxNum = 126;
+  complaints.forEach(c => {
+    const match = c.id && c.id.match(/CF-2026-00(\d+)/);
+    if (match) {
+      const n = parseInt(match[1], 10);
+      if (n > maxNum) maxNum = n;
+    }
+  });
+  const newTicketId = `CF-2026-00${maxNum + 1}`;
+
+  const newTicket = {
+    id: newTicketId,
+    title,
+    department: dept,
+    category,
+    location,
+    priority,
+    description,
+    status: 'PENDING_VERIFICATION',
+    complainant: 'Aarav Patel (Student)',
+    complainantId: '2024-ENG-UG-0142',
+    warden: 'Dr. Ramesh Sharma',
+    worker: 'Pending Authority Verification',
+    submittedTime: 'Just now',
+    timestamp: Date.now()
+  };
+
+  complaints.unshift(newTicket);
+  saveStoredComplaints(complaints);
+  addAuditLog('Aarav Patel', 'Complainant', 'CREATE_TICKET', newTicketId, 'NONE → PENDING_VERIFICATION');
+
+  // Asynchronously notify backend gateway
+  try {
+    fetch('/api/complaints', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: newTicketId,
+        title,
+        department: dept,
+        locationDesc: location,
+        priority,
+        description,
+        complainant: 'Aarav Patel (Student)'
+      })
+    }).catch(() => {});
+  } catch (err) {}
+
   const successEl = document.getElementById('success-ticket-id');
   if (successEl) successEl.textContent = newTicketId;
 
   showModal('modal-submit-success');
-  showToast(`Complaint ${newTicketId} logged! Warden notified.`, 'success');
+  showToast(`Complaint ${newTicketId} logged! Warden and Director dashboards updated in real time.`, 'success');
+
+  // Reset inputs
+  if (titleEl) titleEl.value = '';
+  if (locEl) locEl.value = '';
+  if (descEl) descEl.value = '';
+  removeMockFile();
+
+  renderActiveDashboard();
 }
 
 function handleMockFileSelect(input) {
@@ -287,20 +538,60 @@ function removeMockFile() {
 let activeRejectTicketId = 'CF-2026-00124';
 
 function approveComplaint(ticketId) {
+  const targetId = ticketId || 'CF-2026-00124';
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === targetId);
+
+  if (ticket) {
+    ticket.status = 'VERIFIED_DISPATCHED';
+    ticket.worker = 'Rajesh Kumar (WRK-0018)';
+    ticket.submittedTime = 'Just now';
+    saveStoredComplaints(complaints);
+    addAuditLog('Dr. Ramesh Sharma', 'Authority', 'APPROVE_TICKET', targetId, 'PENDING → VERIFIED_DISPATCHED');
+  }
+
+  // Update backend gateway
+  try {
+    fetch('/api/dispatch/accept', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticketId: targetId, workerId: 'WRK-0018' })
+    }).catch(() => {});
+  } catch (err) {}
+
   const approvedEl = document.getElementById('approved-ticket-id');
-  if (approvedEl) approvedEl.textContent = ticketId;
+  if (approvedEl) approvedEl.textContent = targetId;
+
   showModal('modal-approve-confirm');
-  showToast(`Ticket ${ticketId} verified! Automated dispatch running.`, 'success');
+  showToast(`Ticket ${targetId} approved & verified! Dispatched to Rajesh Kumar.`, 'success');
+
+  renderActiveDashboard();
 }
 
 function openRejectModal(ticketId) {
-  activeRejectTicketId = ticketId;
+  activeRejectTicketId = ticketId || 'CF-2026-00124';
   showModal('modal-reject-reason');
 }
 
 function confirmRejectSubmit() {
+  const reasonEl = document.getElementById('reject-reason-text');
+  const reason = reasonEl && reasonEl.value.trim() ? reasonEl.value.trim() : 'Duplicate report or out of jurisdiction.';
+
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === activeRejectTicketId);
+  if (ticket) {
+    ticket.status = 'REJECTED';
+    ticket.rejectReason = reason;
+    ticket.submittedTime = 'Just now';
+    saveStoredComplaints(complaints);
+    addAuditLog('Dr. Ramesh Sharma', 'Authority', 'REJECT_TICKET', activeRejectTicketId, 'PENDING → REJECTED');
+  }
+
   closeModal('modal-reject-reason');
-  showToast(`Ticket ${activeRejectTicketId} rejected with stated reason.`, 'error');
+  if (reasonEl) reasonEl.value = '';
+  showToast(`Ticket ${activeRejectTicketId} rejected with administrative reason.`, 'error');
+
+  renderActiveDashboard();
 }
 
 function openRequestInfoModal(ticketId) {
@@ -309,7 +600,7 @@ function openRequestInfoModal(ticketId) {
 
 function confirmRequestInfoSubmit() {
   closeModal('modal-request-info');
-  showToast('Clarification request sent to student.', 'info');
+  showToast('Clarification request sent to complainant.', 'info');
 }
 
 /**
@@ -318,7 +609,19 @@ function confirmRequestInfoSubmit() {
 let isWorkerOnline = true;
 
 function acceptJobWorker(ticketId) {
-  showToast(`Job ${ticketId || 'CF-2026-00124'} accepted! Locked into shift queue.`, 'success');
+  const targetId = ticketId || 'CF-2026-00124';
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === targetId);
+  if (ticket) {
+    ticket.status = 'ACTIVE_IN_PROGRESS';
+    ticket.worker = 'Rajesh Kumar (WRK-0018)';
+    ticket.submittedTime = 'Just now';
+    saveStoredComplaints(complaints);
+    addAuditLog('Rajesh Kumar', 'Worker', 'ACCEPT_JOB', targetId, 'DISPATCHED → ACTIVE_IN_PROGRESS');
+  }
+
+  showToast(`Job ${targetId} accepted! Locked into Active Work Order.`, 'success');
+  renderActiveDashboard();
   setTimeout(() => {
     navigateTo('worker-active', 'worker');
   }, 600);
@@ -329,8 +632,18 @@ function openWorkerDeclineModal(ticketId) {
 }
 
 function confirmWorkerDeclineSubmit() {
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.status === 'VERIFIED_DISPATCHED' || c.id === 'CF-2026-00124') || complaints[0];
+  const targetId = ticket ? ticket.id : 'CF-2026-00124';
+  if (ticket) {
+    ticket.worker = 'Vikram Singh (WRK-0019)';
+    ticket.submittedTime = 'Just now';
+    saveStoredComplaints(complaints);
+    addAuditLog('Rajesh Kumar', 'Worker', 'DECLINE_CASCADE', targetId, 'REASSIGNED → WRK-0019');
+  }
   closeModal('modal-worker-decline');
-  showToast('Job declined. System auto-reassigning to standby worker (WRK-0019).', 'info');
+  showToast('Job declined. Cascaded autonomously to secondary standby unit WRK-0019.', 'info');
+  renderActiveDashboard();
   setTimeout(() => {
     navigateTo('worker-overview', 'worker');
   }, 600);
@@ -354,7 +667,16 @@ function handleWorkerPhotoSelect(input) {
 
 function handleWorkerCompleteSubmit(e) {
   if (e && e.preventDefault) e.preventDefault();
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.status === 'ACTIVE_IN_PROGRESS') || complaints[0];
+  if (ticket) {
+    ticket.status = 'COMPLETED_RESOLVED';
+    ticket.submittedTime = 'Just now';
+    saveStoredComplaints(complaints);
+    addAuditLog('Rajesh Kumar', 'Worker', 'SEAL_COMPLETION', ticket.id, 'ACTIVE → COMPLETED_RESOLVED');
+  }
   showToast('Job completed & photo proof cryptographically signed into audit log!', 'success');
+  renderActiveDashboard();
   setTimeout(() => {
     navigateTo('worker-completed', 'worker');
   }, 600);
@@ -396,9 +718,18 @@ function openInterventionModal(ticketId) {
 
 function confirmInterventionSubmit() {
   const select = document.getElementById('override-worker-select');
-  const worker = select ? select.value : 'WRK-0019';
+  const worker = select ? select.value : 'WRK-0019 (Vikram Singh)';
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === 'CF-2026-00124') || complaints[0];
+  if (ticket) {
+    ticket.worker = worker;
+    ticket.submittedTime = 'Just now';
+    saveStoredComplaints(complaints);
+    addAuditLog('Vikramaditya Rao', 'Admin', 'MANUAL_OVERRIDE', ticket.id, `REASSIGNED → ${worker}`);
+  }
   closeModal('modal-admin-intervention');
-  showToast(`Administrative override: Reassigned to ${worker}.`, 'success');
+  showToast(`Administrative override: Reassigned ${ticket ? ticket.id : ''} to ${worker}.`, 'success');
+  renderActiveDashboard();
 }
 
 function handleCreateWorkerSubmit(e) {
@@ -410,6 +741,284 @@ function handleCreateWorkerSubmit(e) {
     navigateTo('admin-workers', 'admin');
   }, 600);
 }
+
+/**
+ * Master Cross-Role Real-Time Rendering Engine
+ */
+function renderActiveDashboard() {
+  const path = window.location.pathname.toLowerCase();
+  const complaints = getStoredComplaints();
+  const pendingTickets = complaints.filter(c => c.status === 'PENDING_VERIFICATION');
+  const activeTickets = complaints.filter(c => c.status === 'ACTIVE_IN_PROGRESS' || c.status === 'VERIFIED_DISPATCHED');
+  const resolvedTickets = complaints.filter(c => c.status === 'COMPLETED_RESOLVED');
+
+  // 1. STUDENT - My Complaints (user/my-complaints.html)
+  const userFullTable = document.getElementById('user-complaints-full-table') ||
+    (path.includes('my-complaints') ? document.querySelector('main table tbody') : null);
+  if (userFullTable) {
+    userFullTable.innerHTML = complaints.map(c => `
+      <tr class="hover:bg-slate-50 transition-colors">
+        <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+        <td class="py-3.5 px-4 font-semibold text-slate-900">${c.title}</td>
+        <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
+        <td class="py-3.5 px-4 text-slate-600">${c.location}</td>
+        <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
+        <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
+        <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recently'}</td>
+        <td class="py-3.5 px-4 text-right">
+          <button onclick="navigateTo('user-complaint-details', 'user')" class="px-3 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
+            Inspect
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // 2. STUDENT - Overview (user/overview.html)
+  const userRecentTable = document.getElementById('user-recent-table') ||
+    (path.includes('user/overview') ? document.querySelector('main table tbody') : null);
+  if (userRecentTable) {
+    userRecentTable.innerHTML = complaints.slice(0, 5).map(c => `
+      <tr class="hover:bg-slate-50 transition-colors">
+        <td class="py-3 font-mono font-bold text-slate-900">${c.id}</td>
+        <td class="py-3 font-medium text-slate-900">${c.title}</td>
+        <td class="py-3">${getDeptBadgeHtml(c.department)}</td>
+        <td class="py-3 text-slate-600">${c.location}</td>
+        <td class="py-3 text-slate-500 font-mono">${c.submittedTime || 'Recently'}</td>
+        <td class="py-3">${getStatusBadgeHtml(c.status, c.worker)}</td>
+        <td class="py-3 text-right">
+          <button onclick="navigateTo('user-complaint-details', 'user')" class="text-blue-600 hover:underline font-semibold">Inspect</button>
+        </td>
+      </tr>
+    `).join('');
+
+    const kpiCards = document.querySelectorAll('main .grid.grid-cols-2.lg\\:grid-cols-4 > div');
+    if (kpiCards.length >= 4) {
+      const totalNum = kpiCards[0].querySelector('.text-2xl');
+      if (totalNum) totalNum.textContent = complaints.length;
+      const pendingNum = kpiCards[1].querySelector('.text-2xl');
+      if (pendingNum) pendingNum.textContent = pendingTickets.length;
+      const activeNum = kpiCards[2].querySelector('.text-2xl');
+      if (activeNum) activeNum.textContent = activeTickets.length;
+      const resolvedNum = kpiCards[3].querySelector('.text-2xl');
+      if (resolvedNum) resolvedNum.textContent = resolvedTickets.length;
+    }
+  }
+
+  // 3. AUTHORITY / WARDEN - Verification Queue (authority/verification-queue.html)
+  if (path.includes('verification-queue')) {
+    const queueTbody = document.querySelector('main table tbody');
+    if (queueTbody) {
+      if (pendingTickets.length === 0) {
+        queueTbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-8 text-center text-slate-500 font-mono text-xs">
+              <span class="material-symbols-outlined text-[28px] text-emerald-500 block mb-1">task_alt</span>
+              No pending requests awaiting verification. All jurisdiction items verified.
+            </td>
+          </tr>
+        `;
+      } else {
+        queueTbody.innerHTML = pendingTickets.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-4 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-4 px-4">
+              <div class="font-semibold text-slate-900">${c.complainant || 'Student'}</div>
+              <div class="text-[10px] text-slate-400 font-mono">${c.complainantId || '2024-ENG-UG'}</div>
+            </td>
+            <td class="py-4 px-4 font-semibold text-slate-900">${c.title}</td>
+            <td class="py-4 px-4">${getDeptBadgeHtml(c.department)}</td>
+            <td class="py-4 px-4 text-slate-600">${c.location}</td>
+            <td class="py-4 px-4">${getPriorityBadgeHtml(c.priority)}</td>
+            <td class="py-4 px-4 font-mono text-slate-500">${c.submittedTime || 'Just now'}</td>
+            <td class="py-4 px-4 text-right space-x-2">
+              <button onclick="approveComplaint('${c.id}')" class="px-3 py-1.5 bg-emerald-600 text-white rounded text-xs font-semibold hover:bg-emerald-700 shadow-sm transition-colors">
+                Approve & Dispatch
+              </button>
+              <button onclick="openRejectModal('${c.id}')" class="px-2.5 py-1.5 bg-slate-100 text-slate-700 border border-slate-300 rounded text-xs font-semibold hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors">
+                Reject
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+  }
+
+  // 4. AUTHORITY / WARDEN - Overview (authority/overview.html)
+  if (path.includes('authority/overview')) {
+    const kpiCards = document.querySelectorAll('main .grid.grid-cols-2.lg\\:grid-cols-4 > div');
+    if (kpiCards.length >= 4) {
+      const totalEl = kpiCards[0].querySelector('.text-2xl');
+      if (totalEl) totalEl.textContent = 24 + complaints.length;
+      const pendingEl = kpiCards[1].querySelector('.text-2xl');
+      if (pendingEl) pendingEl.textContent = pendingTickets.length;
+      const activeEl = kpiCards[2].querySelector('.text-2xl');
+      if (activeEl) activeEl.textContent = 4 + activeTickets.length;
+      const resolvedEl = kpiCards[3].querySelector('.text-2xl');
+      if (resolvedEl) resolvedEl.textContent = 20 + resolvedTickets.length;
+    }
+
+    const reviewBtnSpan = document.querySelector('button[onclick*="authority-queue"] span:last-child');
+    if (reviewBtnSpan) {
+      reviewBtnSpan.textContent = `Review Queue (${pendingTickets.length} Pending)`;
+    }
+
+    const tableTbody = document.querySelector('main table tbody');
+    if (tableTbody) {
+      if (pendingTickets.length === 0) {
+        tableTbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-6 text-center text-slate-500 font-mono text-xs">
+              All jurisdiction requests verified. Zero pending sign-offs.
+            </td>
+          </tr>
+        `;
+      } else {
+        tableTbody.innerHTML = pendingTickets.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 text-slate-700">${c.complainant || 'Student'}</td>
+            <td class="py-3.5 font-semibold text-slate-900">${c.title}</td>
+            <td class="py-3.5">${getDeptBadgeHtml(c.department)}</td>
+            <td class="py-3.5 text-slate-600">${c.location}</td>
+            <td class="py-3.5">${getPriorityBadgeHtml(c.priority)}</td>
+            <td class="py-3.5 text-right space-x-2">
+              <button onclick="approveComplaint('${c.id}')" class="px-3 py-1 bg-emerald-600 text-white rounded text-[11px] font-semibold hover:bg-emerald-700 shadow-sm transition-colors">
+                Approve & Dispatch
+              </button>
+              <button onclick="openRejectModal('${c.id}')" class="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[11px] font-semibold hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors">
+                Reject
+              </button>
+              <button onclick="openRequestInfoModal('${c.id}')" class="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[11px] font-semibold hover:bg-slate-200 transition-colors">
+                Info
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+  }
+
+  // 5. FACILITIES ADMIN / DIRECTOR - Complaints Master (admin/complaints-master.html)
+  if (path.includes('complaints-master')) {
+    const adminTbody = document.querySelector('main table tbody');
+    if (adminTbody) {
+      adminTbody.innerHTML = complaints.map(c => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+          <td class="py-3.5 px-4 text-slate-700">${c.complainant || 'Complainant'}</td>
+          <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
+          <td class="py-3.5 px-4 text-slate-600 font-mono">${c.location}</td>
+          <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
+          <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
+          <td class="py-3.5 px-4 font-semibold text-slate-900">${c.worker || 'Pending'}</td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="navigateTo('admin-assignment-details', 'admin')" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
+              Inspect
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // 6. FACILITIES ADMIN / DIRECTOR - Overview (admin/overview.html)
+  if (path.includes('admin/overview')) {
+    const kpiCards = document.querySelectorAll('main .grid.grid-cols-2.lg\\:grid-cols-4 > div');
+    if (kpiCards.length >= 8) {
+      const totalEl = kpiCards[0].querySelector('.text-2xl');
+      if (totalEl) totalEl.textContent = (1424 + complaints.length).toLocaleString();
+      const pendingEl = kpiCards[1].querySelector('.text-2xl');
+      if (pendingEl) pendingEl.textContent = pendingTickets.length;
+      const activeEl = kpiCards[2].querySelector('.text-2xl');
+      if (activeEl) activeEl.textContent = 40 + activeTickets.length;
+    }
+
+    const telemetryTbody = document.querySelector('main table tbody');
+    if (telemetryTbody) {
+      const telemetryRows = complaints.slice(0, 6);
+      telemetryTbody.innerHTML = telemetryRows.map(c => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3.5 font-mono font-bold text-slate-900">${c.id}</td>
+          <td class="py-3.5">${getDeptBadgeHtml(c.department)}</td>
+          <td class="py-3.5 text-slate-700 font-mono">${c.location}</td>
+          <td class="py-3.5 font-semibold text-slate-900">${c.worker || 'Pending Assignment'}</td>
+          <td class="py-3.5 font-mono text-slate-500">${c.submittedTime || 'Recent'}</td>
+          <td class="py-3.5">${getStatusBadgeHtml(c.status, c.worker)}</td>
+          <td class="py-3.5 font-mono text-slate-600">SLA Active</td>
+          <td class="py-3.5 text-right">
+            <button onclick="openInterventionModal('${c.id}')" class="text-blue-600 hover:underline font-semibold font-mono">Override</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // 7. WORKER - Incoming Dispatch (worker/incoming-dispatch.html)
+  if (path.includes('incoming-dispatch')) {
+    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED') ||
+      complaints.find(c => c.status === 'ACTIVE_IN_PROGRESS') || complaints[0];
+    if (latestDispatched) {
+      const idEl = document.querySelector('.text-lg.font-bold.font-mono.text-slate-900');
+      if (idEl) idEl.textContent = latestDispatched.id;
+      const deptEl = document.querySelector('.text-sm.font-bold.text-amber-700');
+      if (deptEl) deptEl.textContent = latestDispatched.department;
+      const titleEl = document.querySelector('h3.text-xs.font-bold.uppercase.text-slate-500 + p.text-base.font-bold');
+      if (titleEl) titleEl.textContent = latestDispatched.title;
+      const locEl = document.querySelector('.p-3.bg-slate-50.border.border-slate-200.rounded-xl.font-mono');
+      if (locEl) locEl.textContent = latestDispatched.location;
+      const descEl = document.querySelector('p.text-xs.text-slate-600.leading-relaxed.bg-slate-50');
+      if (descEl) descEl.textContent = latestDispatched.description;
+
+      const acceptBtn = document.querySelector('button[onclick*="acceptJobWorker"]');
+      if (acceptBtn) acceptBtn.setAttribute('onclick', `acceptJobWorker('${latestDispatched.id}')`);
+      const declineBtn = document.querySelector('button[onclick*="openWorkerDeclineModal"]');
+      if (declineBtn) declineBtn.setAttribute('onclick', `openWorkerDeclineModal('${latestDispatched.id}')`);
+    }
+  }
+
+  // 8. SUPER ADMIN - Audit Logs (super/audit-logs.html)
+  if (path.includes('audit-logs')) {
+    const auditTbody = document.querySelector('main table tbody');
+    if (auditTbody) {
+      const logs = getStoredAuditLogs();
+      auditTbody.innerHTML = logs.map(l => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3 px-4 font-bold text-slate-900">${l.id}</td>
+          <td class="py-3 px-4 text-slate-800">${l.actor}</td>
+          <td class="py-3 px-4 text-slate-500">${l.role}</td>
+          <td class="py-3 px-4 text-emerald-600 font-bold">${l.action}</td>
+          <td class="py-3 px-4 font-mono font-bold">${l.entity}</td>
+          <td class="py-3 px-4 text-slate-600">${l.transition}</td>
+          <td class="py-3 px-4 text-slate-400 font-mono">${l.time}</td>
+        </tr>
+      `).join('');
+    }
+  }
+}
+
+// Cross-tab real-time sync listeners
+if (typeof BroadcastChannel !== 'undefined') {
+  try {
+    const bc = new BroadcastChannel('campusflow_bus');
+    bc.onmessage = (event) => {
+      if (event.data && event.data.type === 'STATE_CHANGED') {
+        renderActiveDashboard();
+      }
+    };
+  } catch (e) {}
+}
+
+window.addEventListener('storage', (e) => {
+  if (e.key === CF_STORAGE_KEY || e.key === CF_AUDIT_KEY) {
+    renderActiveDashboard();
+  }
+});
+
+window.addEventListener('campusflow:state_changed', () => {
+  renderActiveDashboard();
+});
 
 /**
  * Super Admin Engine Tuning Controls
@@ -587,6 +1196,7 @@ function initInteractiveFilters() {
 
 // Global initialization
 document.addEventListener('DOMContentLoaded', () => {
+  renderActiveDashboard();
   startSLACountdown();
   initInteractiveFilters();
 });
