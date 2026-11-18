@@ -480,81 +480,95 @@
     </div>
   </section>
 
-  <!-- Section 5: The 5 Platform Roles Showcase -->
+  <!-- Section 5: The 6 Platform Roles Showcase -->
   <section class="w-full py-20 bg-surface-container-lowest border-y border-slate-200/80">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-16">
         <span class="font-mono text-xs uppercase tracking-widest text-emerald-700 font-semibold">ROLE-BASED GOVERNANCE</span>
         <h2 class="text-3xl font-bold text-on-surface mt-2">Tailored Experiences for Every Campus Stakeholder</h2>
         <p class="text-sm text-on-surface-variant mt-2">
-          CampusFlow separates operational authority into 5 distinct roles, ensuring high data security and focused ergonomics.
+          CampusFlow separates operational authority into 6 distinct roles, ensuring high data security and focused ergonomics.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <!-- Role 1 -->
         <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
           <div>
             <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mb-3">
               <span class="material-symbols-outlined">school</span>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm">1. User / Complainant</h4>
-            <p class="text-xs text-slate-600 mt-2">Students, faculty, researchers. Snap photo, report issue, track status timeline in real-time.</p>
+            <h4 class="font-bold text-slate-900 text-sm">1. Student / User</h4>
+            <p class="text-xs text-slate-600 mt-2">Undergraduate & postgraduate students. Log facility defects; verified by hostel warden before dispatch.</p>
           </div>
           <button onclick="loginAs('user')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
-            Demo Student Portal
+            Demo Student
           </button>
         </div>
 
-        <!-- Role 2 -->
-        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+        <!-- Role 2: Faculty -->
+        <div class="p-5 bg-emerald-50/50 border border-emerald-200 rounded-2xl flex flex-col justify-between">
           <div>
-            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mb-3">
-              <span class="material-symbols-outlined">shield_person</span>
+            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">workspace_premium</span>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm">2. HOD / Warden</h4>
-            <p class="text-xs text-slate-600 mt-2">Department heads & hostel wardens. Verify claims, filter spam, approve with one-tap push.</p>
+            <h4 class="font-bold text-slate-900 text-sm">2. Faculty / Professor</h4>
+            <p class="text-xs text-slate-600 mt-2">Professors & researchers. Complaints are <strong>auto-verified</strong> instantly without warden intervention.</p>
           </div>
-          <button onclick="loginAs('authority')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
-            Demo Authority Queue
+          <button onclick="loginAs('faculty')" class="mt-5 w-full py-2 text-xs font-semibold bg-emerald-600 text-white border border-emerald-700 rounded-lg hover:bg-emerald-700 transition-colors">
+            Demo Faculty
           </button>
         </div>
 
         <!-- Role 3 -->
         <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
           <div>
-            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3">
-              <span class="material-symbols-outlined">engineering</span>
+            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">shield_person</span>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm">3. Field Worker</h4>
-            <p class="text-xs text-slate-600 mt-2">Electricians, plumbers, HVAC crew. 30m countdown acceptance, progress logging, photo proof.</p>
+            <h4 class="font-bold text-slate-900 text-sm">3. HOD / Warden</h4>
+            <p class="text-xs text-slate-600 mt-2">Department heads & hostel wardens. Verify claims, filter spam, approve with one-tap push.</p>
           </div>
-          <button onclick="loginAs('worker')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
-            Demo Worker App
+          <button onclick="loginAs('authority')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Authority
           </button>
         </div>
 
         <!-- Role 4 -->
         <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
           <div>
-            <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center mb-3">
-              <span class="material-symbols-outlined">tune</span>
+            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">engineering</span>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm">4. Facilities Admin</h4>
-            <p class="text-xs text-slate-600 mt-2">Campus managers. Oversee 6 departments, manage 95 technicians, intervene in delayed tickets.</p>
+            <h4 class="font-bold text-slate-900 text-sm">4. Field Worker</h4>
+            <p class="text-xs text-slate-600 mt-2">Electricians, plumbers, HVAC crew. 30m countdown acceptance, progress logging, photo proof.</p>
           </div>
-          <button onclick="loginAs('admin')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
-            Demo Admin Command
+          <button onclick="loginAs('worker')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Worker
           </button>
         </div>
 
         <!-- Role 5 -->
         <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
           <div>
+            <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined">tune</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm">5. Facilities Admin</h4>
+            <p class="text-xs text-slate-600 mt-2">Campus managers. Oversee 6 departments, manage 95 technicians, intervene in delayed tickets.</p>
+          </div>
+          <button onclick="loginAs('admin')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">
+            Demo Admin
+          </button>
+        </div>
+
+        <!-- Role 6 -->
+        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div>
             <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center mb-3">
               <span class="material-symbols-outlined">security</span>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm">5. Super Admin</h4>
+            <h4 class="font-bold text-slate-900 text-sm">6. Super Admin</h4>
             <p class="text-xs text-slate-600 mt-2">Vice chancellors, IT directors. Configure assignment algorithm weights, audit logs, governance.</p>
           </div>
           <button onclick="loginAs('super')" class="mt-5 w-full py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition-colors">

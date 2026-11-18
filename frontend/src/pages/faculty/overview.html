@@ -1,0 +1,131 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Faculty Overview
+     ID: view-faculty-overview
+     Location: frontend/src/pages/faculty/overview.html
+     ========================================================================= -->
+
+<div id="view-faculty-overview" class="auth-view hidden">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-xs text-slate-500 uppercase tracking-wider font-semibold">FACULTY & PROFESSOR PORTAL</span>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-mono text-[10px] font-bold border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Auto-Verified Privilege
+        </span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900 mt-1">Faculty Maintenance Overview</h1>
+      <p class="text-xs text-slate-600">Department laboratory, office, and academic infrastructure maintenance console</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="navigateTo('faculty-report', 'faculty')" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-sm">
+        <span class="material-symbols-outlined text-[16px]">add_circle</span>
+        <span>Report Issue (Auto-Verified)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Faculty Privilege Callout Banner -->
+  <div class="mb-6 p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-start gap-3">
+    <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[18px]">verified</span>
+    </div>
+    <div class="text-xs">
+      <h4 class="font-bold text-emerald-950">Autonomous Fast-Track Verification Enabled</h4>
+      <p class="text-emerald-800 mt-0.5">Faculty work orders bypass warden queues and dispatch autonomously with high SLA priority. Technicians are immediately notified upon submission.</p>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div onclick="navigateTo('faculty-complaints', 'faculty')" class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-slate-400 cursor-pointer transition-all active:translate-y-[0.5px]">
+      <div class="flex items-center justify-between text-slate-500 mb-2">
+        <span class="text-xs uppercase font-medium">Total Requests</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-400">receipt</span>
+      </div>
+      <div class="text-2xl font-bold text-slate-900">0</div>
+      <span class="text-[11px] text-slate-500">Current Semester</span>
+    </div>
+
+    <div onclick="navigateTo('faculty-complaints', 'faculty')" class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-slate-400 cursor-pointer transition-all active:translate-y-[0.5px]">
+      <div class="flex items-center justify-between text-emerald-600 mb-2">
+        <span class="text-xs uppercase font-medium">Auto-Verified</span>
+        <span class="material-symbols-outlined text-[20px]">bolt</span>
+      </div>
+      <div class="text-2xl font-bold text-emerald-600">0</div>
+      <span class="text-[11px] text-slate-500">Autonomous Sign-off</span>
+    </div>
+
+    <div onclick="navigateTo('faculty-complaints', 'faculty')" class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-slate-400 cursor-pointer transition-all active:translate-y-[0.5px]">
+      <div class="flex items-center justify-between text-blue-600 mb-2">
+        <span class="text-xs uppercase font-medium">In Progress</span>
+        <span class="material-symbols-outlined text-[20px]">handyman</span>
+      </div>
+      <div class="text-2xl font-bold text-blue-600">0</div>
+      <span class="text-[11px] text-slate-500">Dispatched Technicians</span>
+    </div>
+
+    <div onclick="navigateTo('faculty-complaints', 'faculty')" class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-slate-400 cursor-pointer transition-all active:translate-y-[0.5px]">
+      <div class="flex items-center justify-between text-emerald-600 mb-2">
+        <span class="text-xs uppercase font-medium">Resolved</span>
+        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+      </div>
+      <div class="text-2xl font-bold text-emerald-600">0</div>
+      <span class="text-[11px] text-slate-500">Resolved & Closed</span>
+    </div>
+  </div>
+
+  <!-- Active Work Highlight Card (shown dynamically when active work exists) -->
+  <div id="user-active-highlight" class="hidden mb-8 p-5 bg-blue-50/60 border border-blue-200 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">bolt</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs font-bold text-blue-900 active-complaint-id">CF-2026-00000</span>
+          <span class="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px] font-mono font-semibold active-complaint-status">Auto-Verified & Dispatched</span>
+          <span class="px-2 py-0.5 rounded-md bg-red-100 text-red-800 text-[10px] font-mono font-semibold active-complaint-priority">High Priority</span>
+        </div>
+        <h3 class="text-sm font-bold text-slate-900 mt-1 active-complaint-title">Active Complaint</h3>
+        <p class="text-xs text-slate-600"><span class="active-complaint-location">Location</span> • Assigned to <span class="font-semibold text-slate-900 active-complaint-worker">Technician</span></p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="navigateTo('faculty-complaint-details', 'faculty')" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors">
+        Live Progress Timeline
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Complaints Table -->
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <div class="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between">
+      <h3 class="font-bold text-sm text-slate-900">Recent Faculty Requests</h3>
+      <button onclick="navigateTo('faculty-complaints', 'faculty')" class="text-xs text-blue-600 hover:underline font-semibold">View All</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+          <tr>
+            <th class="py-3 px-4">Ticket</th>
+            <th class="py-3 px-4">Issue Title</th>
+            <th class="py-3 px-4">Department</th>
+            <th class="py-3 px-4">Location</th>
+            <th class="py-3 px-4">Logged</th>
+            <th class="py-3 px-4">Status</th>
+            <th class="py-3 px-4 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100" id="user-recent-table">
+          <tr>
+            <td colspan="7" class="py-12 text-center text-slate-500">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">inbox</span>
+              <p class="font-medium text-slate-700">No Recent Complaints</p>
+              <p class="text-xs text-slate-400 mt-0.5">Your submitted maintenance issues will appear here with live tracking</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

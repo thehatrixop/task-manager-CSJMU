@@ -1,0 +1,54 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Faculty Profile & Settings
+     ID: view-faculty-profile
+     Location: frontend/src/pages/faculty/profile.html
+     ========================================================================= -->
+
+<div id="view-faculty-profile" class="auth-view hidden">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-slate-900">Faculty Profile & Settings</h1>
+      <p class="text-xs text-slate-600">Institutional credentials and automated dispatch preferences</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      <div class="flex items-center gap-4 pb-6 border-b border-slate-100">
+        <div class="w-16 h-16 rounded-full bg-slate-900 text-white flex items-center justify-center text-xl font-bold font-mono">
+          AS
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Prof. Ananya Sen</h3>
+          <p class="text-xs text-slate-500 font-mono">ID: FAC-ENG-089 • Department of Electrical & Computer Engineering</p>
+          <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-mono text-[10px] font-semibold border border-emerald-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active Faculty Account (Auto-Verified Privilege)
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Email</label>
+          <input type="text" disabled value="prof.ananya@faculty.university.edu" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 font-mono"/>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Phone Number</label>
+          <input type="text" value="+91 98220 54321" class="w-full h-10 px-3 border border-slate-300 rounded-lg"/>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-100">
+        <h4 class="text-xs font-bold text-slate-900 uppercase mb-3">Notification Preferences</h4>
+        <div class="space-y-3 text-xs">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span>SMS Instant Dispatch Alerts</span>
+            <input type="checkbox" checked class="rounded text-slate-900 focus:ring-0"/>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span>Email Status Digest</span>
+            <input type="checkbox" checked class="rounded text-slate-900 focus:ring-0"/>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

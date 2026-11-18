@@ -34,7 +34,20 @@ const AuthSecurity = {
       roll: '2024-ENG-UG-0142',
       department: 'Computer Science & Engineering',
       target: '../user/overview.html',
-      hint: 'Student / Complainant Access'
+      hint: 'Student / Complainant Access (Warden Approval Required)'
+    },
+    faculty: {
+      email: 'prof.ananya@faculty.university.edu',
+      phone: '+91 98220 54321',
+      password: 'Campus@2026',
+      defaultPassword: 'Campus@2026',
+      acceptedPasswords: ['Campus@2026', 'Faculty@2026', 'password123', 'admin123', 'faculty123', '12345678'],
+      passwordHash: 'e6c279f622c7f329c522976ac52915dd', // 'Campus@2026'
+      name: 'Prof. Ananya Sen',
+      roll: 'FAC-ENG-089',
+      department: 'Electrical & Computer Engineering',
+      target: '../faculty/overview.html',
+      hint: 'Faculty / Professor Access (Auto-Verified Privilege)'
     },
     authority: {
       email: 'ramesh.sharma@faculty.university.edu',
@@ -356,7 +369,7 @@ const AuthSecurity = {
     }
 
     // 2. Validate Role Existence
-    const validRoles = ['user', 'authority', 'worker', 'admin', 'super'];
+    const validRoles = ['user', 'faculty', 'authority', 'worker', 'admin', 'super'];
     if (!validRoles.includes(role)) {
       return { success: false, error: 'Invalid institutional role specified.' };
     }
@@ -409,6 +422,7 @@ const AuthSecurity = {
 
       const targetMap = {
         user: '../user/overview.html',
+        faculty: '../faculty/overview.html',
         worker: '../worker/overview.html',
         authority: '../authority/overview.html',
         admin: '../admin/overview.html',
@@ -557,6 +571,7 @@ const AuthSecurity = {
 
     const targetMap = {
       user: '../user/overview.html',
+      faculty: '../faculty/overview.html',
       worker: '../worker/overview.html',
       authority: '../authority/overview.html',
       admin: '../admin/overview.html',
@@ -650,7 +665,7 @@ function handleRoleSelectionChange(selectedRole) {
   const googleSection = document.getElementById('google-login-section');
   const privNote = document.getElementById('privileged-auth-note');
   if (googleSection && privNote) {
-    if (selectedRole === 'user') {
+    if (selectedRole === 'user' || selectedRole === 'faculty') {
       googleSection.classList.remove('hidden');
       privNote.classList.add('hidden');
     } else {

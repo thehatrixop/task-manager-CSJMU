@@ -1,0 +1,46 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Faculty Notifications
+     ID: view-faculty-notifications
+     Location: frontend/src/pages/faculty/notifications.html
+     ========================================================================= -->
+
+<div id="view-faculty-notifications" class="auth-view hidden">
+  <div class="max-w-3xl mx-auto">
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">Faculty Notifications</h1>
+        <p class="text-xs text-slate-600">Live dispatch telemetry and technician progress alerts</p>
+      </div>
+      <button onclick="showToast('All notifications marked as read', 'success')" class="text-xs font-semibold text-blue-600 hover:underline">
+        Mark all as read
+      </button>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl divide-y divide-slate-100 shadow-sm overflow-hidden">
+      <div class="p-4 flex items-start gap-3 hover:bg-slate-50">
+        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[16px]">bolt</span>
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-slate-900">Autonomous Verification Engaged</span>
+            <span class="font-mono text-[10px] text-slate-400">Just now</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-0.5">Faculty fast-track verified your maintenance request. Technician Rajesh Kumar (WRK-0018) assigned.</p>
+        </div>
+      </div>
+      <div class="p-4 flex items-start gap-3 hover:bg-slate-50">
+        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[16px]">engineering</span>
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-slate-900">Worker En Route</span>
+            <span class="font-mono text-[10px] text-slate-400">12 min ago</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-0.5">Technician has accepted the work order and is navigating to your departmental location.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

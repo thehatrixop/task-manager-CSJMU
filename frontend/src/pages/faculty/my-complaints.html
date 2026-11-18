@@ -1,0 +1,67 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Faculty My Complaints
+     ID: view-faculty-complaints
+     Location: frontend/src/pages/faculty/my-complaints.html
+     ========================================================================= -->
+
+<div id="view-faculty-complaints" class="auth-view hidden">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Faculty Maintenance Complaints</h1>
+      <p class="text-xs text-slate-600">Track and filter all requests submitted with faculty auto-verification privilege</p>
+    </div>
+    <button onclick="navigateTo('faculty-report', 'faculty')" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors flex items-center gap-1.5 shadow-sm">
+      <span class="material-symbols-outlined text-[16px]">add_circle</span>
+      <span>Report Issue</span>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white border border-slate-200 rounded-xl p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+      <span class="material-symbols-outlined text-[18px] text-slate-400">search</span>
+      <input type="text" placeholder="Search by Ticket ID or title..." class="w-full text-xs border-0 focus:outline-none"/>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 text-xs">
+      <select class="px-3 py-1.5 border border-slate-300 rounded-lg bg-white">
+        <option>All Departments</option>
+        <option>Electrical</option>
+        <option>Plumbing</option>
+        <option>HVAC</option>
+      </select>
+      <select class="px-3 py-1.5 border border-slate-300 rounded-lg bg-white">
+        <option>All Statuses</option>
+        <option>Dispatched</option>
+        <option>In Progress</option>
+        <option>Resolved</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-slate-50 border-b border-slate-200 font-mono text-slate-500 uppercase">
+        <tr>
+          <th class="py-3 px-4">Complaint ID</th>
+          <th class="py-3 px-4">Issue Title</th>
+          <th class="py-3 px-4">Department</th>
+          <th class="py-3 px-4">Location</th>
+          <th class="py-3 px-4">Priority</th>
+          <th class="py-3 px-4">Current Status</th>
+          <th class="py-3 px-4">Last Updated</th>
+          <th class="py-3 px-4 text-right">Details</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100" id="user-complaints-full-table">
+        <tr>
+          <td colspan="8" class="py-12 text-center text-slate-500">
+            <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">inbox</span>
+            <p class="font-medium text-slate-700">No complaints reported yet</p>
+            <p class="text-xs text-slate-400 mt-0.5">Use "Report Issue" to submit your first maintenance request</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

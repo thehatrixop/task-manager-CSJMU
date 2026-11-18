@@ -29,6 +29,16 @@ const ROUTE_MAP = {
   'user-notifications': 'user/notifications.html',
   'user-profile': 'user/profile.html',
 
+  // Faculty / Professor (Auto-Verified Privilege)
+  'faculty-overview': 'faculty/overview.html',
+  'faculty-report': 'faculty/report-issue.html',
+  'faculty-complaints': 'faculty/my-complaints.html',
+  'faculty-complaint-details': 'faculty/complaint-details.html',
+  'faculty-tracker': 'faculty/complaint-details.html',
+  'faculty-history': 'faculty/history.html',
+  'faculty-notifications': 'faculty/notifications.html',
+  'faculty-profile': 'faculty/profile.html',
+
   // Authority / HOD / Warden
   'authority-overview': 'authority/overview.html',
   'authority-queue': 'authority/verification-queue.html',
@@ -147,6 +157,7 @@ function navigateTo(viewId, roleId) {
 function loginAs(role) {
   const roleLanding = {
     user: 'user-overview',
+    faculty: 'faculty-overview',
     authority: 'authority-overview',
     worker: 'worker-overview',
     admin: 'admin-overview',
@@ -391,6 +402,19 @@ function handleUserComplaintSubmit(e) {
   });
   const newTicketId = `CF-2026-00${maxNum + 1}`;
 
+  const sessionUser = typeof sessionStorage !== 'undefined' ? (sessionStorage.getItem('campusflow_user') ? JSON.parse(sessionStorage.getItem('campusflow_user')) : null) : null;
+  const isFaculty = (typeof window !== 'undefined' && (
+    window.location.pathname.includes('/faculty/') || 
+    window.location.href.includes('faculty') ||
+    (sessionUser && sessionUser.role === 'faculty')
+  ));
+
+  const complainantName = isFaculty ? (sessionUser && sessionUser.name ? `${sessionUser.name} (Faculty)` : 'Prof. Ananya Sen (Faculty)') : (sessionUser && sessionUser.name ? `${sessionUser.name} (Student)` : 'Aarav Patel (Student)');
+  const complainantId = isFaculty ? (sessionUser && sessionUser.roll ? sessionUser.roll : 'FAC-ENG-089') : (sessionUser && sessionUser.roll ? sessionUser.roll : '2024-ENG-UG-0142');
+  const initialStatus = isFaculty ? 'VERIFIED_DISPATCHED' : 'PENDING_VERIFICATION';
+  const initialWorker = isFaculty ? 'Rajesh Kumar (WRK-0018)' : 'Pending Authority Verification';
+  const verifiedBy = isFaculty ? 'Autonomous Engine (Faculty Auto-Verification Privilege)' : null;
+
   const newTicket = {
     id: newTicketId,
     title,
@@ -399,18 +423,23 @@ function handleUserComplaintSubmit(e) {
     location,
     priority,
     description,
-    status: 'PENDING_VERIFICATION',
-    complainant: 'Aarav Patel (Student)',
-    complainantId: '2024-ENG-UG-0142',
-    warden: 'Dr. Ramesh Sharma',
-    worker: 'Pending Authority Verification',
+    status: initialStatus,
+    complainant: complainantName,
+    complainantId,
+    warden: isFaculty ? 'Autonomous Engine (Auto-Verified)' : 'Dr. Ramesh Sharma',
+    verifiedBy: verifiedBy,
+    worker: initialWorker,
     submittedTime: 'Just now',
     timestamp: Date.now()
   };
 
   complaints.unshift(newTicket);
   saveStoredComplaints(complaints);
-  addAuditLog('Aarav Patel', 'Complainant', 'CREATE_TICKET', newTicketId, 'NONE → PENDING_VERIFICATION');
+  if (isFaculty) {
+    addAuditLog(complainantName, 'Faculty', 'AUTO_VERIFY_FACULTY', newTicketId, 'NONE → VERIFIED_DISPATCHED');
+  } else {
+    addAuditLog('Aarav Patel', 'Complainant', 'CREATE_TICKET', newTicketId, 'NONE → PENDING_VERIFICATION');
+  }
 
   // Asynchronously notify backend gateway
   try {
@@ -424,7 +453,7 @@ function handleUserComplaintSubmit(e) {
         locationDesc: location,
         priority,
         description,
-        complainant: 'Aarav Patel (Student)'
+        complainant: complainantName
       })
     }).catch(() => {});
   } catch (err) {}
@@ -433,7 +462,11 @@ function handleUserComplaintSubmit(e) {
   if (successEl) successEl.textContent = newTicketId;
 
   showModal('modal-submit-success');
-  showToast(`Complaint ${newTicketId} logged! Warden and Director dashboards updated in real time.`, 'success');
+  if (isFaculty) {
+    showToast(`Faculty Complaint ${newTicketId} logged & auto-verified! Directly dispatched to Rajesh Kumar.`, 'success');
+  } else {
+    showToast(`Complaint ${newTicketId} logged! Awaiting Warden verification before dispatch.`, 'success');
+  }
 
   // Reset inputs
   if (titleEl) titleEl.value = '';
@@ -692,9 +725,11 @@ function renderActiveDashboard() {
   const resolvedTickets = complaints.filter(c => c.status === 'COMPLETED_RESOLVED');
   const rejectedTickets = complaints.filter(c => c.status === 'REJECTED');
 
-  // 1. STUDENT - My Complaints (user/my-complaints.html)
+  // 1. STUDENT & FACULTY - My Complaints
   const userFullTable = document.getElementById('user-complaints-full-table') ||
     (path.includes('my-complaints') ? document.querySelector('main table tbody') : null);
+  const isFacultyPortal = path.includes('faculty');
+  const inspectAction = isFacultyPortal ? "navigateTo('faculty-complaint-details', 'faculty')" : "navigateTo('user-complaint-details', 'user')";
   if (userFullTable) {
     if (complaints.length === 0) {
       userFullTable.innerHTML = `
@@ -717,7 +752,7 @@ function renderActiveDashboard() {
           <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
           <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recently'}</td>
           <td class="py-3.5 px-4 text-right">
-            <button onclick="navigateTo('user-complaint-details', 'user')" class="px-3 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
+            <button onclick="${inspectAction}" class="px-3 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
               Inspect
             </button>
           </td>
@@ -726,9 +761,9 @@ function renderActiveDashboard() {
     }
   }
 
-  // 2. STUDENT - Overview (user/overview.html)
+  // 2. STUDENT & FACULTY - Overview
   const userRecentTable = document.getElementById('user-recent-table') ||
-    (path.includes('user/overview') ? document.querySelector('main table tbody') : null);
+    ((path.includes('user/overview') || path.includes('faculty/overview')) ? document.querySelector('main table tbody') : null);
   if (userRecentTable) {
     if (complaints.length === 0) {
       userRecentTable.innerHTML = `
@@ -750,7 +785,7 @@ function renderActiveDashboard() {
           <td class="py-3 text-slate-500 font-mono">${c.submittedTime || 'Recently'}</td>
           <td class="py-3">${getStatusBadgeHtml(c.status, c.worker)}</td>
           <td class="py-3 text-right">
-            <button onclick="navigateTo('user-complaint-details', 'user')" class="text-blue-600 hover:underline font-semibold">Inspect</button>
+            <button onclick="${inspectAction}" class="text-blue-600 hover:underline font-semibold">Inspect</button>
           </td>
         </tr>
       `).join('');

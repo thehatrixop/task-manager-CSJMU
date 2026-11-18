@@ -512,6 +512,21 @@ const rolesConfig = {
       { file: 'profile.html', label: 'Profile & Settings', icon: 'account_circle' }
     ]
   },
+  faculty: {
+    tag: 'FACULTY PORTAL',
+    name: 'Prof. Ananya Sen',
+    sub: 'Faculty / Professor (FAC-ENG-089)',
+    avatar: 'AS',
+    navs: [
+      { file: 'overview.html', label: 'Overview', icon: 'dashboard' },
+      { file: 'report-issue.html', label: 'Report New Issue', icon: 'add_circle' },
+      { file: 'my-complaints.html', label: 'My Complaints', icon: 'receipt_long' },
+      { file: 'complaint-details.html', label: 'Complaint Tracker', icon: 'timeline' },
+      { file: 'history.html', label: 'Complaint History', icon: 'history' },
+      { file: 'notifications.html', label: 'Notifications', icon: 'notifications' },
+      { file: 'profile.html', label: 'Profile & Settings', icon: 'account_circle' }
+    ]
+  },
   authority: {
     tag: 'AUTHORITY PORTAL',
     name: 'Dr. Ramesh Sharma',

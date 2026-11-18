@@ -64,6 +64,7 @@ app.post(['/auth/login', '/api/auth/login'], (req, res) => {
 
   const roleRedirects = {
     user: '/pages/user/overview.html',
+    faculty: '/pages/faculty/overview.html',
     authority: '/pages/authority/overview.html',
     worker: '/pages/worker/overview.html',
     admin: '/pages/admin/overview.html',
@@ -72,6 +73,7 @@ app.post(['/auth/login', '/api/auth/login'], (req, res) => {
 
   const userNameMap = {
     user: 'Aarav Patel',
+    faculty: 'Prof. Ananya Sen',
     authority: 'Dr. Ramesh Sharma',
     worker: 'Rajesh Kumar',
     admin: 'Vikramaditya Rao',
@@ -122,6 +124,7 @@ app.get(['/complaints', '/api/complaints'], (req, res) => {
 app.post(['/complaints', '/api/complaints'], (req, res) => {
   const { id, title, department, locationDesc, priority, description, complainant } = req.body;
   const newId = id || `CF-2026-00${Math.floor(127 + Math.random() * 80)}`;
+  const isFaculty = complainant && complainant.toLowerCase().includes('faculty');
 
   const newTicket = {
     id: newId,
@@ -129,8 +132,9 @@ app.post(['/complaints', '/api/complaints'], (req, res) => {
     department: department || 'General Maintenance',
     location: locationDesc || 'Campus Grounds',
     priority: priority || 'MEDIUM',
-    status: 'PENDING_VERIFICATION',
-    assignedWorker: 'Awaiting Warden Verification',
+    status: isFaculty ? 'VERIFIED_DISPATCHED' : 'PENDING_VERIFICATION',
+    assignedWorker: isFaculty ? 'Rajesh Kumar (WRK-0018)' : 'Awaiting Warden Verification',
+    verifiedBy: isFaculty ? 'Autonomous Engine (Faculty Auto-Verification Privilege)' : null,
     complainant: complainant || 'Aarav Patel (Student)',
     createdAt: new Date().toISOString()
   };

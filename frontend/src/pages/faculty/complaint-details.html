@@ -1,0 +1,97 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Faculty Complaint Live Lifecycle Tracker
+     ID: view-faculty-complaint-details
+     Location: frontend/src/pages/faculty/complaint-details.html
+     ========================================================================= -->
+
+<div id="view-faculty-complaint-details" class="auth-view hidden">
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <button onclick="navigateTo('faculty-complaints', 'faculty')" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 mb-2">
+          <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span>Back to Complaints</span>
+        </button>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-bold text-slate-900">CF-2026-00124</h1>
+          <span class="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-800 font-mono text-xs font-bold">In Progress</span>
+          <span class="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-mono text-xs font-bold">Auto-Verified</span>
+        </div>
+      </div>
+      <div class="text-right font-mono text-xs text-slate-500">
+        Logged: Today
+      </div>
+    </div>
+
+    <!-- Timeline Progress Bar -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-6">
+      <h3 class="text-xs font-mono uppercase text-slate-500 font-bold mb-4">Faculty Fast-Track Operational Lifecycle</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-center text-xs">
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">01</div>
+          <span>Submitted</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-100 text-emerald-900 font-bold border border-emerald-300">
+          <div class="font-mono text-[10px] text-emerald-700">02 AUTO</div>
+          <span>Auto-Verified</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">03</div>
+          <span>Dispatched</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">04</div>
+          <span>Match Engine</span>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800 font-medium border border-emerald-200">
+          <div class="font-mono text-[10px] text-emerald-600 font-bold">05</div>
+          <span>Worker Accepted</span>
+        </div>
+        <div class="p-2 rounded-lg bg-blue-100 text-blue-900 font-bold border border-blue-300 animate-pulse">
+          <div class="font-mono text-[10px] text-blue-700">06 ACTIVE</div>
+          <span>Work In Progress</span>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-50 text-slate-400 font-medium border border-slate-200">
+          <div class="font-mono text-[10px]">07</div>
+          <span>Signed Close</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 Column Details -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Main Content (2 cols) -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-900 mb-2">Issue Description</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Main laboratory switchboard in Room 204 experienced intermittent sparking when high-draw oscilloscopes were activated. Power isolated locally at emergency switch.
+          </p>
+          <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span class="text-slate-500">Autonomous Sign-off:</span>
+            <span class="font-mono font-semibold text-emerald-700">Faculty Privilege Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Metadata (1 col) -->
+      <div class="space-y-6">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 text-xs">
+          <div>
+            <span class="text-slate-400 font-mono text-[10px] uppercase">Assigned Technician</span>
+            <p class="font-bold text-slate-900 mt-0.5">Rajesh Kumar (WRK-0018)</p>
+            <p class="text-slate-500">Senior Electrician • Grade A</p>
+          </div>
+          <div>
+            <span class="text-slate-400 font-mono text-[10px] uppercase">Department Location</span>
+            <p class="font-semibold text-slate-800 mt-0.5">Academic Block B, Rm 204</p>
+          </div>
+          <div>
+            <span class="text-slate-400 font-mono text-[10px] uppercase">SLA Window</span>
+            <p class="font-semibold text-emerald-700 font-mono mt-0.5">Sub-30m Dispatch Active</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
