@@ -172,6 +172,28 @@ The application has been decomposed into individual, standalone HTML files so `i
   - **System States QA Inspector**: `openSystemStatesModal`, `renderSystemState` (dynamic interactive previews for empty, loading, timeout, unauthorized, offline, and completed states).
   - **Real-Time Telemetry & Search**: `startSLACountdown` (synchronized 30m ticking countdown timer), `initInteractiveFilters` (dynamic live table search and department/status filtering).
 
+---
+
+## 10. Vercel Multi-Service Deployment Architecture (`vercel.json`)
+- **Multi-Service Architecture**: Configured for Vercel Services to deploy both the web application and the Express API gateway from a single repository with shared routing and unified domain management.
+- **Service Manifest**:
+  - `app`:
+    - Root: `.` (repo root)
+    - Runtime: `node`
+    - Role: Serves static assets, standalone dashboard pages, and handles server-side request routing.
+    - Bindings: Declares binding to `backend` service injecting internal base URL into `BACKEND_URL`.
+  - `backend`:
+    - Root: `backend`
+    - Framework: `express`
+    - Role: Powers authentication (`/api/auth`), ticket complaints (`/api/complaints`), dispatch actions (`/api/dispatch`), and WebSocket gateways.
+- **Routing & Public Rewrites**:
+  - `/api/(.*)` $\rightarrow$ Service `backend` (public API access for client-side queries and external webhooks).
+  - `/(.*)` $\rightarrow$ Service `app` (public catch-all for web pages, styles, scripts, and media).
+- **Service-to-Service Runtime Binding**:
+  - `app` injects `process.env.BACKEND_URL` to route or proxy API requests directly to the internal `backend` instance.
+  - In `server.js`, `/api/*` requests forward via `BACKEND_URL` (falling back to `http://localhost:4000` in local dev).
+
+
 
 
 
