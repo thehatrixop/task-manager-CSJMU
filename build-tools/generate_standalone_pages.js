@@ -519,7 +519,7 @@ const rolesConfig = {
     avatar: 'RS',
     navs: [
       { file: 'overview.html', label: 'Overview', icon: 'dashboard' },
-      { file: 'verification-queue.html', label: 'Verification Queue (2)', icon: 'pending_actions' },
+      { file: 'verification-queue.html', label: 'Verification Queue', icon: 'pending_actions' },
       { file: 'complaint-review.html', label: 'Complaint Review', icon: 'rate_review' },
       { file: 'approved-requests.html', label: 'Approved Requests', icon: 'verified' },
       { file: 'rejected-requests.html', label: 'Rejected Requests', icon: 'cancel' },

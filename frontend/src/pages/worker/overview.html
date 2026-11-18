@@ -29,8 +29,19 @@
     </div>
   </div>
 
-  <!-- URGENT INCOMING ASSIGNMENT BANNER (TICKING 30M COUNTDOWN) -->
-  <div id="worker-urgent-alert" class="mb-8 p-5 sm:p-6 bg-gradient-to-r from-red-500 to-amber-600 text-white rounded-2xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+  <!-- Standby Alert Banner (shown when no dispatches are pending) -->
+  <div id="worker-standby-banner" class="mb-8 p-6 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-center gap-4">
+    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[26px]">check_circle</span>
+    </div>
+    <div>
+      <h3 class="text-base font-bold text-slate-900">Shift Queue Clear</h3>
+      <p class="text-xs text-slate-500 mt-0.5">You are currently online and on standby. Incoming urgent maintenance requests will alert here with 30-minute SLA dispatch countdowns.</p>
+    </div>
+  </div>
+
+  <!-- URGENT INCOMING ASSIGNMENT BANNER (TICKING 30M COUNTDOWN, shown dynamically) -->
+  <div id="worker-urgent-alert" class="hidden mb-8 p-5 sm:p-6 bg-gradient-to-r from-red-500 to-amber-600 text-white rounded-2xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
     <div class="flex items-start gap-4">
       <div class="w-12 h-12 rounded-full bg-white text-red-600 flex items-center justify-center shrink-0 shadow-md animate-pulse">
         <span class="material-symbols-outlined text-[28px]">notification_important</span>
@@ -40,15 +51,15 @@
           <span class="px-2 py-0.5 rounded-md bg-white/20 text-white text-[11px] font-mono font-bold uppercase tracking-wider">NEW DISPATCH ALERT</span>
           <span class="px-2 py-0.5 rounded-md bg-white text-red-700 text-[11px] font-mono font-bold">HIGH PRIORITY</span>
         </div>
-        <h3 class="text-lg sm:text-xl font-bold mt-1">CF-2026-00124: Switchboard Malfunction & Sparking</h3>
-        <p class="text-xs sm:text-sm text-red-100 mt-0.5">Academic Block B, Second Floor, Room 204 • Complainant: Aarav Patel</p>
+        <h3 class="text-lg sm:text-xl font-bold mt-1" id="worker-urgent-title">CF-2026-00000: Issue Title</h3>
+        <p class="text-xs sm:text-sm text-red-100 mt-0.5" id="worker-urgent-meta">Location • Complainant: Student</p>
       </div>
     </div>
 
     <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
       <div class="text-center md:text-right bg-black/25 px-4 py-2.5 rounded-xl border border-white/20 w-full sm:w-auto">
         <span class="text-[10px] font-mono uppercase tracking-wider block text-white/80">30-Min Acceptance SLA</span>
-        <span class="text-2xl font-bold font-mono tracking-tight text-white countdown-display">28m 14s</span>
+        <span class="text-2xl font-bold font-mono tracking-tight text-white countdown-display" id="worker-urgent-timer">29m 59s</span>
       </div>
       <div class="flex items-center gap-2 w-full sm:w-auto">
         <button onclick="navigateTo('worker-incoming', 'worker')" class="flex-1 sm:flex-initial px-5 py-3 bg-white text-slate-900 rounded-xl font-bold text-xs hover:bg-slate-100 shadow-md transition-all">
@@ -62,17 +73,17 @@
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
       <span class="text-xs font-mono uppercase text-slate-500">Today's Jobs</span>
-      <div class="text-2xl font-bold text-slate-900 mt-1">3 Tasks</div>
-      <span class="text-[11px] text-slate-500">2 closed, 1 active</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">0 Tasks</div>
+      <span class="text-[11px] text-slate-500">0 closed, 0 active</span>
     </div>
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
       <span class="text-xs font-mono uppercase text-slate-500">SLA Acceptance Rate</span>
-      <div class="text-2xl font-bold text-emerald-600 mt-1">98.4%</div>
-      <span class="text-[11px] text-emerald-700 font-mono">Top 5% on campus</span>
+      <div class="text-2xl font-bold text-emerald-600 mt-1">100%</div>
+      <span class="text-[11px] text-emerald-700 font-mono">Top Compliance</span>
     </div>
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
       <span class="text-xs font-mono uppercase text-slate-500">Avg Response Time</span>
-      <div class="text-2xl font-bold text-slate-900 mt-1">2.4 min</div>
+      <div class="text-2xl font-bold text-slate-900 mt-1">—</div>
       <span class="text-[11px] text-slate-500">Target &lt; 30m</span>
     </div>
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">

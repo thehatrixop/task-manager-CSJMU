@@ -105,38 +105,7 @@ app.post(['/auth/google', '/api/auth/google'], (req, res) => {
 // ==========================================
 // Complaints Routes (/api/complaints)
 // ==========================================
-const mockComplaints = [
-  {
-    id: 'CF-2026-00124',
-    title: 'Switchboard Malfunction & Sparking',
-    department: 'Electrical',
-    location: 'Academic Block B, Second Floor, Room 204, Near Laboratory Entrance',
-    priority: 'HIGH',
-    status: 'ACTIVE_IN_PROGRESS',
-    assignedWorker: 'Rajesh Kumar (WRK-0018)',
-    createdAt: '2026-11-10T08:30:00.000Z'
-  },
-  {
-    id: 'CF-2026-00125',
-    title: 'Water Pressure Loss in Common Restrooms',
-    department: 'Plumbing',
-    location: 'Hostel Block C, Ground Floor Washrooms',
-    priority: 'MEDIUM',
-    status: 'PENDING_VERIFICATION',
-    assignedWorker: 'Unassigned',
-    createdAt: '2026-11-10T09:15:00.000Z'
-  },
-  {
-    id: 'CF-2026-00126',
-    title: 'HVAC Chiller Unit Abnormal Vibration',
-    department: 'HVAC',
-    location: 'Central Library, Third Floor Server Room',
-    priority: 'CRITICAL',
-    status: 'ACTIVE_IN_PROGRESS',
-    assignedWorker: 'Vikram Singh (WRK-0019)',
-    createdAt: '2026-11-10T09:45:00.000Z'
-  }
-];
+const mockComplaints = [];
 
 app.get(['/complaints', '/api/complaints'], (req, res) => {
   res.json(mockComplaints);

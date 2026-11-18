@@ -160,8 +160,9 @@ The application has been decomposed into individual, standalone HTML files so `i
 ---
 
 ## 9. Universal Client Navigation & Connected Multi-Role Real-Time State Engine
-- **Connected Multi-Role Data Flow**:
-  - Central reactive store (`campusflow_complaints_v3` & `campusflow_audit_logs_v3`) synchronizes complaints, approvals, dispatches, and resolutions across all 5 roles.
+- **Connected Multi-Role Data Flow & Clean Zero-State Baseline**:
+  - Central reactive store (`campusflow_complaints_clean_v1` & `campusflow_audit_logs_clean_v1`) starts in a **clean zero-mock state** (`[]`). All static mock rows (`CF-2026-00124`, etc.) have been eliminated from tables across all dashboards.
+  - When no complaints have been reported, every dashboard displays high-craft, contextual empty states (e.g. "No complaints reported yet", "Verification Queue is Clear", "Shift Queue Clear", "Master Ticket Registry is Empty", "No Dispatches in SLA Window", "No Audit Events Logged").
   - Cross-tab reactivity powered by `BroadcastChannel('campusflow_bus')` and `window.addEventListener('storage', ...)`.
   - Submitting an issue in the **Student Portal** (`report-issue.html`):
     - Automatically adds the new complaint to state and calls `POST /api/complaints`.

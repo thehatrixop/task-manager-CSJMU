@@ -17,7 +17,7 @@
     <div class="flex items-center gap-3">
       <button onclick="navigateTo('authority-queue', 'authority')" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-semibold hover:bg-amber-700 transition-colors flex items-center gap-1.5 shadow-sm">
         <span class="material-symbols-outlined text-[16px]">pending_actions</span>
-        <span>Review Queue (2 Pending)</span>
+        <span>Review Queue (0 Pending)</span>
       </button>
     </div>
   </div>
@@ -26,8 +26,8 @@
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
       <span class="text-xs uppercase font-medium text-slate-500">Total Jurisdiction Requests</span>
-      <div class="text-2xl font-bold text-slate-900 mt-1">28</div>
-      <span class="text-[11px] text-slate-500 font-mono">Month-to-Date</span>
+      <div class="text-2xl font-bold text-slate-900 mt-1">0</div>
+      <span class="text-[11px] text-slate-500 font-mono">Current Term</span>
     </div>
 
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm border-l-4 border-l-amber-500">
@@ -35,20 +35,20 @@
         <span class="text-xs uppercase font-medium">Awaiting Verification</span>
         <span class="material-symbols-outlined text-[20px]">mark_email_unread</span>
       </div>
-      <div class="text-2xl font-bold text-amber-600 mt-1">2</div>
+      <div class="text-2xl font-bold text-amber-600 mt-1">0</div>
       <span class="text-[11px] text-amber-700 font-semibold">Immediate Action Required</span>
     </div>
 
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
       <span class="text-xs uppercase font-medium text-blue-600">Active Maintenance</span>
-      <div class="text-2xl font-bold text-blue-600 mt-1">5</div>
+      <div class="text-2xl font-bold text-blue-600 mt-1">0</div>
       <span class="text-[11px] text-slate-500 font-mono">Workers on-site</span>
     </div>
 
     <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
       <span class="text-xs uppercase font-medium text-emerald-600">Approved & Resolved</span>
-      <div class="text-2xl font-bold text-emerald-600 mt-1">21</div>
-      <span class="text-[11px] text-emerald-700 font-mono">92% 1st-Time Fixed</span>
+      <div class="text-2xl font-bold text-emerald-600 mt-1">0</div>
+      <span class="text-[11px] text-emerald-700 font-mono">100% Verified</span>
     </div>
   </div>
 
@@ -60,7 +60,7 @@
         <p class="text-xs text-slate-500">Requests requiring authority sign-off before intelligent worker dispatch</p>
       </div>
       <button onclick="navigateTo('authority-queue', 'authority')" class="text-xs font-semibold text-blue-600 hover:underline">
-        View Full Queue (2) →
+        View Full Queue →
       </button>
     </div>
 
@@ -78,42 +78,11 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          <tr class="hover:bg-slate-50">
-            <td class="py-3.5 font-mono font-bold text-slate-900">CF-2026-00124</td>
-            <td class="py-3.5 text-slate-700">Aarav Patel (Student)</td>
-            <td class="py-3.5 font-semibold text-slate-900">Switchboard Malfunction & Sparking</td>
-            <td class="py-3.5"><span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded font-mono text-[10px]">Electrical</span></td>
-            <td class="py-3.5 text-slate-600">Block B, Rm 204</td>
-            <td class="py-3.5"><span class="px-2 py-0.5 bg-red-100 text-red-800 rounded font-mono text-[10px] font-bold">High</span></td>
-            <td class="py-3.5 text-right space-x-2">
-              <button onclick="approveComplaint('CF-2026-00124')" class="px-3 py-1 bg-emerald-600 text-white rounded text-[11px] font-semibold hover:bg-emerald-700 transition-colors">
-                Approve & Dispatch
-              </button>
-              <button onclick="openRejectModal('CF-2026-00124')" class="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[11px] font-semibold hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors">
-                Reject
-              </button>
-              <button onclick="openRequestInfoModal('CF-2026-00124')" class="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[11px] font-semibold hover:bg-slate-200 transition-colors">
-                Info
-              </button>
-            </td>
-          </tr>
-          <tr class="hover:bg-slate-50">
-            <td class="py-3.5 font-mono font-bold text-slate-900">CF-2026-00125</td>
-            <td class="py-3.5 text-slate-700">Prof. Ananya Sen (Faculty)</td>
-            <td class="py-3.5 font-semibold text-slate-900">HVAC Chiller Condensate Leak</td>
-            <td class="py-3.5"><span class="px-2 py-0.5 bg-teal-50 text-teal-800 rounded font-mono text-[10px]">HVAC</span></td>
-            <td class="py-3.5 text-slate-600">Block B, Server Rm 102</td>
-            <td class="py-3.5"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-mono text-[10px] font-bold">Medium</span></td>
-            <td class="py-3.5 text-right space-x-2">
-              <button onclick="approveComplaint('CF-2026-00125')" class="px-3 py-1 bg-emerald-600 text-white rounded text-[11px] font-semibold hover:bg-emerald-700 transition-colors">
-                Approve & Dispatch
-              </button>
-              <button onclick="openRejectModal('CF-2026-00125')" class="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[11px] font-semibold hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors">
-                Reject
-              </button>
-              <button onclick="openRequestInfoModal('CF-2026-00125')" class="px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[11px] font-semibold hover:bg-slate-200 transition-colors">
-                Info
-              </button>
+          <tr>
+            <td colspan="7" class="py-12 text-center text-slate-500">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">task_alt</span>
+              <p class="font-medium text-slate-700">Verification Queue is Clear</p>
+              <p class="text-xs text-slate-400 mt-0.5">No student maintenance requests currently awaiting your approval</p>
             </td>
           </tr>
         </tbody>

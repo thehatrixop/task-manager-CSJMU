@@ -251,82 +251,17 @@ function togglePasswordVisibility(id) {
  * =========================================================================
  */
 
-const CF_STORAGE_KEY = 'campusflow_complaints_v3';
-const CF_AUDIT_KEY = 'campusflow_audit_logs_v3';
+const CF_STORAGE_KEY = 'campusflow_complaints_clean_v1';
+const CF_AUDIT_KEY = 'campusflow_audit_logs_clean_v1';
 
-const BASELINE_COMPLAINTS = [
-  {
-    id: 'CF-2026-00124',
-    title: 'Switchboard Malfunction & Sparking',
-    department: 'Electrical',
-    category: 'Hazardous / Sparking',
-    location: 'Academic Block B, Rm 204',
-    priority: 'High',
-    description: 'Main laboratory switchboard in Room 204 experienced intermittent sparking when high-draw oscilloscopes were activated.',
-    status: 'ACTIVE_IN_PROGRESS',
-    complainant: 'Aarav Patel (Student)',
-    complainantId: '2024-ENG-UG-0142',
-    warden: 'Dr. Ramesh Sharma',
-    worker: 'Rajesh Kumar (WRK-0018)',
-    submittedTime: '18 min ago',
-    timestamp: Date.now() - 18 * 60 * 1000
-  },
-  {
-    id: 'CF-2026-00125',
-    title: 'HVAC Chiller Condensate Leak',
-    department: 'HVAC',
-    category: 'Leakage / Burst',
-    location: 'Academic Block B, Server Rm 102',
-    priority: 'High',
-    description: 'Condensate pan overflowing in Server Room 102. Moisture detected near floor raceways.',
-    status: 'PENDING_VERIFICATION',
-    complainant: 'Prof. Ananya Sen (Faculty)',
-    complainantId: 'FAC-ENG-089',
-    warden: 'Dr. Ramesh Sharma',
-    worker: 'Pending Dispatch Engine',
-    submittedTime: '45 min ago',
-    timestamp: Date.now() - 45 * 60 * 1000
-  },
-  {
-    id: 'CF-2026-00126',
-    title: 'Water Pressure Loss in Common Restrooms',
-    department: 'Plumbing',
-    category: 'Equipment Failure',
-    location: 'Hostel Block C, Ground Floor Washrooms',
-    priority: 'Medium',
-    description: 'Water pressure dropped completely in ground floor washrooms during peak morning hours.',
-    status: 'PENDING_VERIFICATION',
-    complainant: 'Kabir Mehta (Student)',
-    complainantId: '2023-CIV-UG-0081',
-    warden: 'Dr. Ramesh Sharma',
-    worker: 'Pending Dispatch Engine',
-    submittedTime: '1 hr ago',
-    timestamp: Date.now() - 60 * 60 * 1000
-  },
-  {
-    id: 'CF-2026-00122',
-    title: 'Library 3rd Floor Water Cooler Low Pressure',
-    department: 'Plumbing',
-    category: 'Routine Maintenance',
-    location: 'Central Library, 3F',
-    priority: 'Low',
-    description: 'Filter replacement and flow valve tuning required.',
-    status: 'COMPLETED_RESOLVED',
-    complainant: 'Aarav Patel (Student)',
-    complainantId: '2024-ENG-UG-0142',
-    warden: 'Dr. Ramesh Sharma',
-    worker: 'Vikram Singh (WRK-0019)',
-    submittedTime: 'Nov 07, 2026',
-    timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000
-  }
-];
+const BASELINE_COMPLAINTS = [];
 
 function getStoredComplaints() {
   try {
     const raw = localStorage.getItem(CF_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
     console.error('[CampusStore] Error reading complaints:', e);
@@ -356,13 +291,12 @@ function saveStoredComplaints(complaints) {
 function getStoredAuditLogs() {
   try {
     const raw = localStorage.getItem(CF_AUDIT_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (e) {}
-  const defaults = [
-    { id: 'EVT-90412', actor: 'Rajesh Kumar', role: 'Worker', action: 'ACCEPT_DISPATCH', entity: 'CF-2026-00124', transition: 'DISPATCHED → ACTIVE', time: '09:44:12 AM' },
-    { id: 'EVT-90411', actor: 'SYSTEM_ENGINE', role: 'Autonomous', action: 'DISPATCH_WORKER', entity: 'CF-2026-00124', transition: 'VERIFIED → DISPATCHED', time: '09:42:26 AM' },
-    { id: 'EVT-90410', actor: 'Dr. Ramesh Sharma', role: 'Authority', action: 'APPROVE_TICKET', entity: 'CF-2026-00124', transition: 'PENDING → VERIFIED', time: '09:42:15 AM' }
-  ];
+  const defaults = [];
   localStorage.setItem(CF_AUDIT_KEY, JSON.stringify(defaults));
   return defaults;
 }
@@ -756,41 +690,65 @@ function renderActiveDashboard() {
   const userFullTable = document.getElementById('user-complaints-full-table') ||
     (path.includes('my-complaints') ? document.querySelector('main table tbody') : null);
   if (userFullTable) {
-    userFullTable.innerHTML = complaints.map(c => `
-      <tr class="hover:bg-slate-50 transition-colors">
-        <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
-        <td class="py-3.5 px-4 font-semibold text-slate-900">${c.title}</td>
-        <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
-        <td class="py-3.5 px-4 text-slate-600">${c.location}</td>
-        <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
-        <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
-        <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recently'}</td>
-        <td class="py-3.5 px-4 text-right">
-          <button onclick="navigateTo('user-complaint-details', 'user')" class="px-3 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
-            Inspect
-          </button>
-        </td>
-      </tr>
-    `).join('');
+    if (complaints.length === 0) {
+      userFullTable.innerHTML = `
+        <tr>
+          <td colspan="8" class="py-12 text-center text-slate-500">
+            <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">inbox</span>
+            <p class="font-medium text-slate-700">No complaints reported yet</p>
+            <p class="text-xs text-slate-400 mt-0.5">Use "Report Issue" to submit your first maintenance request</p>
+          </td>
+        </tr>
+      `;
+    } else {
+      userFullTable.innerHTML = complaints.map(c => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+          <td class="py-3.5 px-4 font-semibold text-slate-900">${c.title}</td>
+          <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
+          <td class="py-3.5 px-4 text-slate-600">${c.location}</td>
+          <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
+          <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
+          <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recently'}</td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="navigateTo('user-complaint-details', 'user')" class="px-3 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
+              Inspect
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
   }
 
   // 2. STUDENT - Overview (user/overview.html)
   const userRecentTable = document.getElementById('user-recent-table') ||
     (path.includes('user/overview') ? document.querySelector('main table tbody') : null);
   if (userRecentTable) {
-    userRecentTable.innerHTML = complaints.slice(0, 5).map(c => `
-      <tr class="hover:bg-slate-50 transition-colors">
-        <td class="py-3 font-mono font-bold text-slate-900">${c.id}</td>
-        <td class="py-3 font-medium text-slate-900">${c.title}</td>
-        <td class="py-3">${getDeptBadgeHtml(c.department)}</td>
-        <td class="py-3 text-slate-600">${c.location}</td>
-        <td class="py-3 text-slate-500 font-mono">${c.submittedTime || 'Recently'}</td>
-        <td class="py-3">${getStatusBadgeHtml(c.status, c.worker)}</td>
-        <td class="py-3 text-right">
-          <button onclick="navigateTo('user-complaint-details', 'user')" class="text-blue-600 hover:underline font-semibold">Inspect</button>
-        </td>
-      </tr>
-    `).join('');
+    if (complaints.length === 0) {
+      userRecentTable.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-slate-500">
+            <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">inbox</span>
+            <p class="font-medium text-slate-700">No Recent Complaints</p>
+            <p class="text-xs text-slate-400 mt-0.5">Your submitted maintenance issues will appear here with live tracking</p>
+          </td>
+        </tr>
+      `;
+    } else {
+      userRecentTable.innerHTML = complaints.slice(0, 5).map(c => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3 font-mono font-bold text-slate-900">${c.id}</td>
+          <td class="py-3 font-medium text-slate-900">${c.title}</td>
+          <td class="py-3">${getDeptBadgeHtml(c.department)}</td>
+          <td class="py-3 text-slate-600">${c.location}</td>
+          <td class="py-3 text-slate-500 font-mono">${c.submittedTime || 'Recently'}</td>
+          <td class="py-3">${getStatusBadgeHtml(c.status, c.worker)}</td>
+          <td class="py-3 text-right">
+            <button onclick="navigateTo('user-complaint-details', 'user')" class="text-blue-600 hover:underline font-semibold">Inspect</button>
+          </td>
+        </tr>
+      `).join('');
+    }
 
     const kpiCards = document.querySelectorAll('main .grid.grid-cols-2.lg\\:grid-cols-4 > div');
     if (kpiCards.length >= 4) {
@@ -983,17 +941,179 @@ function renderActiveDashboard() {
     const auditTbody = document.querySelector('main table tbody');
     if (auditTbody) {
       const logs = getStoredAuditLogs();
-      auditTbody.innerHTML = logs.map(l => `
-        <tr class="hover:bg-slate-50 transition-colors">
-          <td class="py-3 px-4 font-bold text-slate-900">${l.id}</td>
-          <td class="py-3 px-4 text-slate-800">${l.actor}</td>
-          <td class="py-3 px-4 text-slate-500">${l.role}</td>
-          <td class="py-3 px-4 text-emerald-600 font-bold">${l.action}</td>
-          <td class="py-3 px-4 font-mono font-bold">${l.entity}</td>
-          <td class="py-3 px-4 text-slate-600">${l.transition}</td>
-          <td class="py-3 px-4 text-slate-400 font-mono">${l.time}</td>
-        </tr>
-      `).join('');
+      if (logs.length === 0) {
+        auditTbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-12 text-center text-slate-500 text-xs font-mono">
+              <span class="material-symbols-outlined text-[28px] text-slate-400 block mb-1">verified_user</span>
+              No audit logs recorded yet. System state transitions will appear here in SHA-256 sequence.
+            </td>
+          </tr>
+        `;
+      } else {
+        auditTbody.innerHTML = logs.map(l => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3 px-4 font-bold text-slate-900">${l.id}</td>
+            <td class="py-3 px-4 text-slate-800">${l.actor}</td>
+            <td class="py-3 px-4 text-slate-500">${l.role}</td>
+            <td class="py-3 px-4 text-emerald-600 font-bold">${l.action}</td>
+            <td class="py-3 px-4 font-mono font-bold">${l.entity}</td>
+            <td class="py-3 px-4 text-slate-600">${l.transition}</td>
+            <td class="py-3 px-4 text-slate-400 font-mono">${l.time}</td>
+          </tr>
+        `).join('');
+      }
+    }
+  }
+
+  // 9. AUTHORITY - Approved Requests
+  if (path.includes('approved-requests')) {
+    const tbody = document.querySelector('main table tbody');
+    const approvedTickets = complaints.filter(c => c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS' || c.status === 'RESOLVED');
+    if (tbody) {
+      if (approvedTickets.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-12 text-center text-slate-500 text-xs">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">verified</span>
+              <p class="font-medium text-slate-700">No Approved Requests Yet</p>
+              <p class="text-xs text-slate-400 mt-0.5">Complaints you approve will transition here and dispatch to technicians</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = approvedTickets.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 px-4 font-medium text-slate-900">${c.title}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recent'}</td>
+            <td class="py-3.5 px-4 font-semibold text-slate-900">${c.worker || 'Pending'}</td>
+            <td class="py-3.5 px-4 text-emerald-600 font-mono font-semibold">${c.status === 'RESOLVED' ? 'Resolved' : 'Dispatched'}</td>
+            <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
+          </tr>
+        `).join('');
+      }
+    }
+  }
+
+  // 10. AUTHORITY - Rejected Requests
+  if (path.includes('rejected-requests')) {
+    const tbody = document.querySelector('main table tbody');
+    const rejectedTickets = complaints.filter(c => c.status === 'REJECTED');
+    if (tbody) {
+      if (rejectedTickets.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-12 text-center text-slate-500 text-xs">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">block</span>
+              <p class="font-medium text-slate-700">No Rejected Requests</p>
+              <p class="text-xs text-slate-400 mt-0.5">Rejected maintenance requests with logged justifications will appear here</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = rejectedTickets.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 px-4 font-medium text-slate-900">${c.title}</td>
+            <td class="py-3.5 px-4 text-slate-600">${c.complainant || 'Student'}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recent'}</td>
+            <td class="py-3.5 px-4 text-red-600 font-medium">${c.rejectionReason || 'Administrative decision'}</td>
+          </tr>
+        `).join('');
+      }
+    }
+  }
+
+  // 11. AUTHORITY - Active Maintenance
+  if (path.includes('active-maintenance')) {
+    const tbody = document.querySelector('main table tbody');
+    const activeUnits = complaints.filter(c => c.status === 'ACTIVE_IN_PROGRESS' || c.status === 'VERIFIED_DISPATCHED');
+    if (tbody) {
+      if (activeUnits.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-12 text-center text-slate-500 text-xs">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">engineering</span>
+              <p class="font-medium text-slate-700">No Active Maintenance Underway</p>
+              <p class="text-xs text-slate-400 mt-0.5">Technicians actively performing repairs on-premises in Academic Block B will display here</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = activeUnits.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-700">${c.location}</td>
+            <td class="py-3.5 px-4 font-semibold text-slate-900">${c.worker || 'Dispatched Technician'}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recent'}</td>
+            <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
+          </tr>
+        `).join('');
+      }
+    }
+  }
+
+  // 12. ADMIN - Assignment Telemetry
+  if (path.includes('assignment-telemetry')) {
+    const tbody = document.querySelector('main table tbody');
+    const activeAssignments = complaints.filter(c => c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS');
+    if (tbody) {
+      if (activeAssignments.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-12 text-center text-slate-500 text-xs">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">network_ping</span>
+              <p class="font-medium text-slate-700">No Active Worker Dispatches</p>
+              <p class="text-xs text-slate-400 mt-0.5">Automated 30-minute acceptance windows will display here once dispatches occur</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = activeAssignments.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 px-4 font-semibold text-slate-900">${c.worker || 'Rajesh Kumar (WRK-0018)'}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recent'}</td>
+            <td class="py-3.5 px-4 text-emerald-600 font-semibold font-mono">SLA Active</td>
+            <td class="py-3.5 px-4 font-mono text-slate-600">Attempt #1</td>
+            <td class="py-3.5 px-4 text-right">
+              <button onclick="openInterventionModal('${c.id}')" class="px-2 py-1 bg-slate-100 border border-slate-300 rounded text-slate-700 hover:bg-slate-200 font-mono font-semibold">
+                Manual Override
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+  }
+
+  // 13. WORKER - Completed Jobs
+  if (path.includes('completed-jobs')) {
+    const tbody = document.querySelector('main table tbody');
+    const resolvedJobs = complaints.filter(c => c.status === 'RESOLVED');
+    if (tbody) {
+      if (resolvedJobs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-12 text-center text-slate-500 text-xs">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">task</span>
+              <p class="font-medium text-slate-700">No Completed Jobs</p>
+              <p class="text-xs text-slate-400 mt-0.5">Work orders you successfully resolve and sign off will appear in this ledger</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = resolvedJobs.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 px-4 text-slate-600">${c.location}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Today'}</td>
+            <td class="py-3.5 px-4 font-mono">25 min</td>
+            <td class="py-3.5 px-4 text-emerald-600 font-semibold font-mono">Signed Off (5.0★)</td>
+          </tr>
+        `).join('');
+      }
     }
   }
 }
