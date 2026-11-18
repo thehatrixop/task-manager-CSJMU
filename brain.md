@@ -175,16 +175,17 @@ The application has been decomposed into individual, standalone HTML files so `i
 ---
 
 ## 10. Vercel Production Deployment Architecture (`vercel.json` & `public/`)
-- **Canonical Zero-Config Deployment Layout**: Arranged specifically for Vercel's Edge CDN and Serverless Function hosting:
-  - `public/`: Canonical static web portal hosting all static assets served at the root domain (`public/index.html` -> `/`, `public/pages/*/*.html` -> `/pages/*/*.html`, `public/css/style.css` -> `/css/style.css`, `public/js/` -> `/js/`).
-  - `api/index.js`: Standalone, pure JavaScript Express Serverless Function handling all `/api/*` endpoints (`/api/auth`, `/api/complaints`, `/api/dispatch`, `/api/health`, `/api`). Eliminates TypeScript bundling/transpilation failures during Vercel's serverless build step.
-- **Routing & Rewrite Rules (`vercel.json`)**:
+- **Canonical Zero-Config Deployment Layout**: Arranged specifically for Vercel's Edge CDN and Serverless Function hosting, supporting both root (`./`) and `frontend/` directory imports:
+  - `public/` & `frontend/public/`: Canonical static web portal hosting all static assets served at the root domain (`public/index.html` -> `/`, `public/pages/*/*.html` -> `/pages/*/*.html`, `public/css/style.css` -> `/css/style.css`, `public/js/` -> `/js/`).
+  - `api/index.js` & `frontend/api/index.js`: Standalone, pure JavaScript Express Serverless Function handling all `/api/*` endpoints (`/api/auth`, `/api/complaints`, `/api/dispatch`, `/api/health`, `/api`). Eliminates TypeScript bundling/transpilation failures during Vercel's serverless build step.
+- **Routing & Rewrite Rules (`vercel.json` & `frontend/vercel.json`)**:
+  - `outputDirectory`: Explicitly defined as `"public"`.
   - `rewrites`: Maps `/api` and `/api/(.*)` directly to `/api` (invoking `api/index.js`).
   - `cleanUrls`: Enabled (`true`) for clean URL routing across dashboards without requiring `.html` extensions.
   - `headers`: Full CORS headers configured for `/api/(.*)` enabling cross-origin API access, with aggressive immutable caching on CSS (`max-age=31536000`) and JS (`max-age=86400`).
-- **Build Pipeline (`package.json`)**:
-  - Script `"build": "node build-tools/generate_standalone_pages.js"` automatically generates and synchronizes all 57 pages across `public/`, `pages/`, and `frontend/pages/` during Vercel's build phase.
-  - Zero output directory errors: `public/` directory exists and is committed in git, ensuring instant successful builds under Vercel Framework: Other or Static.
+- **Build Pipeline (`package.json` & `frontend/package.json`)**:
+  - Script `"build": "node build-tools/generate_standalone_pages.js"` (and `node ../build-tools/generate_standalone_pages.js`) automatically generates and synchronizes all 60 pages across `public/`, `pages/`, `frontend/public/`, and `frontend/pages/` during Vercel's build phase.
+  - Zero output directory errors: `public` directory is declared in `vercel.json` and committed in git for both repository root and `frontend/`.
 - **Local Fallback (`server.js`)**:
   - Running `node server.js` locally serves `public/` static files first (falling back to root) and proxies `/api/*` requests to `BACKEND_URL` (or `http://localhost:4000`) on port 8080.
 

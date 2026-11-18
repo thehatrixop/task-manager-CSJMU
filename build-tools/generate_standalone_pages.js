@@ -22,7 +22,8 @@ ${appCss}
 const cssDir = path.join(ROOT_DIR, 'css');
 const frontendCssDir = path.join(FRONTEND_DIR, 'css');
 const publicCssDir = path.join(ROOT_DIR, 'public/css');
-[cssDir, frontendCssDir, publicCssDir].forEach(d => {
+const frontendPublicCssDir = path.join(FRONTEND_DIR, 'public/css');
+[cssDir, frontendCssDir, publicCssDir, frontendPublicCssDir].forEach(d => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
   fs.writeFileSync(path.join(d, 'style.css'), enhancedCss, 'utf8');
 });
@@ -32,7 +33,8 @@ console.log('Saved css/style.css with solid surface background');
 const jsDir = path.join(ROOT_DIR, 'js');
 const frontendJsDir = path.join(FRONTEND_DIR, 'js');
 const publicJsDir = path.join(ROOT_DIR, 'public/js');
-[jsDir, frontendJsDir, publicJsDir].forEach(d => {
+const frontendPublicJsDir = path.join(FRONTEND_DIR, 'public/js');
+[jsDir, frontendJsDir, publicJsDir, frontendPublicJsDir].forEach(d => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 });
 
@@ -97,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 `;
 
-[jsDir, frontendJsDir, publicJsDir].forEach(d => {
+[jsDir, frontendJsDir, publicJsDir, frontendPublicJsDir].forEach(d => {
   fs.writeFileSync(path.join(d, 'app.js'), appJsContent, 'utf8');
   fs.writeFileSync(path.join(d, 'auth.js'), authJsContent, 'utf8');
   fs.writeFileSync(path.join(d, 'dispatch.js'), dispatchJsContent, 'utf8');
@@ -332,7 +334,8 @@ function getPublicFooter(isRoot = false) {
 const pubDestDir = path.join(ROOT_DIR, 'pages/public');
 const frontendPubDestDir = path.join(FRONTEND_DIR, 'pages/public');
 const publicPubDestDir = path.join(ROOT_DIR, 'public/pages/public');
-[pubDestDir, frontendPubDestDir, publicPubDestDir].forEach(d => {
+const frontendPublicPubDestDir = path.join(FRONTEND_DIR, 'public/pages/public');
+[pubDestDir, frontendPubDestDir, publicPubDestDir, frontendPublicPubDestDir].forEach(d => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 });
 
@@ -422,6 +425,7 @@ publicPages.forEach(p => {
   fs.writeFileSync(path.join(pubDestDir, p.file), fullDoc, 'utf8');
   fs.writeFileSync(path.join(frontendPubDestDir, p.file), fullDoc, 'utf8');
   fs.writeFileSync(path.join(publicPubDestDir, p.file), fullDoc, 'utf8');
+  fs.writeFileSync(path.join(frontendPublicPubDestDir, p.file), fullDoc, 'utf8');
   console.log('Saved page: pages/public/' + p.file);
 });
 
@@ -472,14 +476,21 @@ const rootLandingDoc = getHtmlHead('Intelligent Campus Operations', 'css/style.c
   path.join(ROOT_DIR, 'public/index.html'),
   path.join(ROOT_DIR, 'public/code.html'),
   path.join(FRONTEND_DIR, 'index.html'),
-  path.join(FRONTEND_DIR, 'code.html')
+  path.join(FRONTEND_DIR, 'code.html'),
+  path.join(FRONTEND_DIR, 'public/index.html'),
+  path.join(FRONTEND_DIR, 'public/code.html')
 ].forEach(target => {
+  const dir = path.dirname(target);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(target, rootLandingDoc, 'utf8');
   console.log('Generated Landing Page: ' + path.relative(ROOT_DIR, target) + ' (' + rootLandingDoc.length + ' bytes)');
 });
 
 if (fs.existsSync(path.join(ROOT_DIR, 'screen.png'))) {
   fs.copyFileSync(path.join(ROOT_DIR, 'screen.png'), path.join(ROOT_DIR, 'public/screen.png'));
+  if (fs.existsSync(path.join(FRONTEND_DIR, 'public'))) {
+    fs.copyFileSync(path.join(ROOT_DIR, 'screen.png'), path.join(FRONTEND_DIR, 'public/screen.png'));
+  }
 }
 
 // -------------------------------------------------------------
@@ -583,7 +594,8 @@ Object.keys(rolesConfig).forEach(roleKey => {
   const targetDir = path.join(ROOT_DIR, 'pages', roleKey);
   const frontendTargetDir = path.join(FRONTEND_DIR, 'pages', roleKey);
   const publicTargetDir = path.join(ROOT_DIR, 'public/pages', roleKey);
-  [targetDir, frontendTargetDir, publicTargetDir].forEach(d => {
+  const frontendPublicTargetDir = path.join(FRONTEND_DIR, 'public/pages', roleKey);
+  [targetDir, frontendTargetDir, publicTargetDir, frontendPublicTargetDir].forEach(d => {
     if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
   });
 
@@ -689,6 +701,7 @@ ${role.hasSlaScript ? '<script src="../../js/dispatch.js"></script>' : ''}
     fs.writeFileSync(path.join(targetDir, nav.file), pageDoc, 'utf8');
     fs.writeFileSync(path.join(frontendTargetDir, nav.file), pageDoc, 'utf8');
     fs.writeFileSync(path.join(publicTargetDir, nav.file), pageDoc, 'utf8');
+    fs.writeFileSync(path.join(frontendPublicTargetDir, nav.file), pageDoc, 'utf8');
     console.log('Saved role page: pages/' + roleKey + '/' + nav.file);
   });
 });
