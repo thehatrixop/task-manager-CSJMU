@@ -1,7 +1,7 @@
 <!-- AUTHENTICATED APP SHELL OPENING -->
 <div id="authenticated-shell" class="hidden flex-1 flex w-full min-h-screen bg-slate-50">
-  <!-- Dynamic Role Sidebar -->
-  <aside id="auth-sidebar" class="w-64 bg-slate-950 text-white shrink-0 hidden md:flex flex-col justify-between p-4 border-r border-slate-900 transition-all">
+  <!-- Dynamic Role Sidebar (Pinned / Fixed on Screen) -->
+  <aside id="auth-sidebar" class="w-64 bg-slate-950 text-white shrink-0 hidden md:flex flex-col justify-between p-4 border-r border-slate-900 sticky top-0 h-screen overflow-y-auto z-30 self-start transition-all">
     <div>
       <!-- Brand in Sidebar -->
       <a href="#home" onclick="navigateTo('home', 'public')" class="flex items-center gap-3 px-2 py-3 mb-6">

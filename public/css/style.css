@@ -108,3 +108,31 @@ html, body {
   font-weight: 600;
   letter-spacing: -0.01em;
 }
+
+/* ==========================================================================
+   CampusFlow Pinned & Fixed Left Navigation Sidebar Panel
+   ========================================================================== */
+#auth-sidebar {
+  position: sticky !important;
+  top: 0 !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  z-index: 30 !important;
+  align-self: flex-start !important;
+}
+
+#auth-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+#auth-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+#auth-sidebar::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 2px;
+}
+#auth-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+

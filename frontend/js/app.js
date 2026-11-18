@@ -1065,6 +1065,11 @@ function handleCreateWorkerSubmit(e) {
  * Master Cross-Role Real-Time Rendering Engine
  */
 function renderActiveDashboard() {
+  const sidebar = document.getElementById('auth-sidebar');
+  if (sidebar) {
+    sidebar.classList.add('sticky', 'top-0', 'h-screen', 'overflow-y-auto', 'z-30', 'self-start');
+  }
+
   const path = window.location.pathname.toLowerCase();
   const complaints = getStoredComplaints();
   const pendingTickets = complaints.filter(c => c.status === 'PENDING_VERIFICATION');

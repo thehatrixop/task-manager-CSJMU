@@ -138,10 +138,10 @@ The application has been decomposed into individual, standalone HTML files so `i
   - `pages/admin/` (11 pages): `overview.html`, `complaints-master.html`, `workers-directory.html`, `create-worker.html`, `worker-details.html`, `departments.html`, `assignment-telemetry.html`, `assignment-details.html`, `reports.html`, `notifications.html`, `settings.html`.
   - `pages/super/` (11 pages): `overview.html`, `user-directory.html`, `user-details.html`, `role-management.html`, `permission-matrix.html`, `department-hierarchy.html`, `assignment-engine-config.html`, `platform-settings.html`, `audit-logs.html`, `system-activity.html`, `global-analytics.html`.
 - **Shared Assets**:
-  - `css/style.css` (Design system styles, solid opaque `#f8fafc` canvas background).
+  - `css/style.css` (Design system styles, solid opaque `#f8fafc` canvas background, pinned/fixed `#auth-sidebar` navigation panel with custom dark scrollbar).
   - `js/auth.js` (4-field login logic, role selector, Google SSO, and redirects).
   - `js/dispatch.js` (30-minute SLA countdown timer with dual selector update & tactile status badges).
-  - `js/app.js` (Universal `navigateTo` dispatcher, full 6-role action suite, toast system, modals, interactive table filters, and mobile sidebar toggle).
+  - `js/app.js` (Universal `navigateTo` dispatcher, full 6-role action suite, toast system, modals, interactive table filters, YouTube-style in-website search, and mobile sidebar toggle).
 - **Lower Layout & Footer**:
   - **Ghost Wireframe Resolution**: Completely eliminated Google Stitch template ghost shapes (underlying wireframe pills, horizontal bars, and empty circle placeholder) by fully integrating them into intentional, high-fidelity UI components.
   - **CTA Section**: Enclosed `Get Started` and `Explore Live Demo` in a pill container (`p-1.5 rounded-full bg-slate-950/80 border border-slate-800`), masked the bottom edge with a floating `Enterprise SLA Guaranteed • Sub-30m Dispatch` pill badge (`-mt-3.5 relative z-20`), and added an animated `Live Operations Status Ribbon` with pulsing gradient telemetry beam.
