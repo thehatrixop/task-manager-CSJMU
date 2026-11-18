@@ -1922,27 +1922,295 @@ function initInteractiveFilters() {
     }
   });
 
-  // Make topbar search box interactive if it is a styled div
-  const topbarSearchDiv = document.querySelector('header .hidden.sm\\:flex.items-center.gap-2');
-  if (topbarSearchDiv && !topbarSearchDiv.querySelector('input')) {
-    topbarSearchDiv.style.cursor = 'text';
-    topbarSearchDiv.addEventListener('click', function() {
-      // Find existing search input on page if available
-      const pageSearch = document.querySelector('main input[placeholder*="Search"], main input[placeholder*="search"]');
-      if (pageSearch) {
-        pageSearch.focus();
-        pageSearch.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-        const query = prompt('Search campus maintenance records:');
-        if (query !== null) {
-          const q = query.toLowerCase().trim();
-          document.querySelectorAll('table tbody tr').forEach(row => {
-            row.style.display = q === '' || row.textContent.toLowerCase().includes(q) ? '' : 'none';
-          });
-          if (q) showToast(`Filtered records for: "${query}"`, 'info');
-        }
-      }
+  // Initialize in-website global search
+  initInWebsiteSearch();
+}
+
+/**
+ * In-Website YouTube-Style Global Search Engine
+ */
+function escapeSearchHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function initInWebsiteSearch() {
+  const header = document.querySelector('header');
+  if (!header) return;
+
+  let searchWrapper = document.getElementById('header-search-wrapper');
+
+  // If header-search-wrapper is missing, transform any static placeholder in header
+  if (!searchWrapper) {
+    const staticPlaceholder = Array.from(header.querySelectorAll('div')).find(div => {
+      const text = div.textContent || '';
+      return text.includes('Search records') && !div.querySelector('input');
     });
+
+    if (staticPlaceholder) {
+      const wrapperDiv = document.createElement('div');
+      wrapperDiv.id = 'header-search-wrapper';
+      wrapperDiv.className = 'relative hidden sm:block w-72 md:w-80 lg:w-96 text-left';
+      wrapperDiv.innerHTML = `
+        <div class="relative flex items-center bg-slate-100 hover:bg-slate-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary border border-slate-200 rounded-xl px-2.5 py-1.5 transition-all shadow-xs">
+          <span class="material-symbols-outlined text-[18px] text-slate-400 select-none mr-1.5 flex-shrink-0">search</span>
+          <input
+            id="global-search-input"
+            type="text"
+            placeholder="Search records, tickets, locations..."
+            class="bg-transparent border-none outline-none w-full text-xs text-slate-800 placeholder:text-slate-400 font-sans focus:ring-0 p-0"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <kbd id="global-search-kbd" class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] bg-white border border-slate-200 rounded font-mono text-slate-400 shadow-2xs select-none ml-1 flex-shrink-0">⌘K</kbd>
+          <button id="global-search-clear" type="button" class="hidden text-slate-400 hover:text-slate-600 ml-1 p-0.5 rounded transition-colors flex-shrink-0" title="Clear search">
+            <span class="material-symbols-outlined text-[16px]">close</span>
+          </button>
+        </div>
+
+        <!-- Floating YouTube-style Suggestions Dropdown -->
+        <div id="global-search-dropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden max-h-[460px] flex flex-col transition-all">
+          <div class="px-3.5 py-2 bg-slate-50/90 border-b border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-500 font-mono">
+            <span id="search-dropdown-count">CAMPUS RECORDS</span>
+            <span class="text-[10px] text-slate-400 font-sans">ESC to close</span>
+          </div>
+          <div id="search-dropdown-results" class="overflow-y-auto divide-y divide-slate-100 divide-opacity-80 text-xs"></div>
+          <div class="px-3.5 py-2 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+            <span>Press <kbd class="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-mono font-semibold">Enter</kbd> to filter table</span>
+            <span class="text-[10px] text-slate-400 font-mono">Real-Time Search</span>
+          </div>
+        </div>
+      `;
+      staticPlaceholder.parentNode.replaceChild(wrapperDiv, staticPlaceholder);
+      searchWrapper = wrapperDiv;
+    }
+  }
+
+  if (!searchWrapper) return;
+
+  const input = document.getElementById('global-search-input');
+  const dropdown = document.getElementById('global-search-dropdown');
+  const clearBtn = document.getElementById('global-search-clear');
+  const kbdEl = document.getElementById('global-search-kbd');
+
+  if (!input || !dropdown) return;
+
+  // Prevent double event binding
+  if (input.dataset.bound === 'true') return;
+  input.dataset.bound = 'true';
+
+  // Open on focus & search
+  input.addEventListener('focus', () => {
+    performGlobalSearch(input.value);
+  });
+
+  // Typing event
+  input.addEventListener('input', () => {
+    performGlobalSearch(input.value);
+  });
+
+  // Key navigation (Enter to filter table, Esc to dismiss)
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      dropdown.classList.add('hidden');
+      const q = input.value.trim().toLowerCase();
+      const rows = document.querySelectorAll('table tbody tr');
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const matches = q === '' || row.textContent.toLowerCase().includes(q);
+        row.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
+      });
+      if (q) {
+        showToast(`Filtered table: ${visibleCount} record${visibleCount === 1 ? '' : 's'} matching "${input.value}"`, 'info');
+      }
+    } else if (e.key === 'Escape') {
+      dropdown.classList.add('hidden');
+      input.blur();
+    }
+  });
+
+  // Clear button click
+  if (clearBtn) {
+    clearBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      if (kbdEl) kbdEl.classList.remove('hidden');
+      document.querySelectorAll('table tbody tr').forEach(r => r.style.display = '');
+      performGlobalSearch('');
+      input.focus();
+    });
+  }
+
+  // Click outside to dismiss
+  document.addEventListener('click', (e) => {
+    if (dropdown && !dropdown.classList.contains('hidden') && !searchWrapper.contains(e.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+  // Global Ctrl+K / Cmd+K shortcut
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      input.focus();
+      input.select();
+      performGlobalSearch(input.value);
+    }
+  });
+}
+
+function performGlobalSearch(query) {
+  const dropdown = document.getElementById('global-search-dropdown');
+  const resultsContainer = document.getElementById('search-dropdown-results');
+  const countEl = document.getElementById('search-dropdown-count');
+  const clearBtn = document.getElementById('global-search-clear');
+  const kbdEl = document.getElementById('global-search-kbd');
+
+  if (!dropdown || !resultsContainer) return;
+
+  const q = (query || '').trim().toLowerCase();
+
+  if (q.length > 0) {
+    if (clearBtn) clearBtn.classList.remove('hidden');
+    if (kbdEl) kbdEl.classList.add('hidden');
+  } else {
+    if (clearBtn) clearBtn.classList.add('hidden');
+    if (kbdEl) kbdEl.classList.remove('hidden');
+  }
+
+  const allComplaints = getStoredComplaints();
+  dropdown.classList.remove('hidden');
+
+  if (!q) {
+    if (countEl) countEl.textContent = 'CAMPUS RECORDS (RECENT)';
+    if (allComplaints.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="p-6 text-center text-slate-400">
+          <span class="material-symbols-outlined text-3xl text-slate-300 block mb-1">search</span>
+          <p class="text-xs font-semibold text-slate-700">Search Campus Maintenance Records</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Type ticket ID (e.g. CF-2026), department, location, or issue details</p>
+        </div>
+      `;
+    } else {
+      resultsContainer.innerHTML = allComplaints.slice(0, 6).map(c => renderSearchItemHtml(c)).join('');
+    }
+    return;
+  }
+
+  // Filter matching records
+  const matches = allComplaints.filter(c => {
+    const textToMatch = [
+      c.id || '',
+      c.title || '',
+      c.department || '',
+      c.location || '',
+      c.description || '',
+      c.status || '',
+      c.worker || '',
+      c.assignedWorker || '',
+      c.priority || '',
+      c.complainant || ''
+    ].join(' ').toLowerCase();
+
+    return textToMatch.includes(q);
+  });
+
+  if (countEl) {
+    countEl.textContent = `${matches.length} MATCHING RECORD${matches.length === 1 ? '' : 'S'}`;
+  }
+
+  if (matches.length === 0) {
+    resultsContainer.innerHTML = `
+      <div class="p-6 text-center text-slate-400">
+        <span class="material-symbols-outlined text-3xl text-slate-300 block mb-1">search_off</span>
+        <p class="text-xs font-semibold text-slate-700">No records found for "${escapeSearchHtml(query)}"</p>
+        <p class="text-[11px] text-slate-400 mt-0.5">Try searching by ticket ID (e.g. CF-2026), department, or general issue keywords</p>
+      </div>
+    `;
+  } else {
+    resultsContainer.innerHTML = matches.map(c => renderSearchItemHtml(c)).join('');
+  }
+}
+
+function renderSearchItemHtml(c) {
+  const statusBadge = getStatusBadgeHtml(c.status, c.worker || c.assignedWorker);
+  const dept = c.department || 'Maintenance';
+  const loc = c.location || 'Campus Facility';
+  const workerInfo = (c.worker || c.assignedWorker) ? `• <span class="font-medium text-slate-700">${c.worker || c.assignedWorker}</span>` : '';
+
+  return `
+    <div onclick="selectSearchResult('${c.id}')" class="p-3 hover:bg-slate-50 cursor-pointer transition-colors group flex flex-col gap-1 text-left">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="font-mono font-bold text-slate-900 group-hover:text-primary transition-colors text-xs">${c.id}</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${dept}</span>
+        </div>
+        <div>
+          ${statusBadge}
+        </div>
+      </div>
+      <div class="font-medium text-slate-800 text-xs line-clamp-1 group-hover:text-slate-900">
+        ${escapeSearchHtml(c.title || 'Untitled Maintenance Record')}
+      </div>
+      <div class="flex items-center gap-1.5 text-[11px] text-slate-500 font-mono">
+        <span class="material-symbols-outlined text-[13px] text-slate-400">location_on</span>
+        <span>${escapeSearchHtml(loc)}</span>
+        ${workerInfo}
+      </div>
+    </div>
+  `;
+}
+
+function selectSearchResult(ticketId) {
+  const dropdown = document.getElementById('global-search-dropdown');
+  if (dropdown) dropdown.classList.add('hidden');
+
+  const input = document.getElementById('global-search-input');
+  if (input) input.value = ticketId;
+
+  // 1. Try to find the ticket on the current page's table
+  const rows = document.querySelectorAll('table tbody tr');
+  let targetRow = null;
+  rows.forEach(row => {
+    if (row.textContent.includes(ticketId)) {
+      targetRow = row;
+    }
+  });
+
+  if (targetRow) {
+    rows.forEach(r => r.style.display = '');
+    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    targetRow.classList.add('bg-amber-100', 'ring-2', 'ring-amber-400');
+    setTimeout(() => {
+      targetRow.classList.remove('bg-amber-100', 'ring-2', 'ring-amber-400');
+    }, 2800);
+    showToast(`Located Ticket ${ticketId}`, 'info');
+    return;
+  }
+
+  // 2. If not found on current page table, save selection and route to role details page
+  localStorage.setItem('campusflow_selected_ticket', ticketId);
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes('faculty')) {
+    navigateTo('faculty-complaint-details', 'faculty');
+  } else if (path.includes('authority')) {
+    navigateTo('authority-review', 'authority');
+  } else if (path.includes('worker')) {
+    navigateTo('worker-assignment-details', 'worker');
+  } else if (path.includes('admin')) {
+    navigateTo('admin-assignment-details', 'admin');
+  } else if (path.includes('super')) {
+    navigateTo('super-overview', 'super');
+  } else {
+    navigateTo('user-complaint-details', 'user');
   }
 }
 
@@ -1951,4 +2219,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderActiveDashboard();
   startSLACountdown();
   initInteractiveFilters();
+  initInWebsiteSearch();
 });
