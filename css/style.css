@@ -136,3 +136,10 @@ html, body {
   background: #334155;
 }
 
+/* Hide Profile & Settings link from Left Sidebar Navigation */
+#auth-sidebar nav a[href*="profile"],
+#auth-sidebar nav a[href*="settings"] {
+  display: none !important;
+}
+
+

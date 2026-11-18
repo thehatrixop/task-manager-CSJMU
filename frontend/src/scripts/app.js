@@ -1070,6 +1070,9 @@ function renderActiveDashboard() {
     sidebar.classList.add('sticky', 'top-0', 'h-screen', 'overflow-y-auto', 'z-30', 'self-start');
   }
 
+  // Ensure top-right Profile Picture Dropdown is active and sidebar Profile link is removed
+  initProfileDropdown();
+
   const path = window.location.pathname.toLowerCase();
   const complaints = getStoredComplaints();
   const pendingTickets = complaints.filter(c => c.status === 'PENDING_VERIFICATION');
@@ -2000,33 +2003,8 @@ function initInWebsiteSearch() {
     }
   }
 
-  // Ensure Switch Role and Sign Out actions are always present in the header
-  const rightContainer = searchWrapper ? searchWrapper.parentElement : (header.querySelector('.flex.items-center.gap-3:last-child') || header.lastElementChild);
-  if (rightContainer) {
-    const text = rightContainer.textContent || '';
-    const hasSwitch = text.includes('Switch Role') || rightContainer.querySelector('[title*="Switch"]') || rightContainer.querySelector('a[href*="login"]');
-    const hasSignOut = text.includes('Sign Out') || text.includes('Exit to') || rightContainer.querySelector('[title*="Log out"]') || rightContainer.querySelector('[title*="Sign Out"]') || rightContainer.querySelector('a[href*="index"]');
-
-    if (!hasSwitch) {
-      const switchBtn = document.createElement('a');
-      switchBtn.href = '../public/login.html?mode=signin';
-      switchBtn.setAttribute('onclick', "if(typeof navigateTo==='function'){navigateTo('login','public'); return false;}");
-      switchBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-all shadow-sm';
-      switchBtn.title = 'Change persona / re-login';
-      switchBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">switch_account</span><span>Switch Role</span>`;
-      rightContainer.appendChild(switchBtn);
-    }
-
-    if (!hasSignOut) {
-      const signOutBtn = document.createElement('a');
-      signOutBtn.href = '../../index.html';
-      signOutBtn.setAttribute('onclick', "if(typeof navigateTo==='function'){navigateTo('home','public'); return false;}");
-      signOutBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-all shadow-sm';
-      signOutBtn.title = 'Log out and return to landing page';
-      signOutBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">logout</span><span class="hidden sm:inline">Sign Out</span>`;
-      rightContainer.appendChild(signOutBtn);
-    }
-  }
+  // Initialize profile picture based dropdown (clubbed: Profile & Settings, Switch Role, Sign Out)
+  initProfileDropdown();
 
   if (!searchWrapper) return;
 
@@ -2251,10 +2229,258 @@ function selectSearchResult(ticketId) {
   }
 }
 
+/**
+ * User Identity & Profile Picture Dropdown System
+ * Clubs Profile & Settings, Switch Role, and Sign Out into a clean top-right avatar menu
+ */
+function getCurrentUserInfo() {
+  const path = window.location.pathname.toLowerCase();
+  let role = localStorage.getItem('campusflow_user_role') || sessionStorage.getItem('campusflow_user_role');
+  if (!role) {
+    if (path.includes('/user/')) role = 'user';
+    else if (path.includes('/faculty/')) role = 'faculty';
+    else if (path.includes('/authority/')) role = 'authority';
+    else if (path.includes('/worker/')) role = 'worker';
+    else if (path.includes('/admin/')) role = 'admin';
+    else if (path.includes('/super/')) role = 'super';
+    else role = 'user';
+  }
+
+  const profiles = {
+    user: {
+      name: 'Aarav Patel',
+      roleTitle: 'Student / Complainant',
+      id: '2024-ENG-UG-0142',
+      initials: 'AP',
+      profileView: 'user-profile',
+      profileFile: 'profile.html'
+    },
+    faculty: {
+      name: 'Prof. Ananya Sen',
+      roleTitle: 'Faculty / Professor',
+      id: 'FAC-ENG-089',
+      initials: 'AS',
+      profileView: 'faculty-profile',
+      profileFile: 'profile.html'
+    },
+    authority: {
+      name: 'Dr. Ramesh Sharma',
+      roleTitle: 'Hostel Warden / HOD',
+      id: 'EMP-FAC-8812',
+      initials: 'RS',
+      profileView: 'authority-settings',
+      profileFile: 'settings.html'
+    },
+    worker: {
+      name: 'Rajesh Kumar',
+      roleTitle: 'Senior Electrician',
+      id: 'WRK-0018',
+      initials: 'RK',
+      profileView: 'worker-profile',
+      profileFile: 'profile.html'
+    },
+    admin: {
+      name: 'Vikramaditya Rao',
+      roleTitle: 'Chief Facilities Officer',
+      id: 'ADM-DIR-004',
+      initials: 'VR',
+      profileView: 'admin-settings',
+      profileFile: 'settings.html'
+    },
+    super: {
+      name: 'Dr. Aris Thorne',
+      roleTitle: 'Platform Operations Director',
+      id: 'SUP-SYS-001',
+      initials: 'AT',
+      profileView: 'super-settings',
+      profileFile: 'platform-settings.html'
+    }
+  };
+
+  return { role, ...(profiles[role] || profiles.user) };
+}
+
+function toggleProfileDropdown(event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  const dropdown = document.getElementById('profile-dropdown-menu');
+  if (!dropdown) return;
+
+  const isHidden = dropdown.classList.contains('hidden');
+  const notifDropdown = document.getElementById('notif-dropdown');
+  if (notifDropdown) notifDropdown.classList.add('hidden');
+  const searchDropdown = document.getElementById('global-search-dropdown');
+  if (searchDropdown) searchDropdown.classList.add('hidden');
+
+  if (isHidden) {
+    dropdown.classList.remove('hidden');
+  } else {
+    dropdown.classList.add('hidden');
+  }
+}
+
+function handleProfileNav(event) {
+  if (event) event.preventDefault();
+  const dropdown = document.getElementById('profile-dropdown-menu');
+  if (dropdown) dropdown.classList.add('hidden');
+  const info = getCurrentUserInfo();
+  if (typeof navigateTo === 'function') {
+    navigateTo(info.profileView, info.role);
+  } else {
+    window.location.href = info.profileFile;
+  }
+}
+
+function handleSwitchRoleNav(event) {
+  if (event) event.preventDefault();
+  const dropdown = document.getElementById('profile-dropdown-menu');
+  if (dropdown) dropdown.classList.add('hidden');
+  if (typeof navigateTo === 'function') {
+    navigateTo('login', 'public');
+  } else {
+    window.location.href = '../public/login.html?mode=signin';
+  }
+}
+
+function handleSignOutNav(event) {
+  if (event) event.preventDefault();
+  const dropdown = document.getElementById('profile-dropdown-menu');
+  if (dropdown) dropdown.classList.add('hidden');
+  localStorage.removeItem('campusflow_session_token');
+  sessionStorage.removeItem('campusflow_session_token');
+  if (typeof navigateTo === 'function') {
+    navigateTo('home', 'public');
+  } else {
+    window.location.href = '../../index.html';
+  }
+}
+
+function initProfileDropdown() {
+  const header = document.querySelector('header');
+  if (!header) return;
+
+  // 1. Remove "Profile & Settings" from left navigation sidebar
+  const sidebarNav = document.getElementById('sidebar-nav-container') || document.querySelector('#auth-sidebar nav');
+  if (sidebarNav) {
+    sidebarNav.querySelectorAll('a').forEach(a => {
+      const text = (a.textContent || '').toLowerCase();
+      const href = (a.getAttribute('href') || '').toLowerCase();
+      if (text.includes('profile') || text.includes('settings') || href.includes('profile') || href.includes('settings')) {
+        a.remove();
+      }
+    });
+  }
+
+  // 2. Locate right actions container in header
+  const rightContainer = header.querySelector('.flex.items-center.gap-3:last-child') ||
+    Array.from(header.querySelectorAll('div')).find(d => d.classList.contains('gap-3') && d.querySelector('button, a'));
+
+  if (!rightContainer) return;
+
+  // 3. Remove loose Switch Role and Sign Out buttons from topbar
+  rightContainer.querySelectorAll('a, button').forEach(el => {
+    if (el.id === 'topbar-avatar-btn' || el.closest('#profile-dropdown-wrapper')) return;
+    const text = (el.textContent || '').trim();
+    if (text.includes('Switch Role') || text.includes('Sign Out')) {
+      el.remove();
+    }
+  });
+
+  const info = getCurrentUserInfo();
+
+  // 4. Inject or update the Profile Picture Dropdown
+  let profileWrapper = document.getElementById('profile-dropdown-wrapper');
+  if (!profileWrapper) {
+    const oldAvatar = rightContainer.querySelector('#topbar-avatar');
+    profileWrapper = document.createElement('div');
+    profileWrapper.id = 'profile-dropdown-wrapper';
+    profileWrapper.className = 'relative';
+    profileWrapper.innerHTML = `
+      <button id="topbar-avatar-btn" onclick="toggleProfileDropdown(event)" class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold font-mono text-xs cursor-pointer hover:ring-2 hover:ring-emerald-500 hover:ring-offset-2 transition-all shadow-sm select-none relative focus:outline-none" title="Account Menu">
+        <span id="topbar-avatar-text">${info.initials}</span>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -bottom-0.5 -right-0.5 ring-2 ring-white"></span>
+      </button>
+
+      <div id="profile-dropdown-menu" class="hidden absolute right-0 top-full mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden text-xs transition-all">
+        <div class="p-3.5 bg-slate-50/90 border-b border-slate-100 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-mono font-bold text-sm shrink-0" id="dropdown-user-avatar">
+            ${info.initials}
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="font-bold text-slate-900 text-sm truncate" id="dropdown-user-name">${info.name}</span>
+            <span class="text-[11px] text-slate-500 font-medium truncate" id="dropdown-user-role">${info.roleTitle}</span>
+            <span class="text-[10px] text-slate-400 font-mono truncate" id="dropdown-user-id">${info.id}</span>
+          </div>
+        </div>
+
+        <div class="p-1.5 space-y-0.5">
+          <a href="#" onclick="handleProfileNav(event)" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium group">
+            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-700 transition-colors">manage_accounts</span>
+            <div class="flex flex-col">
+              <span class="font-semibold text-slate-800">Profile & Settings</span>
+              <span class="text-[10px] text-slate-400">Account info & preferences</span>
+            </div>
+          </a>
+
+          <div class="my-1 border-t border-slate-100"></div>
+
+          <a href="#" onclick="handleSwitchRoleNav(event)" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium group">
+            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-700 transition-colors">switch_account</span>
+            <div class="flex flex-col">
+              <span class="font-semibold text-slate-800">Switch Role</span>
+              <span class="text-[10px] text-slate-400">Change persona or re-authenticate</span>
+            </div>
+          </a>
+
+          <div class="my-1 border-t border-slate-100"></div>
+
+          <a href="#" onclick="handleSignOutNav(event)" class="flex items-center gap-3 px-3 py-2 rounded-xl text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors font-medium group">
+            <span class="material-symbols-outlined text-[18px] text-red-500 group-hover:text-red-600 transition-colors">logout</span>
+            <div class="flex flex-col">
+              <span class="font-semibold text-red-700">Sign Out</span>
+              <span class="text-[10px] text-red-400">End session & return to landing page</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    `;
+
+    if (oldAvatar && oldAvatar.parentNode) {
+      oldAvatar.parentNode.replaceChild(profileWrapper, oldAvatar);
+    } else {
+      rightContainer.appendChild(profileWrapper);
+    }
+  }
+
+  // Bind outside click
+  if (!window._profileDropdownBound) {
+    window._profileDropdownBound = true;
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('profile-dropdown-menu');
+      if (dropdown && !dropdown.classList.contains('hidden')) {
+        const wrapper = document.getElementById('profile-dropdown-wrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+          dropdown.classList.add('hidden');
+        }
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const dropdown = document.getElementById('profile-dropdown-menu');
+        if (dropdown) dropdown.classList.add('hidden');
+      }
+    });
+  }
+}
+
 // Global initialization
 document.addEventListener('DOMContentLoaded', () => {
   renderActiveDashboard();
   startSLACountdown();
   initInteractiveFilters();
   initInWebsiteSearch();
+  initProfileDropdown();
 });
