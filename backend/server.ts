@@ -18,6 +18,32 @@ const io = new SocketIOServer(server, {
 app.use(cors());
 app.use(express.json());
 
+// API Root Discovery endpoint
+app.get(['/', '/api'], (req, res) => {
+  res.json({
+    name: 'CampusFlow Intelligent Operations API Gateway',
+    version: '1.0.0',
+    status: 'ONLINE',
+    service: 'campusflow-backend',
+    endpoints: {
+      health: '/api/health',
+      auth: {
+        login: 'POST /api/auth/login',
+        google: 'POST /api/auth/google'
+      },
+      complaints: {
+        list: 'GET /api/complaints',
+        create: 'POST /api/complaints'
+      },
+      dispatch: {
+        accept: 'POST /api/dispatch/accept',
+        decline: 'POST /api/dispatch/decline',
+        override: 'POST /api/dispatch/override'
+      }
+    }
+  });
+});
+
 // Health Check endpoint (supports both direct and /api prefixed routes)
 app.get(['/health', '/api/health'], (req, res) => {
   res.json({
@@ -56,7 +82,7 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 4000;
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   server.listen(PORT, () => {
     console.log(`[CampusFlow API] Gateway running on http://localhost:${PORT}`);
   });

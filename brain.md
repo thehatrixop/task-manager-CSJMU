@@ -174,24 +174,22 @@ The application has been decomposed into individual, standalone HTML files so `i
 
 ---
 
-## 10. Vercel Multi-Service Deployment Architecture (`vercel.json`)
-- **Multi-Service Architecture**: Configured for Vercel Services to deploy both the web application and the Express API gateway from a single repository with shared routing and unified domain management.
-- **Service Manifest**:
-  - `app`:
-    - Root: `.` (repo root)
-    - Runtime: `node`
-    - Role: Serves static assets, standalone dashboard pages, and handles server-side request routing.
-    - Bindings: Declares binding to `backend` service injecting internal base URL into `BACKEND_URL`.
-  - `backend`:
-    - Root: `backend`
-    - Framework: `express`
-    - Role: Powers authentication (`/api/auth`), ticket complaints (`/api/complaints`), dispatch actions (`/api/dispatch`), and WebSocket gateways.
-- **Routing & Public Rewrites**:
-  - `/api/(.*)` $\rightarrow$ Service `backend` (public API access for client-side queries and external webhooks).
-  - `/(.*)` $\rightarrow$ Service `app` (public catch-all for web pages, styles, scripts, and media).
-- **Service-to-Service Runtime Binding**:
-  - `app` injects `process.env.BACKEND_URL` to route or proxy API requests directly to the internal `backend` instance.
-  - In `server.js`, `/api/*` requests forward via `BACKEND_URL` (falling back to `http://localhost:4000` in local dev).
+## 10. Vercel Production Deployment Architecture (`vercel.json`)
+- **Dual Deployment Architecture**: Configured to deploy out-of-the-box on standard Vercel accounts (Hobby/Pro/Enterprise) using Vercel Serverless Functions + Edge CDN static hosting, while preserving full local Node development compatibility.
+- **Components**:
+  - **Edge CDN Web Portal**: All 57 standalone pages (`pages/*/*.html`), root landing page (`index.html`), design system styles (`css/style.css`), and shared client navigation controller (`js/app.js`) are served globally from Vercel's Edge Network at sub-millisecond latencies.
+  - **Serverless API Gateway (`api/index.ts`)**: Automatically mounts the Express application from `backend/server.ts` as a serverless function responding to `/api/*` requests (`/api/auth`, `/api/complaints`, `/api/dispatch`, `/api/health`).
+  - **API Root Discovery**: Visiting `/api` returns an interactive JSON endpoint directory with cluster health telemetry.
+- **Routing & Rewrite Rules (`vercel.json`)**:
+  - `rewrites`: Maps `/api/(.*)` to `/api` (invoking `api/index.ts`).
+  - `cleanUrls`: Enabled (`true`) for clean URL routing across dashboards without requiring `.html` extensions.
+  - `headers`: Full CORS headers configured for `/api/(.*)` enabling authenticated cross-origin API consumers.
+- **Build & Dependency Configuration**:
+  - Root `package.json` contains all dependencies (`express`, `cors`, `socket.io`, `dotenv`, etc.) and `build` script (`node build-tools/generate_standalone_pages.js`) for automatic compilation on Vercel git push.
+  - Root `tsconfig.json` and `backend/tsconfig.json` configure TypeScript compilation targeting `ES2022`.
+  - `.vercelignore` excludes non-runtime directories (`.git`, `docs`, `tests`) to minimize deployment payload.
+- **Local Fallback (`server.js`)**:
+  - Running `node server.js` locally proxies `/api/*` requests to `BACKEND_URL` (or `http://localhost:4000`) and serves static files on port 8080.
 
 
 
