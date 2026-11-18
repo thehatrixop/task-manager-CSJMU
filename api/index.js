@@ -108,6 +108,14 @@ app.post(['/auth/google', '/api/auth/google'], (req, res) => {
 const mockComplaints = [];
 
 app.get(['/complaints', '/api/complaints'], (req, res) => {
+  const { role, status } = req.query;
+  // If requested by worker or administrator, only return complaints verified by warden/HOD
+  if (role === 'worker' || role === 'admin') {
+    return res.json(mockComplaints.filter(c => c.status !== 'PENDING_VERIFICATION'));
+  }
+  if (status) {
+    return res.json(mockComplaints.filter(c => c.status === status));
+  }
   res.json(mockComplaints);
 });
 
@@ -122,13 +130,32 @@ app.post(['/complaints', '/api/complaints'], (req, res) => {
     location: locationDesc || 'Campus Grounds',
     priority: priority || 'MEDIUM',
     status: 'PENDING_VERIFICATION',
-    assignedWorker: 'Pending Authority Approval',
+    assignedWorker: 'Awaiting Warden Verification',
     complainant: complainant || 'Aarav Patel (Student)',
     createdAt: new Date().toISOString()
   };
 
   mockComplaints.unshift(newTicket);
   res.status(201).json(newTicket);
+});
+
+// Warden/Authority Verification Endpoint
+app.post(['/dispatch/verify', '/api/dispatch/verify', '/authority/verify', '/api/authority/verify'], (req, res) => {
+  const { ticketId, workerId, verifiedBy } = req.body;
+  const t = mockComplaints.find(c => c.id === ticketId);
+  if (t) {
+    t.status = 'VERIFIED_DISPATCHED';
+    t.assignedWorker = workerId || 'Rajesh Kumar (WRK-0018)';
+    t.verifiedBy = verifiedBy || 'Dr. Ramesh Sharma (HOD / Warden)';
+    t.verifiedAt = new Date().toISOString();
+  }
+  res.json({
+    status: 'VERIFIED_DISPATCHED',
+    ticketId: ticketId || 'CF-2026-00124',
+    assignedWorker: workerId || 'Rajesh Kumar (WRK-0018)',
+    message: 'Warden verification successful. Dispatched to field technician and facilities command.',
+    updatedAt: new Date().toISOString()
+  });
 });
 
 // ==========================================

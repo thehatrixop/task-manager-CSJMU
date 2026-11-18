@@ -314,23 +314,23 @@ function getStatusBadgeHtml(status, workerName) {
   switch (status) {
     case 'PENDING_VERIFICATION':
       return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 font-mono text-[10px] font-semibold border border-amber-200">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending Authority
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Awaiting Warden Approval
       </span>`;
     case 'VERIFIED_DISPATCHED':
-      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-mono text-[10px] font-semibold border border-indigo-200">
-        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span> Dispatched (Searching...)
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-mono text-[10px] font-semibold border border-blue-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Dispatched (${workerName || 'Rajesh K.'})
       </span>`;
     case 'ACTIVE_IN_PROGRESS':
-      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-mono text-[10px] font-semibold border border-blue-200">
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> In Progress (${workerName || 'Rajesh K.'})
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-mono text-[10px] font-semibold border border-indigo-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span> In Progress (${workerName || 'Rajesh K.'})
       </span>`;
     case 'COMPLETED_RESOLVED':
       return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 font-mono text-[10px] font-semibold border border-emerald-200">
-        <span class="material-symbols-outlined text-[12px] text-emerald-600">check</span> Resolved
+        <span class="material-symbols-outlined text-[12px] text-emerald-600">check</span> Resolved & Signed
       </span>`;
     case 'REJECTED':
       return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-red-50 text-red-700 font-mono text-[10px] font-semibold border border-red-200">
-        <span class="material-symbols-outlined text-[12px] text-red-600">cancel</span> Rejected
+        <span class="material-symbols-outlined text-[12px] text-red-600">cancel</span> Rejected by Warden
       </span>`;
     default:
       return `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono text-[10px]">${status}</span>`;
@@ -479,6 +479,8 @@ function approveComplaint(ticketId) {
   if (ticket) {
     ticket.status = 'VERIFIED_DISPATCHED';
     ticket.worker = 'Rajesh Kumar (WRK-0018)';
+    ticket.verifiedBy = 'Dr. Ramesh Sharma (HOD / Warden)';
+    ticket.verifiedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     ticket.submittedTime = 'Just now';
     saveStoredComplaints(complaints);
     addAuditLog('Dr. Ramesh Sharma', 'Authority', 'APPROVE_TICKET', targetId, 'PENDING → VERIFIED_DISPATCHED');
@@ -497,7 +499,7 @@ function approveComplaint(ticketId) {
   if (approvedEl) approvedEl.textContent = targetId;
 
   showModal('modal-approve-confirm');
-  showToast(`Ticket ${targetId} approved & verified! Dispatched to Rajesh Kumar.`, 'success');
+  showToast(`Ticket ${targetId} approved & verified by Warden! Dispatched to Worker & Facilities Command.`, 'success');
 
   renderActiveDashboard();
 }
@@ -683,8 +685,12 @@ function renderActiveDashboard() {
   const path = window.location.pathname.toLowerCase();
   const complaints = getStoredComplaints();
   const pendingTickets = complaints.filter(c => c.status === 'PENDING_VERIFICATION');
-  const activeTickets = complaints.filter(c => c.status === 'ACTIVE_IN_PROGRESS' || c.status === 'VERIFIED_DISPATCHED');
+  const verifiedComplaints = complaints.filter(c => c.status !== 'PENDING_VERIFICATION');
+  const dispatchedTickets = complaints.filter(c => c.status === 'VERIFIED_DISPATCHED');
+  const activeTickets = complaints.filter(c => c.status === 'ACTIVE_IN_PROGRESS');
+  const dispatchedOrActiveTickets = complaints.filter(c => c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS');
   const resolvedTickets = complaints.filter(c => c.status === 'COMPLETED_RESOLVED');
+  const rejectedTickets = complaints.filter(c => c.status === 'REJECTED');
 
   // 1. STUDENT - My Complaints (user/my-complaints.html)
   const userFullTable = document.getElementById('user-complaints-full-table') ||
@@ -750,6 +756,27 @@ function renderActiveDashboard() {
       `).join('');
     }
 
+    // Active Work Highlight Card: ONLY shown if complaint is verified by warden and dispatched or active!
+    const activeHighlightCard = document.getElementById('user-active-highlight');
+    const activeDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS');
+    if (activeHighlightCard) {
+      if (activeDispatched) {
+        activeHighlightCard.classList.remove('hidden');
+        const idEl = activeHighlightCard.querySelector('.active-complaint-id');
+        if (idEl) idEl.textContent = activeDispatched.id;
+        const statusEl = activeHighlightCard.querySelector('.active-complaint-status');
+        if (statusEl) statusEl.textContent = activeDispatched.status === 'ACTIVE_IN_PROGRESS' ? 'Work In Progress' : 'Verified & Dispatched';
+        const titleEl = activeHighlightCard.querySelector('.active-complaint-title');
+        if (titleEl) titleEl.textContent = activeDispatched.title;
+        const locEl = activeHighlightCard.querySelector('.active-complaint-location');
+        if (locEl) locEl.textContent = activeDispatched.location;
+        const workerEl = activeHighlightCard.querySelector('.active-complaint-worker');
+        if (workerEl) workerEl.textContent = activeDispatched.worker || 'Assigned Technician';
+      } else {
+        activeHighlightCard.classList.add('hidden');
+      }
+    }
+
     const kpiCards = document.querySelectorAll('main .grid.grid-cols-2.lg\\:grid-cols-4 > div');
     if (kpiCards.length >= 4) {
       const totalNum = kpiCards[0].querySelector('.text-2xl');
@@ -757,7 +784,7 @@ function renderActiveDashboard() {
       const pendingNum = kpiCards[1].querySelector('.text-2xl');
       if (pendingNum) pendingNum.textContent = pendingTickets.length;
       const activeNum = kpiCards[2].querySelector('.text-2xl');
-      if (activeNum) activeNum.textContent = activeTickets.length;
+      if (activeNum) activeNum.textContent = dispatchedOrActiveTickets.length;
       const resolvedNum = kpiCards[3].querySelector('.text-2xl');
       if (resolvedNum) resolvedNum.textContent = resolvedTickets.length;
     }
@@ -770,7 +797,7 @@ function renderActiveDashboard() {
       if (pendingTickets.length === 0) {
         queueTbody.innerHTML = `
           <tr>
-            <td colspan="8" class="py-8 text-center text-slate-500 font-mono text-xs">
+            <td colspan="8" class="py-12 text-center text-slate-500 font-mono text-xs">
               <span class="material-symbols-outlined text-[28px] text-emerald-500 block mb-1">task_alt</span>
               No pending requests awaiting verification. All jurisdiction items verified.
             </td>
@@ -808,13 +835,13 @@ function renderActiveDashboard() {
     const kpiCards = document.querySelectorAll('main .grid.grid-cols-2.lg\\:grid-cols-4 > div');
     if (kpiCards.length >= 4) {
       const totalEl = kpiCards[0].querySelector('.text-2xl');
-      if (totalEl) totalEl.textContent = 24 + complaints.length;
+      if (totalEl) totalEl.textContent = complaints.length;
       const pendingEl = kpiCards[1].querySelector('.text-2xl');
       if (pendingEl) pendingEl.textContent = pendingTickets.length;
       const activeEl = kpiCards[2].querySelector('.text-2xl');
-      if (activeEl) activeEl.textContent = 4 + activeTickets.length;
+      if (activeEl) activeEl.textContent = dispatchedOrActiveTickets.length;
       const resolvedEl = kpiCards[3].querySelector('.text-2xl');
-      if (resolvedEl) resolvedEl.textContent = 20 + resolvedTickets.length;
+      if (resolvedEl) resolvedEl.textContent = resolvedTickets.length;
     }
 
     const reviewBtnSpan = document.querySelector('button[onclick*="authority-queue"] span:last-child');
@@ -827,8 +854,9 @@ function renderActiveDashboard() {
       if (pendingTickets.length === 0) {
         tableTbody.innerHTML = `
           <tr>
-            <td colspan="7" class="py-6 text-center text-slate-500 font-mono text-xs">
-              All jurisdiction requests verified. Zero pending sign-offs.
+            <td colspan="7" class="py-12 text-center text-slate-500 font-mono text-xs">
+              <span class="material-symbols-outlined text-[24px] text-emerald-500 block mb-1">task_alt</span>
+              Verification Queue is Clear. Zero pending complaints requiring sign-off.
             </td>
           </tr>
         `;
@@ -862,22 +890,37 @@ function renderActiveDashboard() {
   if (path.includes('complaints-master')) {
     const adminTbody = document.querySelector('main table tbody');
     if (adminTbody) {
-      adminTbody.innerHTML = complaints.map(c => `
-        <tr class="hover:bg-slate-50 transition-colors">
-          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
-          <td class="py-3.5 px-4 text-slate-700">${c.complainant || 'Complainant'}</td>
-          <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
-          <td class="py-3.5 px-4 text-slate-600 font-mono">${c.location}</td>
-          <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
-          <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
-          <td class="py-3.5 px-4 font-semibold text-slate-900">${c.worker || 'Pending'}</td>
-          <td class="py-3.5 px-4 text-right">
-            <button onclick="navigateTo('admin-assignment-details', 'admin')" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
-              Inspect
-            </button>
-          </td>
-        </tr>
-      `).join('');
+      // Once a student logs a complaint, it must be verified by Warden before appearing in master operations
+      if (verifiedComplaints.length === 0) {
+        adminTbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center text-slate-500 text-xs">
+              <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                <span class="material-symbols-outlined text-[24px]">verified</span>
+              </div>
+              <p class="font-semibold text-slate-700">Master Ticket Registry is Empty</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">Complaints verified and authorized by Wardens / HODs will populate here in real time.</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        adminTbody.innerHTML = verifiedComplaints.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 px-4 text-slate-700">${c.complainant || 'Complainant'}</td>
+            <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
+            <td class="py-3.5 px-4 text-slate-600 font-mono">${c.location}</td>
+            <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
+            <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
+            <td class="py-3.5 px-4 font-semibold text-slate-900">${c.worker || 'Pending'}</td>
+            <td class="py-3.5 px-4 text-right">
+              <button onclick="navigateTo('admin-assignment-details', 'admin')" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
     }
   }
 
@@ -886,54 +929,122 @@ function renderActiveDashboard() {
     const kpiCards = document.querySelectorAll('main .grid.grid-cols-2.lg\\:grid-cols-4 > div');
     if (kpiCards.length >= 8) {
       const totalEl = kpiCards[0].querySelector('.text-2xl');
-      if (totalEl) totalEl.textContent = (1424 + complaints.length).toLocaleString();
+      if (totalEl) totalEl.textContent = verifiedComplaints.length;
       const pendingEl = kpiCards[1].querySelector('.text-2xl');
       if (pendingEl) pendingEl.textContent = pendingTickets.length;
       const activeEl = kpiCards[2].querySelector('.text-2xl');
-      if (activeEl) activeEl.textContent = 40 + activeTickets.length;
+      if (activeEl) activeEl.textContent = activeTickets.length;
+      const slaRiskEl = kpiCards[3].querySelector('.text-2xl');
+      if (slaRiskEl) slaRiskEl.textContent = '0';
     }
 
     const telemetryTbody = document.querySelector('main table tbody');
     if (telemetryTbody) {
-      const telemetryRows = complaints.slice(0, 6);
-      telemetryTbody.innerHTML = telemetryRows.map(c => `
-        <tr class="hover:bg-slate-50 transition-colors">
-          <td class="py-3.5 font-mono font-bold text-slate-900">${c.id}</td>
-          <td class="py-3.5">${getDeptBadgeHtml(c.department)}</td>
-          <td class="py-3.5 text-slate-700 font-mono">${c.location}</td>
-          <td class="py-3.5 font-semibold text-slate-900">${c.worker || 'Pending Assignment'}</td>
-          <td class="py-3.5 font-mono text-slate-500">${c.submittedTime || 'Recent'}</td>
-          <td class="py-3.5">${getStatusBadgeHtml(c.status, c.worker)}</td>
-          <td class="py-3.5 font-mono text-slate-600">SLA Active</td>
-          <td class="py-3.5 text-right">
-            <button onclick="openInterventionModal('${c.id}')" class="text-blue-600 hover:underline font-semibold font-mono">Override</button>
-          </td>
-        </tr>
-      `).join('');
+      // ONLY complaints verified by warden and dispatched to worker appear in Live Dispatch Telemetry
+      if (dispatchedOrActiveTickets.length === 0) {
+        telemetryTbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center text-slate-500 font-mono text-xs">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">timer_off</span>
+              <p class="font-medium text-slate-700">No Dispatches in SLA Window</p>
+              <p class="text-xs text-slate-400 mt-0.5">Complaints awaiting warden verification do not dispatch. Once verified by authority, worker SLA countdowns monitor here.</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        telemetryTbody.innerHTML = dispatchedOrActiveTickets.map(c => `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5">${getDeptBadgeHtml(c.department)}</td>
+            <td class="py-3.5 text-slate-700 font-mono">${c.location}</td>
+            <td class="py-3.5 font-semibold text-slate-900">${c.worker || 'Rajesh Kumar (WRK-0018)'}</td>
+            <td class="py-3.5 font-mono text-slate-500">${c.submittedTime || 'Recent'}</td>
+            <td class="py-3.5">${getStatusBadgeHtml(c.status, c.worker)}</td>
+            <td class="py-3.5 font-mono text-slate-600">SLA Active</td>
+            <td class="py-3.5 text-right">
+              <button onclick="openInterventionModal('${c.id}')" class="text-blue-600 hover:underline font-semibold font-mono">Override</button>
+            </td>
+          </tr>
+        `).join('');
+      }
     }
   }
 
   // 7. WORKER - Incoming Dispatch (worker/incoming-dispatch.html)
   if (path.includes('incoming-dispatch')) {
-    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED') ||
-      complaints.find(c => c.status === 'ACTIVE_IN_PROGRESS') || complaints[0];
+    // Worker ONLY receives complaints after warden verification (VERIFIED_DISPATCHED)
+    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED');
+    const idEl = document.querySelector('.text-lg.font-bold.font-mono.text-slate-900');
+    const deptEl = document.querySelector('.text-sm.font-bold.text-amber-700');
+    const titleEl = document.querySelector('h3.text-xs.font-bold.uppercase.text-slate-500 + p.text-base.font-bold');
+    const locEl = document.querySelector('.p-3.bg-slate-50.border.border-slate-200.rounded-xl.font-mono');
+    const descEl = document.querySelector('p.text-xs.text-slate-600.leading-relaxed.bg-slate-50');
+    const timerDisplay = document.querySelector('.countdown-display');
+
     if (latestDispatched) {
-      const idEl = document.querySelector('.text-lg.font-bold.font-mono.text-slate-900');
       if (idEl) idEl.textContent = latestDispatched.id;
-      const deptEl = document.querySelector('.text-sm.font-bold.text-amber-700');
       if (deptEl) deptEl.textContent = latestDispatched.department;
-      const titleEl = document.querySelector('h3.text-xs.font-bold.uppercase.text-slate-500 + p.text-base.font-bold');
       if (titleEl) titleEl.textContent = latestDispatched.title;
-      const locEl = document.querySelector('.p-3.bg-slate-50.border.border-slate-200.rounded-xl.font-mono');
       if (locEl) locEl.textContent = latestDispatched.location;
-      const descEl = document.querySelector('p.text-xs.text-slate-600.leading-relaxed.bg-slate-50');
       if (descEl) descEl.textContent = latestDispatched.description;
 
       const acceptBtn = document.querySelector('button[onclick*="acceptJobWorker"]');
-      if (acceptBtn) acceptBtn.setAttribute('onclick', `acceptJobWorker('${latestDispatched.id}')`);
+      if (acceptBtn) {
+        acceptBtn.setAttribute('onclick', `acceptJobWorker('${latestDispatched.id}')`);
+        acceptBtn.disabled = false;
+        acceptBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
       const declineBtn = document.querySelector('button[onclick*="openWorkerDeclineModal"]');
-      if (declineBtn) declineBtn.setAttribute('onclick', `openWorkerDeclineModal('${latestDispatched.id}')`);
+      if (declineBtn) {
+        declineBtn.setAttribute('onclick', `openWorkerDeclineModal('${latestDispatched.id}')`);
+        declineBtn.disabled = false;
+        declineBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    } else {
+      // Standby state: no unverified complaints are shown to workers
+      if (idEl) idEl.textContent = 'STANDBY';
+      if (deptEl) deptEl.textContent = 'Maintenance';
+      if (titleEl) titleEl.textContent = 'Shift Queue Clear • Standing By';
+      if (locEl) locEl.textContent = 'Technician Station — Academic Block B';
+      if (descEl) descEl.textContent = 'Zero incoming dispatches awaiting response. When a hostel warden or department head verifies a newly reported issue, it will immediately alert here with a 30-minute acceptance timer.';
+      if (timerDisplay) timerDisplay.textContent = 'STANDBY';
+
+      const acceptBtn = document.querySelector('button[onclick*="acceptJobWorker"]');
+      if (acceptBtn) {
+        acceptBtn.disabled = true;
+        acceptBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+      const declineBtn = document.querySelector('button[onclick*="openWorkerDeclineModal"]');
+      if (declineBtn) {
+        declineBtn.disabled = true;
+        declineBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
     }
+  }
+
+  // 7B. WORKER - Overview (worker/overview.html)
+  if (path.includes('worker/overview')) {
+    const alertBanner = document.getElementById('worker-urgent-alert');
+    const standbyBanner = document.getElementById('worker-standby-banner');
+    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED');
+
+    if (latestDispatched) {
+      // Warden has verified & dispatched this ticket -> Alert the worker!
+      if (alertBanner) alertBanner.classList.remove('hidden');
+      if (standbyBanner) standbyBanner.classList.add('hidden');
+      const titleEl = document.getElementById('worker-urgent-title') || (alertBanner ? alertBanner.querySelector('h3') : null);
+      if (titleEl) titleEl.textContent = `${latestDispatched.id}: ${latestDispatched.title}`;
+      const metaEl = document.getElementById('worker-urgent-meta') || (alertBanner ? alertBanner.querySelector('p') : null);
+      if (metaEl) metaEl.textContent = `${latestDispatched.location} • Complainant: ${latestDispatched.complainant || 'Student'}`;
+    } else {
+      // Still pending warden verification or no tickets -> Keep worker peaceful on standby
+      if (alertBanner) alertBanner.classList.add('hidden');
+      if (standbyBanner) standbyBanner.classList.remove('hidden');
+    }
+
+    const shiftJobsEl = document.querySelector('main .grid.grid-cols-2.lg\\:grid-cols-4 > div:first-child .text-2xl');
+    const verifiedJobsCount = complaints.filter(c => c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS').length;
+    if (shiftJobsEl) shiftJobsEl.textContent = `${verifiedJobsCount} Tasks`;
   }
 
   // 8. SUPER ADMIN - Audit Logs (super/audit-logs.html)
