@@ -180,16 +180,27 @@ The application has been decomposed into individual, standalone HTML files so `i
     - Automatically adds the new complaint to state with `PENDING_VERIFICATION` status and calls `POST /api/complaints`.
     - **Authority Gatekeeping**: Visible **only** to the student and their designated Hostel Warden / Department Head (`pages/authority/overview.html` and `pages/authority/verification-queue.html`).
     - **Worker & Admin Shielding**: Worker terminals remain in tranquil STANDBY mode (no alert, no dispatch card) and Facilities Admin Live Dispatch telemetry remains clear until the warden verifies the hazard.
+  - **Faculty Role Integration & Fast-Track Auto-Verification**:
+    - Separate role persona for Faculty (`role === 'faculty'`) accessible via login and role switchers.
+    - When a faculty member reports a hazard, authority verification gatekeeping is automatically bypassed: ticket directly transitions to `VERIFIED_DISPATCHED`, assigns a certified technician, alerts the worker's shift terminal, and reflects immediately in the admin command telemetry.
   - When the **Warden** approves and verifies the complaint (`approveComplaint`):
     - Status updates to `VERIFIED_DISPATCHED`.
     - Technician `Rajesh Kumar (WRK-0018)` is officially assigned.
     - **Worker's Portal Activated**: `worker/incoming-dispatch.html` and `worker/overview.html` trigger urgent mobile alerts with the 30-minute ticking countdown timer and Accept/Decline actions.
     - **Admin Command Activated**: `admin/overview.html` Live Dispatch Telemetry and `admin/complaints-master.html` populate the ticket for campus-wide facilities oversight.
     - **Student's Portal Updated**: `my-complaints.html` and `user/overview.html` reflect status `Dispatched (Rajesh K.)` with active tracking timeline.
+  - **Complainant-End Verification Cancellation, Editing & Post-Approval Rejection**:
+    - **Pre-Verification State (`PENDING_VERIFICATION`)**:
+      - Complainants can edit wrong details or attachments (`openEditComplaintModal` / `saveComplaintEdit` via `PUT /api/complaints/:id`).
+      - Complainants can cancel/retract their verification request (`openCancelComplaintModal` / `confirmCancelComplaint` via `DELETE /api/complaints/:id`), cleanly removing it from their list and unburdening the warden's queue.
+    - **Post-Verification / In-Progress State (`VERIFIED_DISPATCHED`, `ACTIVE_IN_PROGRESS`)**:
+      - Direct silent modification or deletion is strictly blocked to maintain chain-of-custody.
+      - Complainants can initiate an administrative "Cancel & Reject Work Order" (`openRejectApprovedModal` / `confirmRejectApprovedSubmit` via `POST /api/complaints/reject`), capturing a formal cancellation justification, transitioning the ticket to `REJECTED`, alerting assigned technicians, and logging an audit event.
+    - Accessible directly across `my-complaints.html`, `user/overview.html`, and `complaint-details.html` with responsive contextual action controls and dynamic modal fallbacks (`ensureActionModalsExist`).
 - **Universal Route Map**: Configured comprehensive `ROUTE_MAP` dictionary in `js/app.js` mapping all 57 view tokens to their standalone files across all 5 roles (`user`, `authority`, `worker`, `admin`, `super`) and public pages.
 - **Context-Aware Path Resolution**: Evaluates `window.location.pathname` to construct relative target paths seamlessly whether accessed from `/pages/<role>/`, `/frontend/pages/<role>/`, local server root, or single-page view DOM containers.
 - **Complete Action Suite Implemented**:
-  - **User**: `handleUserComplaintSubmit` (form submit with dynamic ticket ID generation and success modal), `handleMockFileSelect`, `removeMockFile`.
+  - **User & Faculty**: `handleUserComplaintSubmit` (form submit with dynamic ticket ID generation and success modal), `openEditComplaintModal` / `saveComplaintEdit` (pre-verification edit), `openCancelComplaintModal` / `confirmCancelComplaint` (pre-verification retract/delete), `openRejectApprovedModal` / `confirmRejectApprovedSubmit` (post-approval cancellation with audit reason), `handleMockFileSelect`, `removeMockFile`.
   - **Authority**: `approveComplaint` (verification sign-off modal and dispatch notification), `openRejectModal` / `confirmRejectSubmit` (administrative justification log), `openRequestInfoModal` / `confirmRequestInfoSubmit` (student clarification query).
   - **Worker**: `acceptJobWorker` (shift queue lock-in and navigation to active job), `openWorkerDeclineModal` / `confirmWorkerDeclineSubmit` (cascade to secondary technician WRK-0019), `handleWorkerProgressSubmit` (milestone broadcast), `handleWorkerPhotoSelect`, `handleWorkerCompleteSubmit` (cryptographic seal), `toggleWorkerAvailability` (responsive Online/Offline switch with tactile status chips).
   - **Admin**: `openInterventionModal` / `confirmInterventionSubmit` (manual workforce override), `handleCreateWorkerSubmit` (technician account provisioning and directory redirect).

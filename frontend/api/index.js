@@ -143,6 +143,43 @@ app.post(['/complaints', '/api/complaints'], (req, res) => {
   res.status(201).json(newTicket);
 });
 
+// Complainant Edit Unverified Request
+app.put(['/complaints/:id', '/api/complaints/:id'], (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+  const index = mockComplaints.findIndex(c => c.id === id);
+  if (index !== -1) {
+    if (mockComplaints[index].status === 'PENDING_VERIFICATION') {
+      mockComplaints[index] = { ...mockComplaints[index], ...updates };
+      return res.json({ success: true, complaint: mockComplaints[index] });
+    }
+    return res.status(403).json({ error: 'Cannot directly edit complaints that are already verified.' });
+  }
+  res.json({ success: true });
+});
+
+// Complainant Retract / Delete Unverified Request
+app.delete(['/complaints/:id', '/api/complaints/:id'], (req, res) => {
+  const { id } = req.params;
+  const index = mockComplaints.findIndex(c => c.id === id);
+  if (index !== -1) {
+    mockComplaints.splice(index, 1);
+  }
+  res.json({ success: true, message: `Complaint ${id} retracted and purged from verification queue.` });
+});
+
+// Complainant Post-Approval Rejection
+app.post(['/complaints/reject', '/api/complaints/reject'], (req, res) => {
+  const { ticketId, reason } = req.body;
+  const t = mockComplaints.find(c => c.id === ticketId);
+  if (t) {
+    t.status = 'REJECTED';
+    t.rejectionReason = reason || 'Cancelled by complainant';
+    t.updatedAt = new Date().toISOString();
+  }
+  res.json({ success: true, status: 'REJECTED', ticketId });
+});
+
 // Warden/Authority Verification Endpoint
 app.post(['/dispatch/verify', '/api/dispatch/verify', '/authority/verify', '/api/authority/verify'], (req, res) => {
   const { ticketId, workerId, verifiedBy } = req.body;

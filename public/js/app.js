@@ -500,6 +500,356 @@ function removeMockFile() {
 }
 
 /**
+ * Complainant Verification Retraction, Edit & Post-Approval Rejection
+ */
+let activeEditTicketId = null;
+let activeCancelTicketId = null;
+let activeRejectApprovedTicketId = null;
+
+function ensureActionModalsExist() {
+  if (typeof document === 'undefined') return;
+  if (!document.getElementById('modal-edit-complaint')) {
+    const container = document.createElement('div');
+    container.id = 'dynamic-action-modals';
+    container.innerHTML = `
+      <!-- Modal 8: Edit Complaint Details (Before Verification) -->
+      <div id="modal-edit-complaint" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 fade-in max-h-[90vh] overflow-y-auto">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-slate-900">Edit Maintenance Request</h3>
+                <span id="edit-ticket-id-display" class="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold border border-slate-200">CF-2026-00000</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">Correct details, symptoms, or room location before warden verification.</p>
+            </div>
+            <button onclick="closeModal('modal-edit-complaint')" class="text-slate-400 hover:text-slate-600">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <form onsubmit="event.preventDefault(); saveComplaintEdit();" class="space-y-4 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-700 uppercase mb-1">Issue Title <span class="text-red-500">*</span></label>
+              <input type="text" id="edit-title" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs font-medium focus:border-blue-600 focus:outline-none"/>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-700 uppercase mb-1">Department</label>
+                <select id="edit-dept" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="Electrical">Electrical & Power Systems</option>
+                  <option value="HVAC">HVAC & Climate Control</option>
+                  <option value="Plumbing">Plumbing & Water Core</option>
+                  <option value="Civil">Civil & Structural</option>
+                  <option value="Carpentry">Carpentry & Locksmith</option>
+                  <option value="General">General Logistics & Sanitation</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 uppercase mb-1">Category</label>
+                <select id="edit-category" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="Hazardous / Sparking">Hazardous / Sparking / Safety Risk</option>
+                  <option value="Equipment Failure">Equipment Failure</option>
+                  <option value="Leakage / Burst">Leakage / Pipe Burst</option>
+                  <option value="Structural Damage">Structural Damage / Broken Fixture</option>
+                  <option value="Routine Maintenance">Routine Maintenance</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 uppercase mb-1">Room Location <span class="text-red-500">*</span></label>
+              <input type="text" id="edit-location" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs font-mono focus:border-blue-600 focus:outline-none"/>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 uppercase mb-1">Description <span class="text-red-500">*</span></label>
+              <textarea id="edit-desc" rows="3" required class="w-full p-2.5 border border-slate-300 rounded-lg text-xs focus:border-blue-600 focus:outline-none"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-700 uppercase mb-1">Priority</label>
+                <select id="edit-priority" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Emergency">Emergency</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 uppercase mb-1">Photo / Proof Evidence</label>
+                <button type="button" onclick="document.getElementById('edit-photo-input').click()" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-slate-50 hover:bg-slate-100 flex items-center justify-center gap-1.5 font-medium text-slate-700">
+                  <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+                  <span id="edit-photo-label">Update Attached Photo</span>
+                </button>
+                <input type="file" id="edit-photo-input" class="hidden" onchange="handleEditPhotoSelect(this)"/>
+              </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+              <button type="button" onclick="closeModal('modal-edit-complaint')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                Discard Changes
+              </button>
+              <button type="submit" class="px-5 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors shadow-sm">
+                Save & Update Request
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal 9: Cancel / Retract Verification Request (Pending State) -->
+      <div id="modal-cancel-request" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in text-center">
+          <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-[32px]">cancel_presentation</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900">Cancel Verification Request?</h3>
+          <p class="text-xs text-slate-600">
+            You are about to cancel ticket <span class="font-mono font-bold text-slate-900" id="cancel-ticket-id-display">CF-2026-00000</span>.
+          </p>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 text-left font-mono">
+            <p id="cancel-ticket-title-display" class="truncate font-semibold">Switchboard Sparking</p>
+            <p class="text-[10px] text-amber-700 mt-1">Status: Pending Verification (Not yet reviewed by authority)</p>
+          </div>
+          <p class="text-[11px] text-slate-500">
+            Because the authority has not yet approved this complaint, it will be immediately retracted and purged from the warden's queue.
+          </p>
+          <div class="flex gap-3 pt-2">
+            <button type="button" onclick="closeModal('modal-cancel-request')" class="w-1/2 py-2.5 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-50">
+              Keep Request
+            </button>
+            <button type="button" onclick="confirmCancelComplaint()" class="w-1/2 py-2.5 bg-red-600 text-white rounded-xl text-xs font-semibold hover:bg-red-700 shadow-sm transition-colors">
+              Cancel & Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal 10: Reject / Withdraw Approved Request (Post-Approval Rejection) -->
+      <div id="modal-reject-approved-request" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[22px]">block</span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Cancel & Reject Approved Request</h3>
+              <p class="text-xs text-slate-500 font-mono" id="approved-reject-ticket-id-display">CF-2026-00124</p>
+            </div>
+          </div>
+          <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800">
+            <span class="font-bold">Notice:</span> This request has already been approved and dispatched by the authority. Cancelling it now will formally mark it as <strong>REJECTED</strong> and notify the technician.
+          </div>
+          <p id="approved-reject-meta-display" class="text-xs text-slate-600 font-medium"></p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">State Reason for Post-Approval Cancellation <span class="text-red-500">*</span></label>
+            <textarea id="approved-reject-reason-text" rows="3" placeholder="e.g. Issue was self-resolved, entered wrong laboratory room, or technician is no longer needed..." class="w-full p-2.5 border border-slate-300 rounded-xl text-xs focus:border-red-600 focus:outline-none"></textarea>
+          </div>
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button" onclick="closeModal('modal-reject-approved-request')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
+              Keep Active
+            </button>
+            <button type="button" onclick="confirmRejectApprovedSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors shadow-sm">
+              Confirm Rejection
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(container);
+  }
+}
+
+function handleEditPhotoSelect(input) {
+  if (input && input.files && input.files[0]) {
+    const label = document.getElementById('edit-photo-label');
+    if (label) label.textContent = `Photo: ${input.files[0].name}`;
+    showToast(`Attached photo updated: ${input.files[0].name}`, 'info');
+  }
+}
+
+function openEditComplaintModal(ticketId) {
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === ticketId);
+  if (!ticket) {
+    showToast('Ticket not found in local records.', 'error');
+    return;
+  }
+  if (ticket.status !== 'PENDING_VERIFICATION') {
+    showToast('Only pending requests awaiting verification can be edited. This request is already approved by the authority.', 'warning');
+    return;
+  }
+  activeEditTicketId = ticketId;
+  ensureActionModalsExist();
+
+  const idEl = document.getElementById('edit-ticket-id-display');
+  if (idEl) idEl.textContent = ticket.id;
+
+  const titleEl = document.getElementById('edit-title');
+  if (titleEl) titleEl.value = ticket.title || '';
+
+  const deptEl = document.getElementById('edit-dept');
+  if (deptEl) deptEl.value = ticket.department || 'Electrical';
+
+  const catEl = document.getElementById('edit-category');
+  if (catEl) catEl.value = ticket.category || 'Hazardous / Sparking';
+
+  const locEl = document.getElementById('edit-location');
+  if (locEl) locEl.value = ticket.location || '';
+
+  const descEl = document.getElementById('edit-desc');
+  if (descEl) descEl.value = ticket.description || '';
+
+  const prioEl = document.getElementById('edit-priority');
+  if (prioEl) prioEl.value = ticket.priority || 'Medium';
+
+  showModal('modal-edit-complaint');
+}
+
+function saveComplaintEdit() {
+  if (!activeEditTicketId) return;
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === activeEditTicketId);
+  if (!ticket) return;
+
+  if (ticket.status !== 'PENDING_VERIFICATION') {
+    showToast('Cannot edit request: Already verified and approved by authority.', 'error');
+    closeModal('modal-edit-complaint');
+    return;
+  }
+
+  const titleEl = document.getElementById('edit-title');
+  const deptEl = document.getElementById('edit-dept');
+  const catEl = document.getElementById('edit-category');
+  const locEl = document.getElementById('edit-location');
+  const descEl = document.getElementById('edit-desc');
+  const prioEl = document.getElementById('edit-priority');
+
+  ticket.title = titleEl && titleEl.value.trim() ? titleEl.value.trim() : ticket.title;
+  ticket.department = deptEl ? deptEl.value : ticket.department;
+  ticket.category = catEl ? catEl.value : ticket.category;
+  ticket.location = locEl && locEl.value.trim() ? locEl.value.trim() : ticket.location;
+  ticket.description = descEl && descEl.value.trim() ? descEl.value.trim() : ticket.description;
+  ticket.priority = prioEl ? prioEl.value : ticket.priority;
+  ticket.submittedTime = 'Edited just now';
+
+  saveStoredComplaints(complaints);
+  addAuditLog(ticket.complainant || 'Complainant', 'Complainant', 'EDIT_PENDING_DETAILS', ticket.id, 'DETAILS UPDATED BEFORE VERIFICATION');
+
+  try {
+    fetch('/api/complaints/' + ticket.id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ticket)
+    }).catch(() => {});
+  } catch (e) {}
+
+  closeModal('modal-edit-complaint');
+  showToast(`Complaint ${ticket.id} details updated successfully!`, 'success');
+  renderActiveDashboard();
+}
+
+function openCancelComplaintModal(ticketId) {
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === ticketId);
+  if (!ticket) {
+    showToast('Ticket not found in local records.', 'error');
+    return;
+  }
+  activeCancelTicketId = ticketId;
+  ensureActionModalsExist();
+
+  const idEl = document.getElementById('cancel-ticket-id-display');
+  if (idEl) idEl.textContent = ticket.id;
+
+  const titleEl = document.getElementById('cancel-ticket-title-display');
+  if (titleEl) titleEl.textContent = `${ticket.title} • ${ticket.location}`;
+
+  showModal('modal-cancel-request');
+}
+
+function confirmCancelComplaint() {
+  if (!activeCancelTicketId) return;
+  let complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === activeCancelTicketId);
+  if (!ticket) return;
+
+  if (ticket.status !== 'PENDING_VERIFICATION') {
+    closeModal('modal-cancel-request');
+    openRejectApprovedModal(activeCancelTicketId);
+    return;
+  }
+
+  // Remove completely from active verification complaints
+  complaints = complaints.filter(c => c.id !== activeCancelTicketId);
+  saveStoredComplaints(complaints);
+  addAuditLog(ticket.complainant || 'Complainant', 'Complainant', 'CANCEL_VERIFICATION_USER', activeCancelTicketId, 'PENDING_VERIFICATION → RETRACTED_PURGED');
+
+  try {
+    fetch('/api/complaints/' + activeCancelTicketId, {
+      method: 'DELETE'
+    }).catch(() => {});
+  } catch (e) {}
+
+  closeModal('modal-cancel-request');
+  showToast(`Verification request ${activeCancelTicketId} retracted and deleted from queue.`, 'info');
+  renderActiveDashboard();
+}
+
+function openRejectApprovedModal(ticketId) {
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === ticketId);
+  if (!ticket) return;
+
+  activeRejectApprovedTicketId = ticketId;
+  ensureActionModalsExist();
+
+  const idEl = document.getElementById('approved-reject-ticket-id-display');
+  if (idEl) idEl.textContent = ticket.id;
+
+  const metaEl = document.getElementById('approved-reject-meta-display');
+  if (metaEl) metaEl.textContent = `${ticket.title} (${ticket.location}) • Assigned: ${ticket.worker || 'Rajesh Kumar'}`;
+
+  const reasonEl = document.getElementById('approved-reject-reason-text');
+  if (reasonEl) reasonEl.value = '';
+
+  showModal('modal-reject-approved-request');
+}
+
+function confirmRejectApprovedSubmit() {
+  if (!activeRejectApprovedTicketId) return;
+  const complaints = getStoredComplaints();
+  const ticket = complaints.find(c => c.id === activeRejectApprovedTicketId);
+  if (!ticket) return;
+
+  const reasonEl = document.getElementById('approved-reject-reason-text');
+  const reason = reasonEl && reasonEl.value.trim() ? reasonEl.value.trim() : 'Complainant requested cancellation/rejection after approval.';
+
+  ticket.status = 'REJECTED';
+  ticket.rejectionReason = reason;
+  ticket.rejectedBy = `${ticket.complainant || 'User'} (Complainant Cancellation)`;
+  ticket.submittedTime = 'Just now';
+
+  saveStoredComplaints(complaints);
+  addAuditLog(ticket.complainant || 'Complainant', 'Complainant', 'REJECT_APPROVED_REQUEST', activeRejectApprovedTicketId, `VERIFIED_DISPATCHED → REJECTED (${reason})`);
+
+  try {
+    fetch('/api/complaints/reject', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticketId: activeRejectApprovedTicketId, reason })
+    }).catch(() => {});
+  } catch (e) {}
+
+  closeModal('modal-reject-approved-request');
+  showToast(`Complaint ${activeRejectApprovedTicketId} cancelled and marked as REJECTED.`, 'warning');
+  renderActiveDashboard();
+}
+
+/**
  * Authority Verification & Review Actions
  */
 let activeRejectTicketId = 'CF-2026-00124';
@@ -742,22 +1092,137 @@ function renderActiveDashboard() {
         </tr>
       `;
     } else {
-      userFullTable.innerHTML = complaints.map(c => `
-        <tr class="hover:bg-slate-50 transition-colors">
-          <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
-          <td class="py-3.5 px-4 font-semibold text-slate-900">${c.title}</td>
-          <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
-          <td class="py-3.5 px-4 text-slate-600">${c.location}</td>
-          <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
-          <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
-          <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recently'}</td>
-          <td class="py-3.5 px-4 text-right">
+      userFullTable.innerHTML = complaints.map(c => {
+        let actionButtons = '';
+        if (c.status === 'PENDING_VERIFICATION') {
+          actionButtons = `
+            <div class="flex items-center justify-end gap-1.5">
+              <button onclick="${inspectAction}" title="Inspect Details" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
+                Inspect
+              </button>
+              <button onclick="openEditComplaintModal('${c.id}')" title="Edit wrong details or photo before verification" class="px-2 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded text-[11px] font-semibold hover:bg-amber-100 transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">edit</span> Edit
+              </button>
+              <button onclick="openCancelComplaintModal('${c.id}')" title="Cancel verification request" class="px-2 py-1 bg-red-50 text-red-700 border border-red-200 rounded text-[11px] font-semibold hover:bg-red-100 transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">delete</span> Cancel
+              </button>
+            </div>
+          `;
+        } else if (c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS') {
+          actionButtons = `
+            <div class="flex items-center justify-end gap-1.5">
+              <button onclick="${inspectAction}" title="Inspect Details" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
+                Inspect
+              </button>
+              <button onclick="openRejectApprovedModal('${c.id}')" title="Cancel and reject approved request" class="px-2 py-1 bg-red-50 text-red-700 border border-red-200 rounded text-[11px] font-semibold hover:bg-red-100 transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">block</span> Reject
+              </button>
+            </div>
+          `;
+        } else {
+          actionButtons = `
             <button onclick="${inspectAction}" class="px-3 py-1 bg-slate-900 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
               Inspect
             </button>
-          </td>
-        </tr>
-      `).join('');
+          `;
+        }
+
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3.5 px-4 font-semibold text-slate-900">${c.title}</td>
+            <td class="py-3.5 px-4">${getDeptBadgeHtml(c.department)}</td>
+            <td class="py-3.5 px-4 text-slate-600">${c.location}</td>
+            <td class="py-3.5 px-4">${getPriorityBadgeHtml(c.priority)}</td>
+            <td class="py-3.5 px-4">${getStatusBadgeHtml(c.status, c.worker)}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-500">${c.submittedTime || 'Recently'}</td>
+            <td class="py-3.5 px-4 text-right">${actionButtons}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  // 1B. COMPLAINT DETAILS (user/complaint-details.html & faculty/complaint-details.html)
+  if (path.includes('complaint-details')) {
+    const latestTicket = complaints[0] || null;
+    if (latestTicket) {
+      const headingId = document.querySelector('h1.text-2xl.font-bold.text-slate-900');
+      if (headingId) headingId.textContent = latestTicket.id;
+
+      const priorityBadge = document.querySelector('.px-2\\.5.py-0\\.5.rounded-md.bg-red-100');
+      if (priorityBadge) priorityBadge.textContent = latestTicket.priority + ' Priority';
+
+      const statusBadge = document.querySelector('.px-2\\.5.py-0\\.5.rounded-md.bg-blue-100');
+      if (statusBadge) statusBadge.textContent = latestTicket.status === 'PENDING_VERIFICATION' ? 'Awaiting Warden Approval' : (latestTicket.status === 'REJECTED' ? 'Rejected' : 'In Progress');
+
+      const descEl = document.querySelector('.bg-white.border.border-slate-200.rounded-2xl.p-6.shadow-sm p.text-xs.text-slate-600');
+      if (descEl) descEl.textContent = latestTicket.description;
+
+      // Dynamic Complainant Control Banner
+      let banner = document.getElementById('complainant-action-banner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'complainant-action-banner';
+        const main = document.querySelector('main .max-w-4xl');
+        if (main && main.children.length > 1) {
+          main.insertBefore(banner, main.children[1]);
+        }
+      }
+
+      if (banner) {
+        if (latestTicket.status === 'PENDING_VERIFICATION') {
+          banner.className = 'mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
+          banner.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined">pending_actions</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-amber-950 text-xs">Awaiting Authority Verification</h4>
+                <p class="text-[11px] text-amber-800">Entered wrong details, symptoms, or photo? You can edit or cancel this request now before the authority signs off.</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="openEditComplaintModal('${latestTicket.id}')" class="px-3.5 py-1.5 bg-white border border-amber-300 text-amber-900 rounded-lg text-xs font-semibold hover:bg-amber-100 flex items-center gap-1.5 shadow-sm">
+                <span class="material-symbols-outlined text-[15px]">edit</span>
+                <span>Edit Details</span>
+              </button>
+              <button onclick="openCancelComplaintModal('${latestTicket.id}')" class="px-3.5 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 flex items-center gap-1.5 shadow-sm">
+                <span class="material-symbols-outlined text-[15px]">delete</span>
+                <span>Cancel & Delete</span>
+              </button>
+            </div>
+          `;
+        } else if (latestTicket.status === 'VERIFIED_DISPATCHED' || latestTicket.status === 'ACTIVE_IN_PROGRESS') {
+          banner.className = 'mb-6 p-4 bg-blue-50 border border-blue-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
+          banner.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined">verified</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-blue-950 text-xs">Request Verified & Dispatched</h4>
+                <p class="text-[11px] text-blue-800">Technician assigned (${latestTicket.worker || 'Rajesh Kumar'}). If this work is no longer required, you can cancel and reject it with a reason.</p>
+              </div>
+            </div>
+            <button onclick="openRejectApprovedModal('${latestTicket.id}')" class="px-3.5 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs font-semibold hover:bg-red-100 flex items-center gap-1.5 shrink-0 shadow-sm">
+              <span class="material-symbols-outlined text-[15px]">block</span>
+              <span>Cancel & Reject Work Order</span>
+            </button>
+          `;
+        } else if (latestTicket.status === 'REJECTED') {
+          banner.className = 'mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800 text-xs';
+          banner.innerHTML = `
+            <span class="material-symbols-outlined text-red-600 text-[20px]">cancel</span>
+            <div>
+              <span class="font-bold">Request Rejected:</span> ${latestTicket.rejectionReason || 'Withdrawn by complainant or authority.'}
+            </div>
+          `;
+        } else {
+          banner.remove();
+        }
+      }
     }
   }
 
@@ -776,19 +1241,40 @@ function renderActiveDashboard() {
         </tr>
       `;
     } else {
-      userRecentTable.innerHTML = complaints.slice(0, 5).map(c => `
-        <tr class="hover:bg-slate-50 transition-colors">
-          <td class="py-3 font-mono font-bold text-slate-900">${c.id}</td>
-          <td class="py-3 font-medium text-slate-900">${c.title}</td>
-          <td class="py-3">${getDeptBadgeHtml(c.department)}</td>
-          <td class="py-3 text-slate-600">${c.location}</td>
-          <td class="py-3 text-slate-500 font-mono">${c.submittedTime || 'Recently'}</td>
-          <td class="py-3">${getStatusBadgeHtml(c.status, c.worker)}</td>
-          <td class="py-3 text-right">
+      userRecentTable.innerHTML = complaints.slice(0, 5).map(c => {
+        let actionButtons = '';
+        if (c.status === 'PENDING_VERIFICATION') {
+          actionButtons = `
+            <div class="flex items-center justify-end gap-2">
+              <button onclick="${inspectAction}" class="text-blue-600 hover:underline font-semibold">Inspect</button>
+              <button onclick="openEditComplaintModal('${c.id}')" title="Edit details" class="text-amber-700 hover:underline font-semibold text-[11px]">Edit</button>
+              <button onclick="openCancelComplaintModal('${c.id}')" title="Cancel request" class="text-red-600 hover:underline font-semibold text-[11px]">Cancel</button>
+            </div>
+          `;
+        } else if (c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS') {
+          actionButtons = `
+            <div class="flex items-center justify-end gap-2">
+              <button onclick="${inspectAction}" class="text-blue-600 hover:underline font-semibold">Inspect</button>
+              <button onclick="openRejectApprovedModal('${c.id}')" title="Cancel approved request" class="text-red-600 hover:underline font-semibold text-[11px]">Reject</button>
+            </div>
+          `;
+        } else {
+          actionButtons = `
             <button onclick="${inspectAction}" class="text-blue-600 hover:underline font-semibold">Inspect</button>
-          </td>
-        </tr>
-      `).join('');
+          `;
+        }
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3 font-mono font-bold text-slate-900">${c.id}</td>
+            <td class="py-3 font-medium text-slate-900">${c.title}</td>
+            <td class="py-3">${getDeptBadgeHtml(c.department)}</td>
+            <td class="py-3 text-slate-600">${c.location}</td>
+            <td class="py-3 text-slate-500 font-mono">${c.submittedTime || 'Recently'}</td>
+            <td class="py-3">${getStatusBadgeHtml(c.status, c.worker)}</td>
+            <td class="py-3 text-right">${actionButtons}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // Active Work Highlight Card: ONLY shown if complaint is verified by warden and dispatched or active!
