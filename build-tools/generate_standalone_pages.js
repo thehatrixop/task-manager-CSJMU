@@ -21,7 +21,8 @@ ${appCss}
 
 const cssDir = path.join(ROOT_DIR, 'css');
 const frontendCssDir = path.join(FRONTEND_DIR, 'css');
-[cssDir, frontendCssDir].forEach(d => {
+const publicCssDir = path.join(ROOT_DIR, 'public/css');
+[cssDir, frontendCssDir, publicCssDir].forEach(d => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
   fs.writeFileSync(path.join(d, 'style.css'), enhancedCss, 'utf8');
 });
@@ -30,7 +31,8 @@ console.log('Saved css/style.css with solid surface background');
 // Shared JS files
 const jsDir = path.join(ROOT_DIR, 'js');
 const frontendJsDir = path.join(FRONTEND_DIR, 'js');
-[jsDir, frontendJsDir].forEach(d => {
+const publicJsDir = path.join(ROOT_DIR, 'public/js');
+[jsDir, frontendJsDir, publicJsDir].forEach(d => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 });
 
@@ -95,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 `;
 
-[jsDir, frontendJsDir].forEach(d => {
+[jsDir, frontendJsDir, publicJsDir].forEach(d => {
   fs.writeFileSync(path.join(d, 'app.js'), appJsContent, 'utf8');
   fs.writeFileSync(path.join(d, 'auth.js'), authJsContent, 'utf8');
   fs.writeFileSync(path.join(d, 'dispatch.js'), dispatchJsContent, 'utf8');
@@ -329,7 +331,8 @@ function getPublicFooter(isRoot = false) {
 // Write public pages
 const pubDestDir = path.join(ROOT_DIR, 'pages/public');
 const frontendPubDestDir = path.join(FRONTEND_DIR, 'pages/public');
-[pubDestDir, frontendPubDestDir].forEach(d => {
+const publicPubDestDir = path.join(ROOT_DIR, 'public/pages/public');
+[pubDestDir, frontendPubDestDir, publicPubDestDir].forEach(d => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 });
 
@@ -418,6 +421,7 @@ publicPages.forEach(p => {
 
   fs.writeFileSync(path.join(pubDestDir, p.file), fullDoc, 'utf8');
   fs.writeFileSync(path.join(frontendPubDestDir, p.file), fullDoc, 'utf8');
+  fs.writeFileSync(path.join(publicPubDestDir, p.file), fullDoc, 'utf8');
   console.log('Saved page: pages/public/' + p.file);
 });
 
@@ -465,12 +469,18 @@ const rootLandingDoc = getHtmlHead('Intelligent Campus Operations', 'css/style.c
 [
   path.join(ROOT_DIR, 'index.html'),
   path.join(ROOT_DIR, 'code.html'),
+  path.join(ROOT_DIR, 'public/index.html'),
+  path.join(ROOT_DIR, 'public/code.html'),
   path.join(FRONTEND_DIR, 'index.html'),
   path.join(FRONTEND_DIR, 'code.html')
 ].forEach(target => {
   fs.writeFileSync(target, rootLandingDoc, 'utf8');
   console.log('Generated Landing Page: ' + path.relative(ROOT_DIR, target) + ' (' + rootLandingDoc.length + ' bytes)');
 });
+
+if (fs.existsSync(path.join(ROOT_DIR, 'screen.png'))) {
+  fs.copyFileSync(path.join(ROOT_DIR, 'screen.png'), path.join(ROOT_DIR, 'public/screen.png'));
+}
 
 // -------------------------------------------------------------
 // 3. GENERATE AUTHENTICATED ROLE DASHBOARDS
@@ -572,7 +582,8 @@ Object.keys(rolesConfig).forEach(roleKey => {
   const role = rolesConfig[roleKey];
   const targetDir = path.join(ROOT_DIR, 'pages', roleKey);
   const frontendTargetDir = path.join(FRONTEND_DIR, 'pages', roleKey);
-  [targetDir, frontendTargetDir].forEach(d => {
+  const publicTargetDir = path.join(ROOT_DIR, 'public/pages', roleKey);
+  [targetDir, frontendTargetDir, publicTargetDir].forEach(d => {
     if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
   });
 
@@ -677,6 +688,7 @@ ${role.hasSlaScript ? '<script src="../../js/dispatch.js"></script>' : ''}
 
     fs.writeFileSync(path.join(targetDir, nav.file), pageDoc, 'utf8');
     fs.writeFileSync(path.join(frontendTargetDir, nav.file), pageDoc, 'utf8');
+    fs.writeFileSync(path.join(publicTargetDir, nav.file), pageDoc, 'utf8');
     console.log('Saved role page: pages/' + roleKey + '/' + nav.file);
   });
 });

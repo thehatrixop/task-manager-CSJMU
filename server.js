@@ -67,17 +67,22 @@ const server = http.createServer((req, res) => {
     }
   }
 
-  // 2. Static file serving for web application frontend
+  // 2. Static file serving for web application frontend (searches public/ first, then repo root)
   if (parsedUrl === '/' || parsedUrl === '') {
     parsedUrl = '/index.html';
   }
 
   const safePath = path.normalize(parsedUrl).replace(/^(\.\.[\/\\])+/, '');
-  let filePath = path.join(__dirname, safePath);
+  let filePath = path.join(__dirname, 'public', safePath);
+
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    filePath = path.join(__dirname, safePath);
+  }
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      filePath = path.join(__dirname, 'index.html');
+      const publicIndex = path.join(__dirname, 'public', 'index.html');
+      filePath = fs.existsSync(publicIndex) ? publicIndex : path.join(__dirname, 'index.html');
     }
 
     fs.readFile(filePath, (readErr, content) => {
