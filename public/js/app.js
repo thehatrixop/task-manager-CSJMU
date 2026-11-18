@@ -1945,14 +1945,18 @@ function initInWebsiteSearch() {
 
   let searchWrapper = document.getElementById('header-search-wrapper');
 
-  // If header-search-wrapper is missing, transform any static placeholder in header
+  // If header-search-wrapper is missing, transform ONLY the specific leaf search div
   if (!searchWrapper) {
-    const staticPlaceholder = Array.from(header.querySelectorAll('div')).find(div => {
-      const text = div.textContent || '';
-      return text.includes('Search records') && !div.querySelector('input');
-    });
+    const staticPlaceholder = header.querySelector('.hidden.sm\\:flex.items-center.gap-2') ||
+      Array.from(header.querySelectorAll('div')).find(div => {
+        const text = (div.textContent || '').trim();
+        const hasSearchText = text.includes('Search records');
+        const hasLinksOrButtons = div.querySelector('a') || div.querySelector('button');
+        const hasNestedDivs = div.querySelector('div');
+        return hasSearchText && !hasLinksOrButtons && !hasNestedDivs && !div.querySelector('input');
+      });
 
-    if (staticPlaceholder) {
+    if (staticPlaceholder && staticPlaceholder.parentNode) {
       const wrapperDiv = document.createElement('div');
       wrapperDiv.id = 'header-search-wrapper';
       wrapperDiv.className = 'relative hidden sm:block w-72 md:w-80 lg:w-96 text-left';
@@ -1988,6 +1992,34 @@ function initInWebsiteSearch() {
       `;
       staticPlaceholder.parentNode.replaceChild(wrapperDiv, staticPlaceholder);
       searchWrapper = wrapperDiv;
+    }
+  }
+
+  // Ensure Switch Role and Sign Out actions are always present in the header
+  const rightContainer = searchWrapper ? searchWrapper.parentElement : (header.querySelector('.flex.items-center.gap-3:last-child') || header.lastElementChild);
+  if (rightContainer) {
+    const text = rightContainer.textContent || '';
+    const hasSwitch = text.includes('Switch Role') || rightContainer.querySelector('[title*="Switch"]') || rightContainer.querySelector('a[href*="login"]');
+    const hasSignOut = text.includes('Sign Out') || text.includes('Exit to') || rightContainer.querySelector('[title*="Log out"]') || rightContainer.querySelector('[title*="Sign Out"]') || rightContainer.querySelector('a[href*="index"]');
+
+    if (!hasSwitch) {
+      const switchBtn = document.createElement('a');
+      switchBtn.href = '../public/login.html?mode=signin';
+      switchBtn.setAttribute('onclick', "if(typeof navigateTo==='function'){navigateTo('login','public'); return false;}");
+      switchBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-all shadow-sm';
+      switchBtn.title = 'Change persona / re-login';
+      switchBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">switch_account</span><span>Switch Role</span>`;
+      rightContainer.appendChild(switchBtn);
+    }
+
+    if (!hasSignOut) {
+      const signOutBtn = document.createElement('a');
+      signOutBtn.href = '../../index.html';
+      signOutBtn.setAttribute('onclick', "if(typeof navigateTo==='function'){navigateTo('home','public'); return false;}");
+      signOutBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-all shadow-sm';
+      signOutBtn.title = 'Log out and return to landing page';
+      signOutBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">logout</span><span class="hidden sm:inline">Sign Out</span>`;
+      rightContainer.appendChild(signOutBtn);
     }
   }
 
