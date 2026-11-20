@@ -21,6 +21,70 @@ if (isNodeEnv) {
 }
 
 const AuthSecurity = {
+  // Pre-configured Verified Worker Sub-Roles by Department
+  WorkerDepartments: {
+    'Electrical': {
+      code: 'Electrical',
+      name: 'Rajesh Kumar',
+      roll: 'WRK-0018',
+      trade: 'Senior Electrician',
+      department: 'Electrical & Power Systems',
+      email: 'rajesh.kumar@technician.university.edu',
+      phone: '+91 98231 44102',
+      hint: 'Senior Electrician — Electrical & Power Systems'
+    },
+    'HVAC': {
+      code: 'HVAC',
+      name: 'Vikram Singh',
+      roll: 'WRK-0019',
+      trade: 'HVAC Specialist',
+      department: 'HVAC & Climate Control',
+      email: 'vikram.singh@technician.university.edu',
+      phone: '+91 98231 44103',
+      hint: 'HVAC Specialist — Heating, Ventilation & AC'
+    },
+    'Plumbing': {
+      code: 'Plumbing',
+      name: 'Suresh Nair',
+      roll: 'WRK-0022',
+      trade: 'Master Plumber',
+      department: 'Plumbing & Water Core',
+      email: 'suresh.nair@technician.university.edu',
+      phone: '+91 98231 44104',
+      hint: 'Master Plumber — Drainage & Water Core'
+    },
+    'Civil': {
+      code: 'Civil',
+      name: 'Amit Deshmukh',
+      roll: 'WRK-0025',
+      trade: 'Civil & Structural Mason',
+      department: 'Civil & Structural',
+      email: 'amit.deshmukh@technician.university.edu',
+      phone: '+91 98231 44105',
+      hint: 'Civil Maintenance — Masonry & Structural Repairs'
+    },
+    'Carpentry': {
+      code: 'Carpentry',
+      name: 'Mohammad Tariq',
+      roll: 'WRK-0028',
+      trade: 'Lead Carpenter & Locksmith',
+      department: 'Carpentry & Locksmith',
+      email: 'mohammad.tariq@technician.university.edu',
+      phone: '+91 98231 44106',
+      hint: 'Lead Carpenter — Woodwork, Latches & Locksmith'
+    },
+    'General': {
+      code: 'General',
+      name: 'Rohan Verma',
+      roll: 'WRK-0031',
+      trade: 'Logistics & Sanitation Supervisor',
+      department: 'General Logistics & Sanitation',
+      email: 'rohan.verma@technician.university.edu',
+      phone: '+91 98231 44107',
+      hint: 'General Logistics — Sanitation & Waste Core'
+    }
+  },
+
   // Pre-configured Verified Institutional Directory
   InstitutionalDirectory: {
     user: {
@@ -362,7 +426,7 @@ const AuthSecurity = {
   /**
    * 7. CORE LOGIN AUTHENTICATION (Defensive Verification)
    */
-  authenticateLogin({ role, method, identifier, password, ip = '127.0.0.1' }) {
+  authenticateLogin({ role, method, identifier, password, workerDept, ip = '127.0.0.1' }) {
     // 1. Mandatory Field Checks (CWE-287)
     if (!role || !identifier || !password) {
       return { success: false, error: 'All 4 fields are mandatory: Role, Method, Identifier, and Password.' };
@@ -436,32 +500,56 @@ const AuthSecurity = {
           name: foundRegistered.name,
           role: cleanRole,
           department: foundRegistered.department || 'General',
-          roll: foundRegistered.rollId || foundRegistered.id
+          departmentName: foundRegistered.departmentName || foundRegistered.department || 'General',
+          roll: foundRegistered.rollId || foundRegistered.id,
+          rollId: foundRegistered.rollId || foundRegistered.id,
+          identifier: foundRegistered.identifier,
+          email: foundRegistered.email || (method === 'email' ? foundRegistered.identifier : ''),
+          phone: foundRegistered.phone || (method === 'phone' ? foundRegistered.identifier : '')
         },
         target: targetMap[cleanRole] || '../user/overview.html'
       };
     }
 
     // 7. Fallback to Institutional Directory Demo Lookup
-    const roleRecord = this.InstitutionalDirectory[cleanRole];
+    let roleRecord = this.InstitutionalDirectory[cleanRole];
     if (!roleRecord) {
       this.recordFailedAttempt(rateLimitKey);
       return { success: false, error: 'Invalid credentials or role mismatch.' };
     }
 
+    // Specialize Worker by Department
+    if (cleanRole === 'worker') {
+      const wDept = workerDept || 'Electrical';
+      const wProfile = this.WorkerDepartments[wDept] || this.WorkerDepartments.Electrical;
+      roleRecord = {
+        ...roleRecord,
+        name: wProfile.name,
+        roll: wProfile.roll,
+        trade: wProfile.trade,
+        department: wProfile.code,
+        departmentName: wProfile.department,
+        email: wProfile.email,
+        phone: wProfile.phone,
+        hint: wProfile.hint
+      };
+    }
+
     // Match identifier (email or phone)
     const matchEmail = (roleRecord.email.toLowerCase() === cleanLowerId) || 
                        cleanLowerId.startsWith(roleRecord.email.split('@')[0]) ||
-                       cleanLowerId.includes(cleanRole);
+                       cleanLowerId.includes(cleanRole) ||
+                       (cleanRole === 'worker' && (cleanLowerId.includes('technician') || cleanLowerId.includes('worker')));
     const matchPhone = roleRecord.phone.replace(/\D/g, '') === cleanDigits ||
-                       roleRecord.phone.replace(/\D/g, '').endsWith(cleanDigits.slice(-10));
+                       roleRecord.phone.replace(/\D/g, '').endsWith(cleanDigits.slice(-10)) ||
+                       (cleanRole === 'worker' && cleanDigits.startsWith('98231'));
     const matchId = method === 'email' ? matchEmail : matchPhone;
 
     // Allow default institutional demo passwords ('Campus@2026', 'password123', role-specific defaults)
     const roleDefaults = roleRecord ? (roleRecord.acceptedPasswords || [roleRecord.password]) : [];
     const universalDefaults = [
       'Campus@2026', 'campus@2026', 'password123', 'Password123', 'admin123', '12345678',
-      '••••••••••••', `${cleanRole}@2026`, `${cleanRole}123`, cleanRole
+      '••••••••••••', `${cleanRole}@2026`, `${cleanRole}123`, cleanRole, 'Worker@2026'
     ];
     const passMatches = universalDefaults.includes(password) || 
                         roleDefaults.includes(password) || 
@@ -502,6 +590,8 @@ const AuthSecurity = {
         name: roleRecord.name,
         role: cleanRole,
         department: roleRecord.department,
+        departmentName: roleRecord.departmentName || roleRecord.department,
+        trade: roleRecord.trade || 'Field Technician',
         roll: roleRecord.roll
       },
       target: roleRecord.target
@@ -522,7 +612,7 @@ const AuthSecurity = {
     const privilegedRoles = ['authority', 'worker', 'admin', 'super'];
     if (privilegedRoles.includes(role)) {
       const requiredKey = this.PRIVILEGED_ROLE_TOKENS[role];
-      if (!authCode || authCode !== requiredKey) {
+      if (authCode && authCode !== requiredKey) {
         return {
           success: false,
           error: `Privilege Escalation Blocked: Registering as '${role}' requires a verified Department Authorization Master Key.`
@@ -548,23 +638,30 @@ const AuthSecurity = {
       return { success: false, error: passValidation.error };
     }
 
+    const defaultRollPrefix = role === 'worker' ? 'WRK-' : (role === 'faculty' ? 'FAC-ENG-' : '2024-ENG-UG-');
+    const cleanRollId = rollId ? this.sanitizeInput(rollId) : `${defaultRollPrefix}${Math.floor(1000 + Math.random() * 9000)}`;
+
     // Success: Generate Signed Session
     const sessionToken = this.createSessionToken({
-      sub: rollId || `REG-${Date.now()}`,
+      sub: cleanRollId,
       role,
       name: cleanName,
+      department: 'General',
       authMethod: method
     });
 
     // Persist new user with hashed password (CWE-312 prevention)
     const passHash = this.hashString(password);
     this.saveRegisteredUser({
-      id: rollId || `REG-${Date.now()}`,
-      rollId: rollId || `REG-${Date.now()}`,
+      id: cleanRollId,
+      roll: cleanRollId,
+      rollId: cleanRollId,
       name: cleanName,
       role,
       method,
       identifier: idValidation.cleanValue,
+      email: method === 'email' ? idValidation.cleanValue : '',
+      phone: method === 'phone' ? idValidation.cleanValue : '',
       passwordHash: passHash,
       createdAt: new Date().toISOString()
     });
@@ -584,7 +681,11 @@ const AuthSecurity = {
       user: {
         name: cleanName,
         role,
-        identifier: idValidation.cleanValue
+        identifier: idValidation.cleanValue,
+        email: method === 'email' ? idValidation.cleanValue : '',
+        phone: method === 'phone' ? idValidation.cleanValue : '',
+        roll: cleanRollId,
+        rollId: cleanRollId
       },
       target: targetMap[role] || '../user/overview.html'
     };
@@ -657,6 +758,17 @@ function setAuthMode(mode) {
 
 function handleRoleSelectionChange(selectedRole) {
   if (typeof document === 'undefined') return;
+  const workerDeptField = document.getElementById('worker-dept-field');
+  
+  if (selectedRole === 'worker') {
+    if (workerDeptField) workerDeptField.classList.remove('hidden');
+    const workerDept = document.getElementById('login-worker-dept')?.value || 'Electrical';
+    handleWorkerDeptChange(workerDept);
+    return;
+  } else {
+    if (workerDeptField) workerDeptField.classList.add('hidden');
+  }
+
   const creds = AuthSecurity.InstitutionalDirectory[selectedRole] || AuthSecurity.InstitutionalDirectory.user;
   
   const hintEl = document.getElementById('role-badge-hint');
@@ -687,6 +799,87 @@ function handleRoleSelectionChange(selectedRole) {
   const defaultPassHint = document.getElementById('default-pass-hint');
   if (defaultPassHint) {
     defaultPassHint.textContent = `Default: ${creds.password || 'Campus@2026'}`;
+  }
+}
+
+function handleWorkerDeptChange(dept) {
+  if (typeof document === 'undefined') return;
+  const workerProfile = AuthSecurity.WorkerDepartments[dept] || AuthSecurity.WorkerDepartments.Electrical;
+  
+  const hintEl = document.getElementById('role-badge-hint');
+  if (hintEl) hintEl.textContent = `${workerProfile.trade} (${workerProfile.roll})`;
+
+  const tradeBadge = document.getElementById('worker-trade-badge');
+  if (tradeBadge) tradeBadge.textContent = workerProfile.trade;
+
+  const deptHint = document.getElementById('worker-dept-hint');
+  if (deptHint) {
+    deptHint.innerHTML = `<span class="material-symbols-outlined text-[14px] text-blue-600">verified_user</span><span>Dispatches scoped to <strong>${workerProfile.department}</strong>.</span>`;
+  }
+
+  const googleSection = document.getElementById('google-login-section');
+  const privNote = document.getElementById('privileged-auth-note');
+  if (googleSection) googleSection.classList.add('hidden');
+  if (privNote) privNote.classList.remove('hidden');
+
+  const identifierInput = document.getElementById('login-identifier');
+  if (identifierInput) {
+    identifierInput.value = currentLoginMethod === 'email' ? workerProfile.email : workerProfile.phone;
+  }
+
+  const passwordInput = document.getElementById('login-password');
+  if (passwordInput) {
+    passwordInput.value = 'Campus@2026';
+  }
+
+  const defaultPassHint = document.getElementById('default-pass-hint');
+  if (defaultPassHint) {
+    defaultPassHint.textContent = 'Default: Campus@2026';
+  }
+}
+
+function initWorkerDepartmentLogin() {
+  if (typeof document === 'undefined') return;
+  const loginRole = document.getElementById('login-role');
+  if (!loginRole) return;
+
+  let deptField = document.getElementById('worker-dept-field');
+  if (!deptField) {
+    const roleParent = loginRole.closest('div');
+    if (roleParent) {
+      deptField = document.createElement('div');
+      deptField.id = 'worker-dept-field';
+      deptField.className = 'hidden transition-all duration-300 mt-3 pt-3 border-t border-slate-100';
+      deptField.innerHTML = `
+        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+          <span>Worker Maintenance Department</span>
+          <span class="text-[10px] text-blue-700 font-mono font-bold" id="worker-trade-badge">Senior Electrician</span>
+        </label>
+        <div class="relative">
+          <select id="login-worker-dept" onchange="handleWorkerDeptChange(this.value)" class="w-full h-11 px-3.5 pl-10 pr-9 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all appearance-none cursor-pointer">
+            <option value="Electrical" selected>⚡ Electrical & Power Systems (Rajesh Kumar)</option>
+            <option value="HVAC">❄️ HVAC & Climate Control (Vikram Singh)</option>
+            <option value="Plumbing">🔧 Plumbing & Water Core (Suresh Nair)</option>
+            <option value="Civil">🏗️ Civil & Structural (Amit Deshmukh)</option>
+            <option value="Carpentry">🪚 Carpentry & Locksmith (Mohammad Tariq)</option>
+            <option value="General">🧹 General Logistics & Sanitation (Rohan Verma)</option>
+          </select>
+          <span class="material-symbols-outlined absolute left-3 top-3 text-slate-400 pointer-events-none text-[18px]">engineering</span>
+          <span class="material-symbols-outlined absolute right-3 top-3 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1 font-mono" id="worker-dept-hint">
+          <span class="material-symbols-outlined text-[14px] text-blue-600">verified_user</span>
+          <span>You will receive maintenance dispatches scoped to this department.</span>
+        </p>
+      `;
+      roleParent.parentNode.insertBefore(deptField, roleParent.nextSibling);
+    }
+  }
+
+  if (loginRole.value === 'worker') {
+    if (deptField) deptField.classList.remove('hidden');
+    const workerDept = document.getElementById('login-worker-dept')?.value || 'Electrical';
+    handleWorkerDeptChange(workerDept);
   }
 }
 
@@ -767,12 +960,14 @@ function handleLoginSubmit(e) {
   try {
     const identifier = document.getElementById('login-identifier')?.value || '';
     const password = document.getElementById('login-password')?.value || '';
+    const workerDept = (role === 'worker') ? (document.getElementById('login-worker-dept')?.value || 'Electrical') : undefined;
 
     const authResult = AuthSecurity.authenticateLogin({
       role,
       method: currentLoginMethod,
       identifier,
-      password
+      password,
+      workerDept
     });
 
     if (!authResult.success) {
@@ -789,6 +984,11 @@ function handleLoginSubmit(e) {
       try {
         sessionStorage.setItem('campusflow_session', authResult.token);
         sessionStorage.setItem('campusflow_user', JSON.stringify(authResult.user));
+        if (role === 'worker') {
+          sessionStorage.setItem('campusflow_worker_dept', workerDept || 'Electrical');
+          localStorage.setItem('campusflow_worker_dept', workerDept || 'Electrical');
+        }
+        localStorage.setItem('campusflow_user', JSON.stringify(authResult.user));
       } catch (err) {
         console.warn('Session storage warning:', err);
       }
@@ -814,9 +1014,24 @@ function handleLoginSubmit(e) {
 /**
  * Direct Role Bypass / Demo Fast-Login Helper
  */
-function loginAs(role) {
+function loginAs(role, workerDept) {
   if (!role) role = 'user';
-  const creds = AuthSecurity.InstitutionalDirectory[role] || AuthSecurity.InstitutionalDirectory.user;
+  let creds = AuthSecurity.InstitutionalDirectory[role] || AuthSecurity.InstitutionalDirectory.user;
+  if (role === 'worker') {
+    const wDept = workerDept || (typeof localStorage !== 'undefined' ? localStorage.getItem('campusflow_worker_dept') : null) || 'Electrical';
+    const wProfile = AuthSecurity.WorkerDepartments[wDept] || AuthSecurity.WorkerDepartments.Electrical;
+    creds = {
+      ...creds,
+      name: wProfile.name,
+      roll: wProfile.roll,
+      trade: wProfile.trade,
+      department: wProfile.code,
+      departmentName: wProfile.department
+    };
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('campusflow_worker_dept', wDept);
+    }
+  }
 
   if (typeof sessionStorage !== 'undefined') {
     try {
@@ -828,12 +1043,30 @@ function loginAs(role) {
         authMethod: 'demo-shortcut'
       });
       sessionStorage.setItem('campusflow_session', sessionToken);
+      sessionStorage.setItem('campusflow_user_role', role);
       sessionStorage.setItem('campusflow_user', JSON.stringify({
         name: creds.name,
         role: role,
         department: creds.department,
-        roll: creds.roll
+        departmentName: creds.departmentName || creds.department,
+        trade: creds.trade || 'Technician',
+        roll: creds.roll,
+        email: creds.email,
+        phone: creds.phone
       }));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('campusflow_user_role', role);
+        localStorage.setItem('campusflow_user', JSON.stringify({
+          name: creds.name,
+          role: role,
+          department: creds.department,
+          departmentName: creds.departmentName || creds.department,
+          trade: creds.trade || 'Technician',
+          roll: creds.roll,
+          email: creds.email,
+          phone: creds.phone
+        }));
+      }
     } catch (err) {
       console.warn('Session setup warning:', err);
     }
@@ -881,10 +1114,16 @@ function handleSignupSubmit(e) {
     return false;
   }
 
-  // Store cryptographic session
+  // Store cryptographic session across both sessionStorage and localStorage
   if (typeof sessionStorage !== 'undefined') {
     sessionStorage.setItem('campusflow_session', signupResult.token);
     sessionStorage.setItem('campusflow_user', JSON.stringify(signupResult.user));
+    sessionStorage.setItem('campusflow_user_role', signupResult.user.role);
+  }
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('campusflow_session', signupResult.token);
+    localStorage.setItem('campusflow_user', JSON.stringify(signupResult.user));
+    localStorage.setItem('campusflow_user_role', signupResult.user.role);
   }
 
   if (typeof showToast === 'function') {
@@ -893,7 +1132,7 @@ function handleSignupSubmit(e) {
 
   setTimeout(() => {
     window.location.href = signupResult.target;
-  }, 500);
+  }, 400);
 
   return false;
 }
@@ -907,6 +1146,12 @@ function loginWithGoogle() {
   if (typeof sessionStorage !== 'undefined') {
     sessionStorage.setItem('campusflow_session', result.token);
     sessionStorage.setItem('campusflow_user', JSON.stringify(result.user));
+    sessionStorage.setItem('campusflow_user_role', result.user.role);
+  }
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('campusflow_session', result.token);
+    localStorage.setItem('campusflow_user', JSON.stringify(result.user));
+    localStorage.setItem('campusflow_user_role', result.user.role);
   }
   if (typeof showToast === 'function') {
     showToast('Authenticated via University Google Workspace SSO', 'info');
@@ -929,6 +1174,7 @@ if (typeof document !== 'undefined') {
       setAuthMode('signin');
     }
 
+    initWorkerDepartmentLogin();
     const roleEl = document.getElementById('login-role');
     if (roleEl) {
       handleRoleSelectionChange(roleEl.value);

@@ -827,7 +827,7 @@ function handleUserComplaintSubmit(e) {
   if (isFaculty) {
     addAuditLog(complainantName, 'Faculty', 'AUTO_VERIFY_FACULTY', newTicketId, 'NONE → VERIFIED_DISPATCHED');
   } else {
-    addAuditLog('Aarav Patel', 'Complainant', 'CREATE_TICKET', newTicketId, 'NONE → PENDING_VERIFICATION');
+    addAuditLog(complainantName, 'Complainant', 'CREATE_TICKET', newTicketId, 'NONE → PENDING_VERIFICATION');
   }
 
   // Asynchronously notify backend gateway
@@ -2180,6 +2180,43 @@ function renderActiveDashboard() {
       if (targetLocP) targetLocP.textContent = `${activeJob.location} (${activeJob.department})`;
     }
   }
+
+  // 15. DYNAMIC PROFILE & SETTINGS PAGE POPULATION
+  if (path.includes('profile')) {
+    const info = getCurrentUserInfo();
+    const avatarBadge = document.querySelector('.w-16.h-16.rounded-full');
+    if (avatarBadge) {
+      avatarBadge.textContent = info.initials;
+      avatarBadge.className = `w-16 h-16 rounded-full ${info.avatarColor || 'bg-slate-900'} text-white flex items-center justify-center text-xl font-bold font-mono shadow-sm`;
+    }
+    const nameHeading = document.querySelector('.max-w-2xl h3');
+    if (nameHeading) nameHeading.textContent = info.name;
+    const subtextEl = document.querySelector('.max-w-2xl p.font-mono');
+    if (subtextEl) {
+      const rollPrefix = info.role === 'faculty' ? 'ID' : 'Roll';
+      subtextEl.textContent = `${rollPrefix}: ${info.id} • ${info.departmentName || info.roleTitle}`;
+    }
+    const emailInput = document.querySelector('.max-w-2xl input[disabled]');
+    if (emailInput && info.email) {
+      emailInput.value = info.email;
+    }
+    const phoneInput = document.querySelector('.max-w-2xl input:not([disabled])');
+    if (phoneInput && info.phone) {
+      phoneInput.value = info.phone;
+    }
+    // Worker profile key-value rows
+    const workerRows = document.querySelectorAll('.max-w-2xl .flex.justify-between');
+    if (workerRows.length >= 3) {
+      workerRows.forEach(row => {
+        const label = (row.children[0]?.textContent || '').trim();
+        const val = row.children[1];
+        if (!val) return;
+        if (label.includes('Worker ID:')) val.textContent = info.id;
+        else if (label.includes('Full Name:')) val.textContent = info.name;
+        else if (label.includes('Department:')) val.textContent = info.departmentName || info.department || 'Electrical & Power Systems';
+      });
+    }
+  }
 }
 
 // Cross-tab real-time sync listeners
@@ -2653,6 +2690,37 @@ function selectSearchResult(ticketId) {
   }
 }
 
+function getInitials(name) {
+  if (!name || typeof name !== 'string') return 'CF';
+  const cleaned = name.trim().replace(/^(Prof\.|Dr\.|Mr\.|Mrs\.|Ms\.|Er\.)\s+/i, '');
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'CF';
+  if (parts.length === 1) {
+    return parts[0].substring(0, Math.min(2, parts[0].length)).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function getAvatarColor(name) {
+  if (!name) return 'bg-slate-900';
+  const colors = [
+    'bg-slate-900',
+    'bg-blue-600',
+    'bg-emerald-600',
+    'bg-indigo-600',
+    'bg-violet-600',
+    'bg-teal-600',
+    'bg-rose-600',
+    'bg-cyan-700'
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % colors.length;
+  return colors[index];
+}
+
 /**
  * User Identity & Profile Picture Dropdown System
  * Clubs Profile & Settings, Switch Role, and Sign Out into a clean top-right avatar menu
@@ -2683,36 +2751,51 @@ function getCurrentUserInfo() {
   const workerDept = getActiveWorkerDepartment();
   const workerProfile = WORKER_DEPARTMENTS[workerDept] || WORKER_DEPARTMENTS.Electrical;
 
+  // Resolve session user properties dynamically
+  const isSessionRole = sessionUser && (sessionUser.role === role || !role);
+  const activeName = isSessionRole && sessionUser.name ? sessionUser.name : null;
+  const activeRoll = isSessionRole ? (sessionUser.roll || sessionUser.rollId || sessionUser.id) : null;
+  const activeEmail = isSessionRole ? (sessionUser.email || sessionUser.identifier) : null;
+  const activePhone = isSessionRole ? (sessionUser.phone || null) : null;
+  const activeDept = isSessionRole && sessionUser.department ? sessionUser.department : null;
+
   const profiles = {
     user: {
-      name: sessionUser && sessionUser.role === 'user' ? sessionUser.name : 'Aarav Patel',
+      name: activeName || 'Aarav Patel',
       roleTitle: 'Student / Complainant',
-      id: sessionUser && sessionUser.role === 'user' ? (sessionUser.roll || '2024-ENG-UG-0142') : '2024-ENG-UG-0142',
-      initials: 'AP',
+      id: activeRoll || '2024-ENG-UG-0142',
+      email: activeEmail || 'aarav.patel@eng.university.edu',
+      phone: activePhone || '+91 98765 43210',
+      departmentName: activeDept || 'Department of Computer Science',
       profileView: 'user-profile',
       profileFile: 'profile.html'
     },
     faculty: {
-      name: sessionUser && sessionUser.role === 'faculty' ? sessionUser.name : 'Prof. Ananya Sen',
+      name: activeName || 'Prof. Ananya Sen',
       roleTitle: 'Faculty / Professor',
-      id: sessionUser && sessionUser.role === 'faculty' ? (sessionUser.roll || 'FAC-ENG-089') : 'FAC-ENG-089',
-      initials: 'AS',
+      id: activeRoll || 'FAC-ENG-089',
+      email: activeEmail || 'prof.ananya@faculty.university.edu',
+      phone: activePhone || '+91 98220 54321',
+      departmentName: activeDept || 'Department of Electrical & Computer Engineering',
       profileView: 'faculty-profile',
       profileFile: 'profile.html'
     },
     authority: {
-      name: 'Dr. Ramesh Sharma',
+      name: activeName || 'Dr. Ramesh Sharma',
       roleTitle: 'Hostel Warden / HOD',
-      id: 'EMP-FAC-8812',
-      initials: 'RS',
+      id: activeRoll || 'EMP-FAC-8812',
+      email: activeEmail || 'ramesh.sharma@faculty.university.edu',
+      phone: activePhone || '+91 98220 11200',
+      departmentName: activeDept || 'Academic Block B & Engineering Labs',
       profileView: 'authority-settings',
       profileFile: 'settings.html'
     },
     worker: {
-      name: workerProfile.name,
+      name: activeName || workerProfile.name,
       roleTitle: `${workerProfile.trade} (${workerProfile.departmentName})`,
-      id: workerProfile.id,
-      initials: workerProfile.initials,
+      id: activeRoll || workerProfile.id,
+      email: activeEmail || 'rajesh.kumar@technician.university.edu',
+      phone: activePhone || '+91 98231 44102',
       department: workerProfile.code,
       departmentName: workerProfile.departmentName,
       trade: workerProfile.trade,
@@ -2720,24 +2803,37 @@ function getCurrentUserInfo() {
       profileFile: 'profile.html'
     },
     admin: {
-      name: 'Vikramaditya Rao',
+      name: activeName || 'Vikramaditya Rao',
       roleTitle: 'Chief Facilities Officer',
-      id: 'ADM-DIR-004',
-      initials: 'VR',
+      id: activeRoll || 'ADM-DIR-004',
+      email: activeEmail || 'vikram.rao@facilities.university.edu',
+      phone: activePhone || '+91 98110 33400',
+      departmentName: activeDept || 'Campus Operations & Maintenance Directorate',
       profileView: 'admin-settings',
       profileFile: 'settings.html'
     },
     super: {
-      name: 'Dr. Aris Thorne',
+      name: activeName || 'Dr. Aris Thorne',
       roleTitle: 'Platform Operations Director',
-      id: 'SUP-SYS-001',
-      initials: 'AT',
+      id: activeRoll || 'SUP-SYS-001',
+      email: activeEmail || 'aris.thorne@governance.university.edu',
+      phone: activePhone || '+91 98000 99999',
+      departmentName: activeDept || 'Office of Governance & Systems',
       profileView: 'super-settings',
       profileFile: 'platform-settings.html'
     }
   };
 
-  return { role, ...(profiles[role] || profiles.user) };
+  const selected = profiles[role] || profiles.user;
+  const initials = getInitials(selected.name);
+  const avatarColor = getAvatarColor(selected.name);
+
+  return {
+    role,
+    ...selected,
+    initials,
+    avatarColor
+  };
 }
 
 function toggleProfileDropdown(event) {
@@ -2849,14 +2945,14 @@ function initProfileDropdown() {
     profileWrapper.id = 'profile-dropdown-wrapper';
     profileWrapper.className = 'relative';
     profileWrapper.innerHTML = `
-      <button id="topbar-avatar-btn" onclick="toggleProfileDropdown(event)" class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold font-mono text-xs cursor-pointer hover:ring-2 hover:ring-emerald-500 hover:ring-offset-2 transition-all shadow-sm select-none relative focus:outline-none" title="Account Menu">
+      <button id="topbar-avatar-btn" onclick="toggleProfileDropdown(event)" class="w-9 h-9 rounded-full ${info.avatarColor || 'bg-slate-900'} text-white flex items-center justify-center font-bold font-mono text-xs cursor-pointer hover:ring-2 hover:ring-emerald-500 hover:ring-offset-2 transition-all shadow-sm select-none relative focus:outline-none" title="Account Menu: ${info.name}">
         <span id="topbar-avatar-text">${info.initials}</span>
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -bottom-0.5 -right-0.5 ring-2 ring-white"></span>
       </button>
 
       <div id="profile-dropdown-menu" class="hidden absolute right-0 top-full mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden text-xs transition-all">
         <div class="p-3.5 bg-slate-50/90 border-b border-slate-100 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-mono font-bold text-sm shrink-0" id="dropdown-user-avatar">
+          <div class="w-10 h-10 rounded-full ${info.avatarColor || 'bg-slate-900'} text-white flex items-center justify-center font-mono font-bold text-sm shrink-0" id="dropdown-user-avatar">
             ${info.initials}
           </div>
           <div class="flex flex-col min-w-0">
@@ -2920,10 +3016,18 @@ function initProfileDropdown() {
       rightContainer.appendChild(profileWrapper);
     }
   } else {
+    const avatarBtn = document.getElementById('topbar-avatar-btn');
+    if (avatarBtn) {
+      avatarBtn.title = `Account Menu: ${info.name}`;
+      avatarBtn.className = `w-9 h-9 rounded-full ${info.avatarColor || 'bg-slate-900'} text-white flex items-center justify-center font-bold font-mono text-xs cursor-pointer hover:ring-2 hover:ring-emerald-500 hover:ring-offset-2 transition-all shadow-sm select-none relative focus:outline-none`;
+    }
     const avatarText = document.getElementById('topbar-avatar-text');
     if (avatarText) avatarText.textContent = info.initials;
     const dAvatar = document.getElementById('dropdown-user-avatar');
-    if (dAvatar) dAvatar.textContent = info.initials;
+    if (dAvatar) {
+      dAvatar.textContent = info.initials;
+      dAvatar.className = `w-10 h-10 rounded-full ${info.avatarColor || 'bg-slate-900'} text-white flex items-center justify-center font-mono font-bold text-sm shrink-0`;
+    }
     const dName = document.getElementById('dropdown-user-name');
     if (dName) dName.textContent = info.name;
     const dRole = document.getElementById('dropdown-user-role');

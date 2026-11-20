@@ -57,6 +57,10 @@
     - **Facilities Admin (`admin`)**: `vikram.rao@facilities.university.edu` / `+91 98110 33400` (Password: `Campus@2026` or `Admin@2026`)
     - **Super Admin (`super`)**: `aris.thorne@governance.university.edu` / `+91 98000 99999` (Password: `Campus@2026` or `Super@2026`)
   - **Google SSO**: Available for `User` and `Faculty` roles.
+  - **Dynamic Profile Avatar & Badges**:
+    - **Algorithmic Initials Engine (`getInitials`)**: Strips honorifics (`Prof.`, `Dr.`, `Mr.`, `Ms.`) and extracts 2-letter uppercase initials dynamically from any user's registered or logged-in legal name (e.g., `John Doe` → `JD`, `Tarun Sharma` → `TS`).
+    - **Deterministic Palette (`getAvatarColor`)**: Computes a stable brand avatar color (`bg-blue-600`, `bg-emerald-600`, `bg-indigo-600`, `bg-violet-600`, `bg-teal-600`, `bg-rose-600`, `bg-cyan-700`, `bg-slate-900`) derived from the user's name hash.
+    - **Header & Profile Page Synchronization**: The top-right avatar button, dropdown card, and dedicated profile pages (`pages/<role>/profile.html`) dynamically bind to `sessionStorage` and `localStorage`, rendering user-specific name, roll ID, email, and avatar badge rather than static defaults.
   - **Direct Role Redirection**: On submit, authenticates and routes directly to the corresponding role dashboard (`#user-overview`, `#faculty-overview`, `#authority-overview`, `#worker-overview`, `#admin-overview`, `#super-overview`).
   - **Authenticated Topbar**: Contains "Switch Role" and "Sign Out" actions to easily toggle between personas or return to the public landing page.
 1. **Student / Complainant** (`USER`):

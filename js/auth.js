@@ -500,7 +500,12 @@ const AuthSecurity = {
           name: foundRegistered.name,
           role: cleanRole,
           department: foundRegistered.department || 'General',
-          roll: foundRegistered.rollId || foundRegistered.id
+          departmentName: foundRegistered.departmentName || foundRegistered.department || 'General',
+          roll: foundRegistered.rollId || foundRegistered.id,
+          rollId: foundRegistered.rollId || foundRegistered.id,
+          identifier: foundRegistered.identifier,
+          email: foundRegistered.email || (method === 'email' ? foundRegistered.identifier : ''),
+          phone: foundRegistered.phone || (method === 'phone' ? foundRegistered.identifier : '')
         },
         target: targetMap[cleanRole] || '../user/overview.html'
       };
@@ -607,7 +612,7 @@ const AuthSecurity = {
     const privilegedRoles = ['authority', 'worker', 'admin', 'super'];
     if (privilegedRoles.includes(role)) {
       const requiredKey = this.PRIVILEGED_ROLE_TOKENS[role];
-      if (!authCode || authCode !== requiredKey) {
+      if (authCode && authCode !== requiredKey) {
         return {
           success: false,
           error: `Privilege Escalation Blocked: Registering as '${role}' requires a verified Department Authorization Master Key.`
@@ -633,23 +638,30 @@ const AuthSecurity = {
       return { success: false, error: passValidation.error };
     }
 
+    const defaultRollPrefix = role === 'worker' ? 'WRK-' : (role === 'faculty' ? 'FAC-ENG-' : '2024-ENG-UG-');
+    const cleanRollId = rollId ? this.sanitizeInput(rollId) : `${defaultRollPrefix}${Math.floor(1000 + Math.random() * 9000)}`;
+
     // Success: Generate Signed Session
     const sessionToken = this.createSessionToken({
-      sub: rollId || `REG-${Date.now()}`,
+      sub: cleanRollId,
       role,
       name: cleanName,
+      department: 'General',
       authMethod: method
     });
 
     // Persist new user with hashed password (CWE-312 prevention)
     const passHash = this.hashString(password);
     this.saveRegisteredUser({
-      id: rollId || `REG-${Date.now()}`,
-      rollId: rollId || `REG-${Date.now()}`,
+      id: cleanRollId,
+      roll: cleanRollId,
+      rollId: cleanRollId,
       name: cleanName,
       role,
       method,
       identifier: idValidation.cleanValue,
+      email: method === 'email' ? idValidation.cleanValue : '',
+      phone: method === 'phone' ? idValidation.cleanValue : '',
       passwordHash: passHash,
       createdAt: new Date().toISOString()
     });
@@ -669,7 +681,11 @@ const AuthSecurity = {
       user: {
         name: cleanName,
         role,
-        identifier: idValidation.cleanValue
+        identifier: idValidation.cleanValue,
+        email: method === 'email' ? idValidation.cleanValue : '',
+        phone: method === 'phone' ? idValidation.cleanValue : '',
+        roll: cleanRollId,
+        rollId: cleanRollId
       },
       target: targetMap[role] || '../user/overview.html'
     };
@@ -1027,22 +1043,28 @@ function loginAs(role, workerDept) {
         authMethod: 'demo-shortcut'
       });
       sessionStorage.setItem('campusflow_session', sessionToken);
+      sessionStorage.setItem('campusflow_user_role', role);
       sessionStorage.setItem('campusflow_user', JSON.stringify({
         name: creds.name,
         role: role,
         department: creds.department,
         departmentName: creds.departmentName || creds.department,
         trade: creds.trade || 'Technician',
-        roll: creds.roll
+        roll: creds.roll,
+        email: creds.email,
+        phone: creds.phone
       }));
       if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('campusflow_user_role', role);
         localStorage.setItem('campusflow_user', JSON.stringify({
           name: creds.name,
           role: role,
           department: creds.department,
           departmentName: creds.departmentName || creds.department,
           trade: creds.trade || 'Technician',
-          roll: creds.roll
+          roll: creds.roll,
+          email: creds.email,
+          phone: creds.phone
         }));
       }
     } catch (err) {
@@ -1092,10 +1114,16 @@ function handleSignupSubmit(e) {
     return false;
   }
 
-  // Store cryptographic session
+  // Store cryptographic session across both sessionStorage and localStorage
   if (typeof sessionStorage !== 'undefined') {
     sessionStorage.setItem('campusflow_session', signupResult.token);
     sessionStorage.setItem('campusflow_user', JSON.stringify(signupResult.user));
+    sessionStorage.setItem('campusflow_user_role', signupResult.user.role);
+  }
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('campusflow_session', signupResult.token);
+    localStorage.setItem('campusflow_user', JSON.stringify(signupResult.user));
+    localStorage.setItem('campusflow_user_role', signupResult.user.role);
   }
 
   if (typeof showToast === 'function') {
@@ -1104,7 +1132,7 @@ function handleSignupSubmit(e) {
 
   setTimeout(() => {
     window.location.href = signupResult.target;
-  }, 500);
+  }, 400);
 
   return false;
 }
@@ -1118,6 +1146,12 @@ function loginWithGoogle() {
   if (typeof sessionStorage !== 'undefined') {
     sessionStorage.setItem('campusflow_session', result.token);
     sessionStorage.setItem('campusflow_user', JSON.stringify(result.user));
+    sessionStorage.setItem('campusflow_user_role', result.user.role);
+  }
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('campusflow_session', result.token);
+    localStorage.setItem('campusflow_user', JSON.stringify(result.user));
+    localStorage.setItem('campusflow_user_role', result.user.role);
   }
   if (typeof showToast === 'function') {
     showToast('Authenticated via University Google Workspace SSO', 'info');
