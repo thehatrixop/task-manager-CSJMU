@@ -24,17 +24,101 @@
 
       <!-- Department & Category -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Maintenance Department <span class="text-red-500">*</span></label>
-          <select id="report-dept" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none bg-white">
-            <option value="Electrical">Electrical & Power Systems</option>
-            <option value="HVAC">HVAC & Climate Control</option>
-            <option value="Plumbing">Plumbing & Water Core</option>
-            <option value="Civil">Civil & Structural</option>
-            <option value="Carpentry">Carpentry & Locksmith</option>
-            <option value="General">General Logistics & Sanitation</option>
-          </select>
+        <!-- Multi-Select Maintenance Department -->
+        <div class="relative" id="dept-multiselect-container">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700 uppercase">Maintenance Department <span class="text-red-500">*</span></label>
+            <span class="text-[10px] font-mono text-slate-400">Select 1 or more</span>
+          </div>
+
+          <!-- Hidden input that carries the actual submitted value -->
+          <input type="hidden" id="report-dept" name="report-dept" value="Electrical" required />
+
+          <!-- Multi-Select Trigger Button -->
+          <button
+            type="button"
+            id="dept-multiselect-btn"
+            onclick="toggleDeptDropdown(event)"
+            class="w-full min-h-[42px] px-3 py-1.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 flex items-center justify-between cursor-pointer transition-all text-left shadow-xs"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+          >
+            <div id="dept-chips-container" class="flex flex-wrap items-center gap-1.5 min-w-0 pr-2">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium" data-dept="Electrical">
+                Electrical & Power Systems
+                <span onclick="removeDeptItem('Electrical', event)" class="hover:text-blue-900 cursor-pointer ml-0.5 text-sm leading-none font-bold">&times;</span>
+              </span>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-slate-400 shrink-0 transition-transform duration-200" id="dept-dropdown-arrow">expand_more</span>
+          </button>
+
+          <!-- Dropdown Checkbox Menu -->
+          <div
+            id="dept-dropdown-menu"
+            class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-2 space-y-1 text-xs max-h-64 overflow-y-auto"
+            role="listbox"
+            aria-multiselectable="true"
+          >
+            <div class="px-2 py-1 text-[11px] font-semibold text-slate-400 font-mono border-b border-slate-100 flex items-center justify-between">
+              <span>SELECT DEPARTMENTS</span>
+              <button type="button" onclick="clearAllDepts(event)" class="text-[10px] text-blue-600 hover:underline font-sans font-medium">Clear All</button>
+            </div>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors bg-blue-50/80 text-blue-900" onclick="toggleDeptSelection('Electrical', 'Electrical & Power Systems', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Electrical" checked />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Electrical & Power Systems</span>
+                <span class="text-[10px] text-slate-400">Wiring, switchboards, generators, power points</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('HVAC', 'HVAC & Climate Control', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="HVAC" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">HVAC & Climate Control</span>
+                <span class="text-[10px] text-slate-400">Air conditioning, ventilation, heating units</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Plumbing', 'Plumbing & Water Core', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Plumbing" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Plumbing & Water Core</span>
+                <span class="text-[10px] text-slate-400">Pipes, drainage, washroom fixtures, faucets</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Civil', 'Civil & Structural', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Civil" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Civil & Structural</span>
+                <span class="text-[10px] text-slate-400">Masonry, plaster, flooring, glass panels</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Carpentry', 'Carpentry & Locksmith', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Carpentry" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Carpentry & Locksmith</span>
+                <span class="text-[10px] text-slate-400">Doors, latches, desks, cupboards, windows</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('General', 'General Logistics & Sanitation', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="General" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">General Logistics & Sanitation</span>
+                <span class="text-[10px] text-slate-400">Sanitation, pest control, waste management</span>
+              </div>
+            </label>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-500">
+              <span id="dept-selected-count">1 department selected</span>
+              <button type="button" onclick="closeDeptDropdown()" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[10px] font-semibold hover:bg-slate-800 transition-colors">Done</button>
+            </div>
+          </div>
         </div>
+
         <div>
           <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Problem Category <span class="text-red-500">*</span></label>
           <select id="report-category" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none bg-white">

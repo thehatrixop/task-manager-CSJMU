@@ -361,14 +361,244 @@ function getPriorityBadgeHtml(priority) {
 }
 
 function getDeptBadgeHtml(dept) {
-  const d = (dept || 'General').toLowerCase();
-  let color = 'bg-slate-100 text-slate-700';
-  if (d.includes('elect')) color = 'bg-amber-50 text-amber-800 border-amber-200';
-  else if (d.includes('plumb')) color = 'bg-blue-50 text-blue-800 border-blue-200';
-  else if (d.includes('hvac')) color = 'bg-teal-50 text-teal-800 border-teal-200';
-  else if (d.includes('civil')) color = 'bg-stone-50 text-stone-800 border-stone-200';
-  else if (d.includes('carpent')) color = 'bg-orange-50 text-orange-800 border-orange-200';
-  return `<span class="px-2 py-0.5 ${color} rounded font-mono text-[10px] border">${dept || 'General'}</span>`;
+  if (!dept) return `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded font-mono text-[10px] border border-slate-200">General</span>`;
+  const rawDepts = String(dept).split(',').map(s => s.trim()).filter(Boolean);
+  if (rawDepts.length === 0) return `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded font-mono text-[10px] border border-slate-200">General</span>`;
+  return rawDepts.map(singleDept => {
+    const d = singleDept.toLowerCase();
+    let color = 'bg-slate-100 text-slate-700 border-slate-200';
+    if (d.includes('elect')) color = 'bg-amber-50 text-amber-800 border-amber-200';
+    else if (d.includes('plumb')) color = 'bg-blue-50 text-blue-800 border-blue-200';
+    else if (d.includes('hvac')) color = 'bg-teal-50 text-teal-800 border-teal-200';
+    else if (d.includes('civil')) color = 'bg-stone-50 text-stone-800 border-stone-200';
+    else if (d.includes('carpent')) color = 'bg-orange-50 text-orange-800 border-orange-200';
+    return `<span class="inline-flex items-center px-2 py-0.5 ${color} rounded font-mono text-[10px] border mr-1 mb-0.5 whitespace-nowrap">${singleDept}</span>`;
+  }).join('');
+}
+
+/**
+ * Maintenance Department Multi-Select System
+ */
+const DEPARTMENT_MAP = {
+  'Electrical': 'Electrical & Power Systems',
+  'HVAC': 'HVAC & Climate Control',
+  'Plumbing': 'Plumbing & Water Core',
+  'Civil': 'Civil & Structural',
+  'Carpentry': 'Carpentry & Locksmith',
+  'General': 'General Logistics & Sanitation'
+};
+
+let selectedDepartments = ['Electrical'];
+
+function toggleDeptDropdown(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const menu = document.getElementById('dept-dropdown-menu');
+  const arrow = document.getElementById('dept-dropdown-arrow');
+  const btn = document.getElementById('dept-multiselect-btn');
+  if (!menu) return;
+  const isHidden = menu.classList.contains('hidden');
+  if (isHidden) {
+    menu.classList.remove('hidden');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+  } else {
+    menu.classList.add('hidden');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function closeDeptDropdown() {
+  const menu = document.getElementById('dept-dropdown-menu');
+  const arrow = document.getElementById('dept-dropdown-arrow');
+  const btn = document.getElementById('dept-multiselect-btn');
+  if (menu && !menu.classList.contains('hidden')) {
+    menu.classList.add('hidden');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function toggleDeptSelection(code, label, e) {
+  if (e) {
+    if (e.target.tagName !== 'INPUT') {
+      e.preventDefault();
+      const cb = document.querySelector(`.dept-checkbox[value="${code}"]`);
+      if (cb) cb.checked = !cb.checked;
+    }
+  }
+  syncSelectedDepartmentsFromDOM();
+}
+
+function syncSelectedDepartmentsFromDOM() {
+  const checkboxes = document.querySelectorAll('.dept-checkbox');
+  const selected = [];
+  checkboxes.forEach(cb => {
+    const parentLabel = cb.closest('label');
+    if (cb.checked) {
+      selected.push(cb.value);
+      if (parentLabel) {
+        parentLabel.classList.add('bg-blue-50/80', 'text-blue-900');
+        parentLabel.classList.remove('hover:bg-slate-50');
+      }
+    } else {
+      if (parentLabel) {
+        parentLabel.classList.remove('bg-blue-50/80', 'text-blue-900');
+        parentLabel.classList.add('hover:bg-slate-50');
+      }
+    }
+  });
+
+  selectedDepartments = selected;
+  updateDeptMultiSelectUI();
+}
+
+function updateDeptMultiSelectUI() {
+  const hiddenInput = document.getElementById('report-dept');
+  const chipsContainer = document.getElementById('dept-chips-container');
+  const countEl = document.getElementById('dept-selected-count');
+
+  if (hiddenInput) {
+    hiddenInput.value = selectedDepartments.join(', ');
+  }
+
+  if (chipsContainer) {
+    if (selectedDepartments.length === 0) {
+      chipsContainer.innerHTML = '<span class="text-slate-400 font-normal text-xs">Select one or more departments...</span>';
+    } else {
+      chipsContainer.innerHTML = selectedDepartments.map(code => `
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium" data-dept="${code}">
+          ${DEPARTMENT_MAP[code] || code}
+          <span onclick="removeDeptItem('${code}', event)" class="hover:text-blue-900 cursor-pointer ml-0.5 text-sm leading-none font-bold" title="Remove">&times;</span>
+        </span>
+      `).join('');
+    }
+  }
+
+  if (countEl) {
+    countEl.textContent = `${selectedDepartments.length} department${selectedDepartments.length === 1 ? '' : 's'} selected`;
+  }
+}
+
+function removeDeptItem(code, e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const cb = document.querySelector(`.dept-checkbox[value="${code}"]`);
+  if (cb) {
+    cb.checked = false;
+  }
+  syncSelectedDepartmentsFromDOM();
+}
+
+function clearAllDepts(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const checkboxes = document.querySelectorAll('.dept-checkbox');
+  checkboxes.forEach(cb => {
+    cb.checked = false;
+  });
+  syncSelectedDepartmentsFromDOM();
+}
+
+function resetDeptMultiSelect() {
+  selectedDepartments = ['Electrical'];
+  const checkboxes = document.querySelectorAll('.dept-checkbox');
+  checkboxes.forEach(cb => {
+    cb.checked = cb.value === 'Electrical';
+  });
+  syncSelectedDepartmentsFromDOM();
+}
+
+function initMultiSelectDepartments() {
+  const deptSelect = document.getElementById('report-dept');
+  if (deptSelect && deptSelect.tagName === 'SELECT') {
+    const parent = deptSelect.parentElement;
+    if (parent && !parent.id.includes('dept-multiselect-container')) {
+      const container = document.createElement('div');
+      container.id = 'dept-multiselect-container';
+      container.className = 'relative';
+
+      const initialVal = deptSelect.value || 'Electrical';
+      
+      container.innerHTML = `
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">
+          Maintenance Department <span class="text-red-500">*</span>
+          <span class="text-[10px] text-slate-400 font-normal ml-1 lowercase">(select one or more)</span>
+        </label>
+        <input type="hidden" id="report-dept" name="report-dept" value="${initialVal}" required />
+        <button
+          type="button"
+          id="dept-multiselect-btn"
+          onclick="toggleDeptDropdown(event)"
+          class="w-full min-h-[42px] px-3 py-1.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 flex items-center justify-between cursor-pointer transition-all text-left shadow-xs"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+        >
+          <div id="dept-chips-container" class="flex flex-wrap items-center gap-1.5 min-w-0 pr-2">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium" data-dept="${initialVal}">
+              ${DEPARTMENT_MAP[initialVal] || initialVal}
+              <span onclick="removeDeptItem('${initialVal}', event)" class="hover:text-blue-900 cursor-pointer ml-0.5 text-sm leading-none font-bold">&times;</span>
+            </span>
+          </div>
+          <span class="material-symbols-outlined text-[18px] text-slate-400 shrink-0 transition-transform duration-200" id="dept-dropdown-arrow">expand_more</span>
+        </button>
+        <div
+          id="dept-dropdown-menu"
+          class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-2 space-y-1 text-xs max-h-64 overflow-y-auto"
+          role="listbox"
+          aria-multiselectable="true"
+        >
+          <div class="px-2 py-1 text-[11px] font-semibold text-slate-400 font-mono border-b border-slate-100 flex items-center justify-between">
+            <span>SELECT DEPARTMENTS</span>
+            <button type="button" onclick="clearAllDepts(event)" class="text-[10px] text-blue-600 hover:underline font-sans font-medium">Clear All</button>
+          </div>
+          ${Object.entries(DEPARTMENT_MAP).map(([code, name]) => `
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors ${code === initialVal ? 'bg-blue-50/80 text-blue-900' : ''}" onclick="toggleDeptSelection('${code}', '${name}', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="${code}" ${code === initialVal ? 'checked' : ''} />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">${name}</span>
+              </div>
+            </label>
+          `).join('')}
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-500">
+            <span id="dept-selected-count">1 department selected</span>
+            <button type="button" onclick="closeDeptDropdown()" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[10px] font-semibold hover:bg-slate-800 transition-colors">Done</button>
+          </div>
+        </div>
+      `;
+      parent.replaceChild(container, deptSelect);
+      selectedDepartments = [initialVal];
+    }
+  } else if (document.getElementById('dept-multiselect-container')) {
+    const checked = Array.from(document.querySelectorAll('.dept-checkbox:checked')).map(cb => cb.value);
+    if (checked.length > 0) {
+      selectedDepartments = checked;
+    }
+    updateDeptMultiSelectUI();
+  }
+
+  if (!window._deptOutsideClickBound) {
+    window._deptOutsideClickBound = true;
+    document.addEventListener('click', (e) => {
+      const container = document.getElementById('dept-multiselect-container');
+      if (container && !container.contains(e.target)) {
+        closeDeptDropdown();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDeptDropdown();
+      }
+    });
+  }
 }
 
 /**
@@ -385,7 +615,22 @@ function handleUserComplaintSubmit(e) {
   const prioEl = document.querySelector('input[name="report-priority"]:checked');
 
   const title = titleEl && titleEl.value.trim() ? titleEl.value.trim() : 'Facility Issue';
-  const dept = deptEl ? deptEl.value : 'General';
+  let dept = 'General';
+  if (typeof selectedDepartments !== 'undefined' && selectedDepartments && selectedDepartments.length > 0) {
+    dept = selectedDepartments.join(', ');
+  } else if (deptEl && deptEl.value) {
+    dept = deptEl.value;
+  }
+  if (!dept || dept.trim() === '') {
+    showToast('Please select at least one maintenance department.', 'warning');
+    const btn = document.getElementById('dept-multiselect-btn');
+    if (btn) {
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      btn.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+      setTimeout(() => btn.classList.remove('border-red-500', 'ring-2', 'ring-red-200'), 2500);
+    }
+    return;
+  }
   const category = catEl ? catEl.value : 'Hazardous / Sparking';
   const location = locEl && locEl.value.trim() ? locEl.value.trim() : 'Academic Block B, Rm 204';
   const description = descEl && descEl.value.trim() ? descEl.value.trim() : 'Reported issue by student.';
@@ -472,6 +717,7 @@ function handleUserComplaintSubmit(e) {
   if (titleEl) titleEl.value = '';
   if (locEl) locEl.value = '';
   if (descEl) descEl.value = '';
+  if (typeof resetDeptMultiSelect === 'function') resetDeptMultiSelect();
   removeMockFile();
 
   renderActiveDashboard();
@@ -692,7 +938,7 @@ function openEditComplaintModal(ticketId) {
   if (titleEl) titleEl.value = ticket.title || '';
 
   const deptEl = document.getElementById('edit-dept');
-  if (deptEl) deptEl.value = ticket.department || 'Electrical';
+  if (deptEl) deptEl.value = (ticket.department || 'Electrical').split(',')[0].trim();
 
   const catEl = document.getElementById('edit-category');
   if (catEl) catEl.value = ticket.category || 'Hazardous / Sparking';
@@ -1072,6 +1318,7 @@ function renderActiveDashboard() {
 
   // Ensure top-right Profile Picture Dropdown is active and sidebar Profile link is removed
   initProfileDropdown();
+  if (typeof initMultiSelectDepartments === 'function') initMultiSelectDepartments();
 
   const path = window.location.pathname.toLowerCase();
   const complaints = getStoredComplaints();
@@ -2483,4 +2730,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initInteractiveFilters();
   initInWebsiteSearch();
   initProfileDropdown();
+  if (typeof initMultiSelectDepartments === 'function') initMultiSelectDepartments();
 });
