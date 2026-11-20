@@ -56,6 +56,30 @@
           </div>
         </div>
 
+        <!-- FIELD 1B: WORKER MAINTENANCE DEPARTMENT SUB-ROLE (Visible when Role == 'worker') -->
+        <div id="worker-dept-field" class="hidden transition-all duration-300">
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+            <span>Maintenance Department</span>
+            <span class="text-[10px] text-blue-700 font-mono font-bold" id="worker-trade-badge">Specialist Roster</span>
+          </label>
+          <div class="relative">
+            <select id="login-worker-dept" onchange="handleWorkerDeptChange(this.value)" class="w-full h-11 px-3.5 pl-10 pr-9 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all appearance-none cursor-pointer">
+              <option value="Electrical" selected>⚡ Electrical & Power Systems (Rajesh Kumar)</option>
+              <option value="HVAC">❄️ HVAC & Climate Control (Vikram Singh)</option>
+              <option value="Plumbing">🔧 Plumbing & Water Core (Suresh Nair)</option>
+              <option value="Civil">🏗️ Civil & Structural (Amit Deshmukh)</option>
+              <option value="Carpentry">🪚 Carpentry & Locksmith (Mohammad Tariq)</option>
+              <option value="General">🧹 General Logistics & Sanitation (Rohan Verma)</option>
+            </select>
+            <span class="material-symbols-outlined absolute left-3 top-3 text-slate-400 pointer-events-none text-[18px]">engineering</span>
+            <span class="material-symbols-outlined absolute right-3 top-3 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1 font-mono" id="worker-dept-hint">
+            <span class="material-symbols-outlined text-[14px] text-blue-600">verified_user</span>
+            <span>You will receive maintenance dispatches scoped to this department.</span>
+          </p>
+        </div>
+
         <!-- FIELD 2: WAY OF LOGIN (EMAIL VS PHONE NUMBER) -->
         <div>
           <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">

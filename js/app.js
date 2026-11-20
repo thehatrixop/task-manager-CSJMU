@@ -388,6 +388,149 @@ const DEPARTMENT_MAP = {
   'General': 'General Logistics & Sanitation'
 };
 
+/**
+ * Worker Sub-Roles Divided by Maintenance Department
+ */
+const WORKER_DEPARTMENTS = {
+  'Electrical': {
+    code: 'Electrical',
+    name: 'Rajesh Kumar',
+    roleTitle: 'Senior Electrician',
+    id: 'WRK-0018',
+    initials: 'RK',
+    department: 'Electrical',
+    departmentName: 'Electrical & Power Systems',
+    trade: 'Senior Electrician'
+  },
+  'HVAC': {
+    code: 'HVAC',
+    name: 'Vikram Singh',
+    roleTitle: 'HVAC Specialist',
+    id: 'WRK-0019',
+    initials: 'VS',
+    code: 'HVAC',
+    department: 'HVAC',
+    departmentName: 'HVAC & Climate Control',
+    trade: 'HVAC Specialist'
+  },
+  'Plumbing': {
+    code: 'Plumbing',
+    name: 'Suresh Nair',
+    roleTitle: 'Master Plumber',
+    id: 'WRK-0022',
+    initials: 'SN',
+    code: 'Plumbing',
+    department: 'Plumbing',
+    departmentName: 'Plumbing & Water Core',
+    trade: 'Master Plumber'
+  },
+  'Civil': {
+    code: 'Civil',
+    name: 'Amit Deshmukh',
+    roleTitle: 'Civil & Structural Mason',
+    id: 'WRK-0025',
+    initials: 'AD',
+    code: 'Civil',
+    department: 'Civil',
+    departmentName: 'Civil & Structural',
+    trade: 'Civil & Structural Mason'
+  },
+  'Carpentry': {
+    code: 'Carpentry',
+    name: 'Mohammad Tariq',
+    roleTitle: 'Lead Carpenter & Locksmith',
+    id: 'WRK-0028',
+    initials: 'MT',
+    code: 'Carpentry',
+    department: 'Carpentry',
+    departmentName: 'Carpentry & Locksmith',
+    trade: 'Lead Carpenter & Locksmith'
+  },
+  'General': {
+    code: 'General',
+    name: 'Rohan Verma',
+    roleTitle: 'Logistics & Sanitation Supervisor',
+    id: 'WRK-0031',
+    initials: 'RV',
+    code: 'General',
+    department: 'General',
+    departmentName: 'General Logistics & Sanitation',
+    trade: 'Logistics & Sanitation Supervisor'
+  }
+};
+
+function getActiveWorkerDepartment() {
+  try {
+    const raw = sessionStorage.getItem('campusflow_user') || localStorage.getItem('campusflow_user');
+    if (raw) {
+      const u = JSON.parse(raw);
+      if (u.department) return u.department;
+    }
+  } catch (e) {}
+  return (typeof localStorage !== 'undefined' ? localStorage.getItem('campusflow_worker_dept') : null) || 'Electrical';
+}
+
+function setActiveWorkerDepartment(dept) {
+  const d = dept || 'Electrical';
+  if (typeof localStorage !== 'undefined') localStorage.setItem('campusflow_worker_dept', d);
+  try {
+    const raw = sessionStorage.getItem('campusflow_user') || localStorage.getItem('campusflow_user');
+    let u = raw ? JSON.parse(raw) : { role: 'worker' };
+    const profile = WORKER_DEPARTMENTS[d] || WORKER_DEPARTMENTS.Electrical;
+    u.name = profile.name;
+    u.department = profile.code;
+    u.departmentName = profile.departmentName;
+    u.trade = profile.trade;
+    u.roll = profile.id;
+    if (typeof sessionStorage !== 'undefined') sessionStorage.setItem('campusflow_user', JSON.stringify(u));
+    if (typeof localStorage !== 'undefined') localStorage.setItem('campusflow_user', JSON.stringify(u));
+  } catch (e) {}
+  if (typeof renderActiveDashboard === 'function') renderActiveDashboard();
+  if (typeof showToast === 'function') {
+    showToast(`Switched active technician trade to: ${WORKER_DEPARTMENTS[d]?.departmentName || d}`, 'info');
+  }
+}
+
+function complaintMatchesWorkerDept(complaint, workerDept) {
+  if (!complaint) return false;
+  const cDept = (complaint.department || '').toLowerCase();
+  const wDept = (workerDept || 'electrical').toLowerCase();
+  
+  const KEYWORDS = {
+    'electrical': ['elect', 'power', 'wiring', 'switchboard', 'voltage', 'short circuit', 'spark'],
+    'hvac': ['hvac', 'climate', 'ac', 'air conditioning', 'ventilation', 'heating', 'cooling'],
+    'plumbing': ['plumb', 'water', 'drain', 'leak', 'pipe', 'faucet', 'toilet', 'washroom', 'flush'],
+    'civil': ['civil', 'structur', 'masonry', 'wall', 'floor', 'tile', 'plaster', 'ceiling', 'crack'],
+    'carpentry': ['carpent', 'locksmith', 'door', 'window', 'desk', 'wood', 'latch', 'hinge', 'cabinet'],
+    'general': ['general', 'logistics', 'sanitation', 'clean', 'waste', 'pest', 'garbage']
+  };
+
+  if (cDept.includes(wDept) || wDept.includes(cDept)) return true;
+
+  const keywords = KEYWORDS[wDept] || [wDept];
+  return keywords.some(k => cDept.includes(k));
+}
+
+function getTechnicianForDepartment(dept) {
+  const d = (dept || '').toLowerCase();
+  if (d.includes('hvac') || d.includes('air') || d.includes('climat') || d.includes('ventilat')) {
+    return { name: 'Vikram Singh (WRK-0019)', roll: 'WRK-0019', dept: 'HVAC', trade: 'HVAC Specialist' };
+  }
+  if (d.includes('plumb') || d.includes('water') || d.includes('pipe') || d.includes('drain') || d.includes('leak')) {
+    return { name: 'Suresh Nair (WRK-0022)', roll: 'WRK-0022', dept: 'Plumbing', trade: 'Master Plumber' };
+  }
+  if (d.includes('civil') || d.includes('struct') || d.includes('mason') || d.includes('wall') || d.includes('floor')) {
+    return { name: 'Amit Deshmukh (WRK-0025)', roll: 'WRK-0025', dept: 'Civil', trade: 'Civil & Structural Mason' };
+  }
+  if (d.includes('carpent') || d.includes('lock') || d.includes('wood') || d.includes('door') || d.includes('desk')) {
+    return { name: 'Mohammad Tariq (WRK-0028)', roll: 'WRK-0028', dept: 'Carpentry', trade: 'Lead Carpenter & Locksmith' };
+  }
+  if (d.includes('general') || d.includes('sanitat') || d.includes('clean') || d.includes('waste') || d.includes('pest')) {
+    return { name: 'Rohan Verma (WRK-0031)', roll: 'WRK-0031', dept: 'General', trade: 'Sanitation & Logistics Supervisor' };
+  }
+  return { name: 'Rajesh Kumar (WRK-0018)', roll: 'WRK-0018', dept: 'Electrical', trade: 'Senior Electrician' };
+}
+
 let selectedDepartments = ['Electrical'];
 
 function toggleDeptDropdown(e) {
@@ -657,7 +800,8 @@ function handleUserComplaintSubmit(e) {
   const complainantName = isFaculty ? (sessionUser && sessionUser.name ? `${sessionUser.name} (Faculty)` : 'Prof. Ananya Sen (Faculty)') : (sessionUser && sessionUser.name ? `${sessionUser.name} (Student)` : 'Aarav Patel (Student)');
   const complainantId = isFaculty ? (sessionUser && sessionUser.roll ? sessionUser.roll : 'FAC-ENG-089') : (sessionUser && sessionUser.roll ? sessionUser.roll : '2024-ENG-UG-0142');
   const initialStatus = isFaculty ? 'VERIFIED_DISPATCHED' : 'PENDING_VERIFICATION';
-  const initialWorker = isFaculty ? 'Rajesh Kumar (WRK-0018)' : 'Pending Authority Verification';
+  const assignedTech = getTechnicianForDepartment(dept);
+  const initialWorker = isFaculty ? assignedTech.name : 'Pending Authority Verification';
   const verifiedBy = isFaculty ? 'Autonomous Engine (Faculty Auto-Verification Privilege)' : null;
 
   const newTicket = {
@@ -1106,8 +1250,9 @@ function approveComplaint(ticketId) {
   const ticket = complaints.find(c => c.id === targetId);
 
   if (ticket) {
+    const tech = getTechnicianForDepartment(ticket.department);
     ticket.status = 'VERIFIED_DISPATCHED';
-    ticket.worker = 'Rajesh Kumar (WRK-0018)';
+    ticket.worker = tech.name;
     ticket.verifiedBy = 'Dr. Ramesh Sharma (HOD / Warden)';
     ticket.verifiedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     ticket.submittedTime = 'Just now';
@@ -1177,15 +1322,17 @@ function acceptJobWorker(ticketId) {
   const targetId = ticketId || 'CF-2026-00124';
   const complaints = getStoredComplaints();
   const ticket = complaints.find(c => c.id === targetId);
+  const workerDept = getActiveWorkerDepartment();
+  const workerProfile = WORKER_DEPARTMENTS[workerDept] || WORKER_DEPARTMENTS.Electrical;
   if (ticket) {
     ticket.status = 'ACTIVE_IN_PROGRESS';
-    ticket.worker = 'Rajesh Kumar (WRK-0018)';
+    ticket.worker = `${workerProfile.name} (${workerProfile.id})`;
     ticket.submittedTime = 'Just now';
     saveStoredComplaints(complaints);
-    addAuditLog('Rajesh Kumar', 'Worker', 'ACCEPT_JOB', targetId, 'DISPATCHED → ACTIVE_IN_PROGRESS');
+    addAuditLog(workerProfile.name, 'Worker', 'ACCEPT_JOB', targetId, 'DISPATCHED → ACTIVE_IN_PROGRESS');
   }
 
-  showToast(`Job ${targetId} accepted! Locked into Active Work Order.`, 'success');
+  showToast(`Job ${targetId} accepted by ${workerProfile.name}! Locked into Active Work Order.`, 'success');
   renderActiveDashboard();
   setTimeout(() => {
     navigateTo('worker-active', 'worker');
@@ -1746,10 +1893,29 @@ function renderActiveDashboard() {
     }
   }
 
+  // WORKER PORTAL - Active Worker Context & Department Scoping
+  const workerDept = getActiveWorkerDepartment();
+  const workerProfile = WORKER_DEPARTMENTS[workerDept] || WORKER_DEPARTMENTS.Electrical;
+
+  // Update Worker Shift Banner (overview.html and elsewhere in worker dashboard)
+  if (path.includes('worker')) {
+    const shiftBanner = document.querySelector('div.mb-6.p-4.sm\\:p-5.bg-slate-900.text-white');
+    if (shiftBanner) {
+      const avatarBox = shiftBanner.querySelector('.w-12.h-12');
+      if (avatarBox) avatarBox.textContent = workerProfile.initials;
+      const nameH2 = shiftBanner.querySelector('h2');
+      if (nameH2) nameH2.textContent = workerProfile.name;
+      const rollSpan = shiftBanner.querySelector('.font-mono.text-xs.text-slate-400');
+      if (rollSpan) rollSpan.textContent = workerProfile.id;
+      const deptP = shiftBanner.querySelector('p.text-xs.text-slate-300');
+      if (deptP) deptP.textContent = `${workerProfile.departmentName} • Shift A (08:00 - 16:30)`;
+    }
+  }
+
   // 7. WORKER - Incoming Dispatch (worker/incoming-dispatch.html)
   if (path.includes('incoming-dispatch')) {
-    // Worker ONLY receives complaints after warden verification (VERIFIED_DISPATCHED)
-    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED');
+    // Worker ONLY receives complaints after warden verification in their assigned department
+    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED' && complaintMatchesWorkerDept(c, workerDept));
     const idEl = document.querySelector('.text-lg.font-bold.font-mono.text-slate-900');
     const deptEl = document.querySelector('.text-sm.font-bold.text-amber-700');
     const titleEl = document.querySelector('h3.text-xs.font-bold.uppercase.text-slate-500 + p.text-base.font-bold');
@@ -1777,12 +1943,12 @@ function renderActiveDashboard() {
         declineBtn.classList.remove('opacity-50', 'cursor-not-allowed');
       }
     } else {
-      // Standby state: no unverified complaints are shown to workers
+      // Standby state scoped to this worker's department
       if (idEl) idEl.textContent = 'STANDBY';
-      if (deptEl) deptEl.textContent = 'Maintenance';
-      if (titleEl) titleEl.textContent = 'Shift Queue Clear • Standing By';
-      if (locEl) locEl.textContent = 'Technician Station — Academic Block B';
-      if (descEl) descEl.textContent = 'Zero incoming dispatches awaiting response. When a hostel warden or department head verifies a newly reported issue, it will immediately alert here with a 30-minute acceptance timer.';
+      if (deptEl) deptEl.textContent = workerProfile.departmentName;
+      if (titleEl) titleEl.textContent = `Shift Queue Clear • Standing By (${workerProfile.code})`;
+      if (locEl) locEl.textContent = `Technician Station — Scoped to ${workerProfile.departmentName}`;
+      if (descEl) descEl.textContent = `Zero incoming dispatches awaiting response for ${workerProfile.departmentName}. When an issue in your department is verified, it will immediately alert here with a 30-minute acceptance timer.`;
       if (timerDisplay) timerDisplay.textContent = 'STANDBY';
 
       const acceptBtn = document.querySelector('button[onclick*="acceptJobWorker"]');
@@ -1802,24 +1968,24 @@ function renderActiveDashboard() {
   if (path.includes('worker/overview')) {
     const alertBanner = document.getElementById('worker-urgent-alert');
     const standbyBanner = document.getElementById('worker-standby-banner');
-    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED');
+    const latestDispatched = complaints.find(c => c.status === 'VERIFIED_DISPATCHED' && complaintMatchesWorkerDept(c, workerDept));
 
     if (latestDispatched) {
-      // Warden has verified & dispatched this ticket -> Alert the worker!
+      // Warden has verified & dispatched this ticket in this worker's department
       if (alertBanner) alertBanner.classList.remove('hidden');
       if (standbyBanner) standbyBanner.classList.add('hidden');
       const titleEl = document.getElementById('worker-urgent-title') || (alertBanner ? alertBanner.querySelector('h3') : null);
       if (titleEl) titleEl.textContent = `${latestDispatched.id}: ${latestDispatched.title}`;
       const metaEl = document.getElementById('worker-urgent-meta') || (alertBanner ? alertBanner.querySelector('p') : null);
-      if (metaEl) metaEl.textContent = `${latestDispatched.location} • Complainant: ${latestDispatched.complainant || 'Student'}`;
+      if (metaEl) metaEl.textContent = `${latestDispatched.location} • Trade: ${latestDispatched.department}`;
     } else {
-      // Still pending warden verification or no tickets -> Keep worker peaceful on standby
+      // No tickets in worker's trade -> Keep worker peaceful on standby
       if (alertBanner) alertBanner.classList.add('hidden');
       if (standbyBanner) standbyBanner.classList.remove('hidden');
     }
 
     const shiftJobsEl = document.querySelector('main .grid.grid-cols-2.lg\\:grid-cols-4 > div:first-child .text-2xl');
-    const verifiedJobsCount = complaints.filter(c => c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS').length;
+    const verifiedJobsCount = complaints.filter(c => (c.status === 'VERIFIED_DISPATCHED' || c.status === 'ACTIVE_IN_PROGRESS') && complaintMatchesWorkerDept(c, workerDept)).length;
     if (shiftJobsEl) shiftJobsEl.textContent = `${verifiedJobsCount} Tasks`;
   }
 
@@ -1978,7 +2144,7 @@ function renderActiveDashboard() {
   // 13. WORKER - Completed Jobs
   if (path.includes('completed-jobs')) {
     const tbody = document.querySelector('main table tbody');
-    const resolvedJobs = complaints.filter(c => c.status === 'RESOLVED');
+    const resolvedJobs = complaints.filter(c => (c.status === 'RESOLVED' || c.status === 'COMPLETED_RESOLVED') && complaintMatchesWorkerDept(c, workerDept));
     if (tbody) {
       if (resolvedJobs.length === 0) {
         tbody.innerHTML = `
@@ -1986,7 +2152,7 @@ function renderActiveDashboard() {
             <td colspan="5" class="py-12 text-center text-slate-500 text-xs">
               <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">task</span>
               <p class="font-medium text-slate-700">No Completed Jobs</p>
-              <p class="text-xs text-slate-400 mt-0.5">Work orders you successfully resolve and sign off will appear in this ledger</p>
+              <p class="text-xs text-slate-400 mt-0.5">Work orders in ${workerProfile.departmentName} you successfully resolve and sign off will appear in this ledger</p>
             </td>
           </tr>
         `;
@@ -2001,6 +2167,17 @@ function renderActiveDashboard() {
           </tr>
         `).join('');
       }
+    }
+  }
+
+  // 13B. WORKER - Active Job Live
+  if (path.includes('active-job')) {
+    const activeJob = complaints.find(c => c.status === 'ACTIVE_IN_PROGRESS' && complaintMatchesWorkerDept(c, workerDept));
+    const locP = document.querySelector('p.text-xs.text-slate-600.font-mono');
+    const targetLocP = document.querySelector('p.text-sm.font-semibold.text-slate-900.font-mono');
+    if (activeJob) {
+      if (locP) locP.textContent = `${activeJob.id} • ${activeJob.location}`;
+      if (targetLocP) targetLocP.textContent = `${activeJob.location} (${activeJob.department})`;
     }
   }
 }
@@ -2483,6 +2660,16 @@ function selectSearchResult(ticketId) {
 function getCurrentUserInfo() {
   const path = window.location.pathname.toLowerCase();
   let role = localStorage.getItem('campusflow_user_role') || sessionStorage.getItem('campusflow_user_role');
+  let sessionUser = null;
+  try {
+    const raw = sessionStorage.getItem('campusflow_user') || localStorage.getItem('campusflow_user');
+    if (raw) sessionUser = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!role && sessionUser?.role) {
+    role = sessionUser.role;
+  }
+
   if (!role) {
     if (path.includes('/user/')) role = 'user';
     else if (path.includes('/faculty/')) role = 'faculty';
@@ -2493,19 +2680,22 @@ function getCurrentUserInfo() {
     else role = 'user';
   }
 
+  const workerDept = getActiveWorkerDepartment();
+  const workerProfile = WORKER_DEPARTMENTS[workerDept] || WORKER_DEPARTMENTS.Electrical;
+
   const profiles = {
     user: {
-      name: 'Aarav Patel',
+      name: sessionUser && sessionUser.role === 'user' ? sessionUser.name : 'Aarav Patel',
       roleTitle: 'Student / Complainant',
-      id: '2024-ENG-UG-0142',
+      id: sessionUser && sessionUser.role === 'user' ? (sessionUser.roll || '2024-ENG-UG-0142') : '2024-ENG-UG-0142',
       initials: 'AP',
       profileView: 'user-profile',
       profileFile: 'profile.html'
     },
     faculty: {
-      name: 'Prof. Ananya Sen',
+      name: sessionUser && sessionUser.role === 'faculty' ? sessionUser.name : 'Prof. Ananya Sen',
       roleTitle: 'Faculty / Professor',
-      id: 'FAC-ENG-089',
+      id: sessionUser && sessionUser.role === 'faculty' ? (sessionUser.roll || 'FAC-ENG-089') : 'FAC-ENG-089',
       initials: 'AS',
       profileView: 'faculty-profile',
       profileFile: 'profile.html'
@@ -2519,10 +2709,13 @@ function getCurrentUserInfo() {
       profileFile: 'settings.html'
     },
     worker: {
-      name: 'Rajesh Kumar',
-      roleTitle: 'Senior Electrician',
-      id: 'WRK-0018',
-      initials: 'RK',
+      name: workerProfile.name,
+      roleTitle: `${workerProfile.trade} (${workerProfile.departmentName})`,
+      id: workerProfile.id,
+      initials: workerProfile.initials,
+      department: workerProfile.code,
+      departmentName: workerProfile.departmentName,
+      trade: workerProfile.trade,
       profileView: 'worker-profile',
       profileFile: 'profile.html'
     },
@@ -2673,6 +2866,22 @@ function initProfileDropdown() {
           </div>
         </div>
 
+        ${info.role === 'worker' ? `
+        <div class="px-3.5 py-2.5 bg-blue-50/80 border-b border-blue-100 flex flex-col gap-1.5">
+          <div class="flex items-center justify-between text-[10px] font-mono font-bold text-blue-900 uppercase">
+            <span>Maintenance Trade</span>
+            <span class="px-1.5 py-0.5 rounded bg-blue-200 text-blue-900">${info.department || 'Electrical'}</span>
+          </div>
+          <select onchange="setActiveWorkerDepartment(this.value)" class="w-full text-xs font-semibold py-1.5 px-2 bg-white border border-blue-200 rounded-lg text-slate-800 focus:outline-none cursor-pointer">
+            <option value="Electrical" ${(info.department || 'Electrical') === 'Electrical' ? 'selected' : ''}>⚡ Electrical & Power (Rajesh Kumar)</option>
+            <option value="HVAC" ${(info.department || 'Electrical') === 'HVAC' ? 'selected' : ''}>❄️ HVAC & Climate (Vikram Singh)</option>
+            <option value="Plumbing" ${(info.department || 'Electrical') === 'Plumbing' ? 'selected' : ''}>🔧 Plumbing & Water (Suresh Nair)</option>
+            <option value="Civil" ${(info.department || 'Electrical') === 'Civil' ? 'selected' : ''}>🏗️ Civil & Structural (Amit Deshmukh)</option>
+            <option value="Carpentry" ${(info.department || 'Electrical') === 'Carpentry' ? 'selected' : ''}>🪚 Carpentry & Locksmith (Mohammad Tariq)</option>
+            <option value="General" ${(info.department || 'Electrical') === 'General' ? 'selected' : ''}>🧹 General Logistics (Rohan Verma)</option>
+          </select>
+        </div>` : ''}
+
         <div class="p-1.5 space-y-0.5">
           <a href="#" onclick="handleProfileNav(event)" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium group">
             <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-700 transition-colors">manage_accounts</span>
@@ -2710,6 +2919,17 @@ function initProfileDropdown() {
     } else {
       rightContainer.appendChild(profileWrapper);
     }
+  } else {
+    const avatarText = document.getElementById('topbar-avatar-text');
+    if (avatarText) avatarText.textContent = info.initials;
+    const dAvatar = document.getElementById('dropdown-user-avatar');
+    if (dAvatar) dAvatar.textContent = info.initials;
+    const dName = document.getElementById('dropdown-user-name');
+    if (dName) dName.textContent = info.name;
+    const dRole = document.getElementById('dropdown-user-role');
+    if (dRole) dRole.textContent = info.roleTitle;
+    const dId = document.getElementById('dropdown-user-id');
+    if (dId) dId.textContent = info.id;
   }
 
   // Bind outside click

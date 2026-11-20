@@ -69,8 +69,14 @@
    - Scope: Department heads and hostel wardens scoped to their jurisdiction (e.g., *Academic Block B & Labs*).
    - Capabilities: Verification queue, 1-tap Approve & Dispatch, Reject with stated reason, Request additional clarification.
 4. **Worker / Field Technician** (`WORKER`):
-   - Scope: Electricians, plumbers, HVAC technicians, carpenters, civil maintenance, sanitation staff.
-   - Capabilities: Mobile-first interface with **ONLINE/OFFLINE** toggle, urgent incoming dispatch cards with **30-Minute Ticking Countdown Timer**, Accept/Decline actions, progress logging, and completion with photographic proof.
+   - Scope: Multi-trade field workforce divided into 6 specialized maintenance department sub-roles:
+     - **Electrical & Power Systems**: Rajesh Kumar (`WRK-0018`), Senior Electrician
+     - **HVAC & Climate Control**: Vikram Singh (`WRK-0019`), HVAC Specialist
+     - **Plumbing & Water Core**: Suresh Nair (`WRK-0022`), Master Plumber
+     - **Civil & Structural**: Amit Deshmukh (`WRK-0025`), Structural Mason
+     - **Carpentry & Locksmith**: Mohammad Tariq (`WRK-0028`), Lead Carpenter & Locksmith
+     - **General Logistics & Sanitation**: Rohan Verma (`WRK-0031`), Sanitation Supervisor
+   - Capabilities: Department-scoped job dispatching (workers strictly see and receive dispatches relevant to their selected trade), reactive department selection on login, in-portal trade switching, mobile-first interface with **ONLINE/OFFLINE** toggle, urgent incoming dispatch cards with **30-Minute Ticking Countdown Timer**, Accept/Decline actions, progress logging, and completion with photographic proof.
 5. **Facilities Admin** (`ADMIN`):
    - Scope: Campus facilities superintendents and dispatch coordinators.
    - Capabilities: Master ticket database, workforce roster (95 technicians), worker account provisioning, department management, assignment telemetry monitoring, manual reassignment override.
