@@ -2620,6 +2620,17 @@ function initProfileDropdown() {
     });
   }
 
+  // 1b. Remove bottom profile detail card & redundant exit link from sidebar
+  const sidebar = document.getElementById('auth-sidebar');
+  if (sidebar) {
+    const bottomProfile = sidebar.querySelector('.pt-4.border-t') || 
+                          sidebar.querySelector('.border-t.border-slate-800') ||
+                          Array.from(sidebar.children).find(child => child !== sidebar.firstElementChild && child.textContent.includes('Exit to Public Site'));
+    if (bottomProfile) {
+      bottomProfile.remove();
+    }
+  }
+
   // 2. Locate right actions container in header
   const rightContainer = header.querySelector('.flex.items-center.gap-3:last-child') ||
     Array.from(header.querySelectorAll('div')).find(d => d.classList.contains('gap-3') && d.querySelector('button, a'));

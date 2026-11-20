@@ -642,22 +642,6 @@ Object.keys(rolesConfig).forEach(roleKey => {
         ${navLinksHtml}
       </nav>
     </div>
-
-    <div class="pt-4 border-t border-slate-800/80">
-      <div class="flex items-center gap-3 px-2 py-2 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center font-mono font-bold text-xs">
-          ${role.avatar}
-        </div>
-        <div class="flex flex-col truncate">
-          <span class="text-xs font-bold text-white truncate">${role.name}</span>
-          <span class="text-[10px] text-slate-400 font-mono truncate">${role.sub}</span>
-        </div>
-      </div>
-      <a href="../../index.html" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg transition-colors">
-        <span class="material-symbols-outlined text-[16px]">logout</span>
-        <span>Exit to Public Site</span>
-      </a>
-    </div>
   </aside>
 
   <!-- Main Canvas -->
