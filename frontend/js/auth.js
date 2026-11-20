@@ -719,8 +719,52 @@ const AuthSecurity = {
       user: { name, role: 'user', email: emailCheck.cleanValue },
       target: '../user/overview.html'
     };
+  },
+
+  /**
+   * 10. SYSTEM SIGNOUT & SESSION INVALIDATION
+   */
+  signOut() {
+    const keys = [
+      'campusflow_session',
+      'campusflow_session_token',
+      'campusflow_user',
+      'campusflow_user_role',
+      'campusflow_worker_dept',
+      'campusflow_selected_ticket'
+    ];
+    keys.forEach(k => {
+      try {
+        if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(k);
+        if (typeof localStorage !== 'undefined') localStorage.removeItem(k);
+      } catch (e) {}
+    });
+
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const bc = new BroadcastChannel('campusflow_bus');
+        bc.postMessage({ type: 'AUTH_LOGOUT' });
+      } catch (e) {}
+    }
   }
 };
+
+// Global signout export for universal access
+if (typeof window !== 'undefined') {
+  window.performSignOut = () => AuthSecurity.signOut();
+  window.handleSignOutNav = function(event) {
+    if (event) {
+      try {
+        event.preventDefault();
+        event.stopPropagation();
+      } catch (e) {}
+    }
+    AuthSecurity.signOut();
+    const isFrontend = window.location.pathname.includes('/frontend/');
+    const target = isFrontend ? '/frontend/pages/public/login.html?mode=signin' : '/pages/public/login.html?mode=signin';
+    window.location.href = target;
+  };
+}
 
 // =========================================================================
 // BROWSER UI CONTROLLER EVENT HANDLERS

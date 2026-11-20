@@ -61,6 +61,11 @@
     - **Algorithmic Initials Engine (`getInitials`)**: Strips honorifics (`Prof.`, `Dr.`, `Mr.`, `Ms.`) and extracts 2-letter uppercase initials dynamically from any user's registered or logged-in legal name (e.g., `John Doe` → `JD`, `Tarun Sharma` → `TS`).
     - **Deterministic Palette (`getAvatarColor`)**: Computes a stable brand avatar color (`bg-blue-600`, `bg-emerald-600`, `bg-indigo-600`, `bg-violet-600`, `bg-teal-600`, `bg-rose-600`, `bg-cyan-700`, `bg-slate-900`) derived from the user's name hash.
     - **Header & Profile Page Synchronization**: The top-right avatar button, dropdown card, and dedicated profile pages (`pages/<role>/profile.html`) dynamically bind to `sessionStorage` and `localStorage`, rendering user-specific name, roll ID, email, and avatar badge rather than static defaults.
+  - **Complete Sign Out & Session Invalidation (`performSignOut` & `handleSignOutNav`)**:
+    - **Storage Purge**: Purges `campusflow_session`, `campusflow_session_token`, `campusflow_user`, `campusflow_user_role`, and `campusflow_worker_dept` across both `sessionStorage` and `localStorage`.
+    - **Public Page Guard**: Blocks the profile picture dropdown (`#profile-dropdown-wrapper`) from rendering on public pages (`index.html`, `pages/public/*`, `login.html`) or when unauthenticated, restoring clean "Sign In" and "Get Started" buttons.
+    - **Dashboard Route Guard**: Intercepts unauthenticated dashboard access (`renderActiveDashboard`), automatically bouncing unauthorized visitors to `login.html?mode=signin`.
+    - **Global Signout Click Interceptor**: Universal click handler detects any Sign Out link/button across all 60 pages and invokes `handleSignOutNav()`.
   - **Direct Role Redirection**: On submit, authenticates and routes directly to the corresponding role dashboard (`#user-overview`, `#faculty-overview`, `#authority-overview`, `#worker-overview`, `#admin-overview`, `#super-overview`).
   - **Authenticated Topbar**: Contains "Switch Role" and "Sign Out" actions to easily toggle between personas or return to the public landing page.
 1. **Student / Complainant** (`USER`):

@@ -1468,6 +1468,23 @@ function renderActiveDashboard() {
   if (typeof initMultiSelectDepartments === 'function') initMultiSelectDepartments();
 
   const path = window.location.pathname.toLowerCase();
+  const isDashboardPage = ['/user/', '/faculty/', '/authority/', '/worker/', '/admin/', '/super/'].some(r => path.includes(r));
+  if (isDashboardPage) {
+    let hasSession = false;
+    try {
+      const rawUser = sessionStorage.getItem('campusflow_user') || localStorage.getItem('campusflow_user');
+      const rawToken = sessionStorage.getItem('campusflow_session') || localStorage.getItem('campusflow_session');
+      if (rawUser && rawToken) hasSession = true;
+    } catch (e) {}
+
+    if (!hasSession) {
+      const isFrontend = path.includes('/frontend/');
+      const target = isFrontend ? '/frontend/pages/public/login.html?mode=signin' : '/pages/public/login.html?mode=signin';
+      window.location.href = target;
+      return;
+    }
+  }
+
   const complaints = getStoredComplaints();
   const pendingTickets = complaints.filter(c => c.status === 'PENDING_VERIFICATION');
   const verifiedComplaints = complaints.filter(c => c.status !== 'PENDING_VERIFICATION');
@@ -2880,22 +2897,103 @@ function handleSwitchRoleNav(event) {
   }
 }
 
+function performSignOut() {
+  const authKeys = [
+    'campusflow_session',
+    'campusflow_session_token',
+    'campusflow_user',
+    'campusflow_user_role',
+    'campusflow_worker_dept',
+    'campusflow_selected_ticket'
+  ];
+  authKeys.forEach(k => {
+    try {
+      if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(k);
+      if (typeof localStorage !== 'undefined') localStorage.removeItem(k);
+    } catch (e) {}
+  });
+
+  const existing = document.getElementById('profile-dropdown-wrapper');
+  if (existing) existing.remove();
+
+  if (typeof BroadcastChannel !== 'undefined') {
+    try {
+      const bc = new BroadcastChannel('campusflow_bus');
+      bc.postMessage({ type: 'AUTH_LOGOUT' });
+    } catch (e) {}
+  }
+}
+
 function handleSignOutNav(event) {
-  if (event) event.preventDefault();
+  if (event) {
+    try {
+      event.preventDefault();
+      event.stopPropagation();
+    } catch (e) {}
+  }
   const dropdown = document.getElementById('profile-dropdown-menu');
   if (dropdown) dropdown.classList.add('hidden');
-  localStorage.removeItem('campusflow_session_token');
-  sessionStorage.removeItem('campusflow_session_token');
-  if (typeof navigateTo === 'function') {
-    navigateTo('home', 'public');
-  } else {
-    window.location.href = '../../index.html';
+
+  performSignOut();
+
+  const isFrontend = typeof window !== 'undefined' && window.location.pathname.includes('/frontend/');
+  const target = isFrontend ? '/frontend/pages/public/login.html?mode=signin' : '/pages/public/login.html?mode=signin';
+
+  if (typeof window !== 'undefined') {
+    window.location.href = target;
   }
+}
+
+if (typeof window !== 'undefined') {
+  window.performSignOut = performSignOut;
+  window.handleSignOutNav = handleSignOutNav;
+}
+
+// Global click listener for any "Sign Out" link or button across the app
+if (typeof document !== 'undefined' && !window._signOutHandlerBound) {
+  window._signOutHandlerBound = true;
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('a, button');
+    if (!target) return;
+    const text = (target.textContent || '').trim().toLowerCase();
+    const href = (target.getAttribute('href') || '').toLowerCase();
+    const hasLogoutIcon = Array.from(target.querySelectorAll('span')).some(s => (s.textContent || '').trim().toLowerCase() === 'logout');
+    
+    if (text === 'sign out' || text.includes('sign out') || href.includes('logout') || hasLogoutIcon) {
+      if (target.id === 'tab-signin-btn' || target.closest('#campusflow-login-form')) return;
+      handleSignOutNav(e);
+    }
+  });
 }
 
 function initProfileDropdown() {
   const header = document.querySelector('header');
   if (!header) return;
+
+  const path = window.location.pathname.toLowerCase();
+  const isPublicPage = path.includes('/public/') || 
+                       path.endsWith('index.html') || 
+                       path.endsWith('code.html') || 
+                       path === '/' || 
+                       path === '' ||
+                       document.getElementById('public-header') !== null;
+
+  // Check if active authenticated session exists
+  let hasSession = false;
+  try {
+    const rawUser = sessionStorage.getItem('campusflow_user') || localStorage.getItem('campusflow_user');
+    const rawToken = sessionStorage.getItem('campusflow_session') || localStorage.getItem('campusflow_session');
+    if (rawUser && rawToken) {
+      hasSession = true;
+    }
+  } catch (e) {}
+
+  // On public pages (especially login.html, signup.html, index.html) or if not logged in, NEVER show profile dropdown!
+  if (isPublicPage || !hasSession) {
+    const existing = document.getElementById('profile-dropdown-wrapper');
+    if (existing) existing.remove();
+    return;
+  }
 
   // 1. Remove "Profile & Settings" from left navigation sidebar
   const sidebarNav = document.getElementById('sidebar-nav-container') || document.querySelector('#auth-sidebar nav');
