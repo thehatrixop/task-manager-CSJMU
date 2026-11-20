@@ -486,13 +486,6 @@ const rootLandingDoc = getHtmlHead('Intelligent Campus Operations', 'css/style.c
   console.log('Generated Landing Page: ' + path.relative(ROOT_DIR, target) + ' (' + rootLandingDoc.length + ' bytes)');
 });
 
-if (fs.existsSync(path.join(ROOT_DIR, 'screen.png'))) {
-  fs.copyFileSync(path.join(ROOT_DIR, 'screen.png'), path.join(ROOT_DIR, 'public/screen.png'));
-  if (fs.existsSync(path.join(FRONTEND_DIR, 'public'))) {
-    fs.copyFileSync(path.join(ROOT_DIR, 'screen.png'), path.join(FRONTEND_DIR, 'public/screen.png'));
-  }
-}
-
 // -------------------------------------------------------------
 // 3. GENERATE AUTHENTICATED ROLE DASHBOARDS
 // -------------------------------------------------------------

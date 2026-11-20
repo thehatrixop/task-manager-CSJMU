@@ -157,6 +157,7 @@ The application has been decomposed into individual, standalone HTML files so `i
 - **Codebase Cleanliness & Redundancy Audit**:
   - Eliminated 22 obsolete scratch files, intermediate step backups (`original_code*`), stale Python generators in `build-tools/`, and redundant duplicate directories (`design-system/`, `docs/BRAIN.md`).
   - Freed ~653 KB of dead code and duplicate assets.
+  - Dedicated Archive Hierarchy: Moved all non-runtime documentation, work reports, PDF/DOCX summaries, and legacy assets into an organized `archive/` directory (`archive/reports/`, `archive/media/`, `archive/legacy-docs/`), removing 470 KB of duplicate screenshots from `public/` and keeping the project root strictly clean for deployment.
   - Consolidated single canonical generator in `build-tools/generate_standalone_pages.js` and linked `package.json` `"build"` scripts directly to it.
 
 ---
