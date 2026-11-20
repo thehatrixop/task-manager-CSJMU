@@ -20,12 +20,18 @@
       </div>
     </div>
     
-    <!-- Online/Offline Switch -->
-    <div class="flex items-center gap-3 bg-slate-800/80 p-2 rounded-xl border border-slate-700">
-      <span class="text-xs font-mono font-medium" id="worker-status-label">ONLINE & AVAILABLE</span>
-      <button onclick="toggleWorkerAvailability()" id="worker-status-btn" class="px-3 py-1 bg-emerald-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-emerald-400 transition-colors">
-        Go Offline
+    <!-- Actions: Report Hazard + Online/Offline Switch -->
+    <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+      <button onclick="navigateTo('worker-report', 'worker')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition-colors shadow-sm">
+        <span class="material-symbols-outlined text-[16px]">add_circle</span>
+        <span>Report Hazard</span>
       </button>
+      <div class="flex items-center gap-3 bg-slate-800/80 p-2 rounded-xl border border-slate-700">
+        <span class="text-xs font-mono font-medium" id="worker-status-label">ONLINE & AVAILABLE</span>
+        <button onclick="toggleWorkerAvailability()" id="worker-status-btn" class="px-3 py-1 bg-emerald-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-emerald-400 transition-colors">
+          Go Offline
+        </button>
+      </div>
     </div>
   </div>
 

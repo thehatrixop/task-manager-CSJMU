@@ -109,21 +109,21 @@
 
 ---
 
-## 5. Screen Catalog (All 64 Standalone Pages)
+## 5. Screen Catalog (All 71 Standalone Pages)
 - **Public Website (11)**:
   `#home`, `#about`, `#platform`, `#how-it-works`, `#departments`, `#department-details`, `#analytics`, `#login`, `#signup`, `#otp-verify`, `#account-recovery`.
 - **User Dashboard (7)**:
   `#user-overview`, `#user-report`, `#user-complaints`, `#user-complaint-details`, `#user-history`, `#user-notifications`, `#user-profile`.
 - **Faculty Dashboard (7)**:
   `#faculty-overview`, `#faculty-report`, `#faculty-complaints`, `#faculty-complaint-details`, `#faculty-history`, `#faculty-notifications`, `#faculty-profile`.
-- **Authority Dashboard (10)**:
-  `#authority-overview`, `#authority-queue`, `#authority-review`, `#authority-approved`, `#authority-rejected`, `#authority-active`, `#authority-workers`, `#authority-analytics`, `#authority-notifications`, `#authority-settings`.
-- **Worker Dashboard (10)**:
-  `#worker-overview`, `#worker-incoming`, `#worker-assignment`, `#worker-active`, `#worker-progress`, `#worker-complete`, `#worker-completed`, `#worker-history`, `#worker-notifications`, `#worker-profile`.
-- **Admin Dashboard (11)**:
-  `#admin-overview`, `#admin-complaints`, `#admin-workers`, `#admin-create-worker`, `#admin-worker-details`, `#admin-departments`, `#admin-assignments`, `#admin-assignment-details`, `#admin-reports`, `#admin-notifications`, `#admin-settings`.
-- **Super Admin Dashboard (11)**:
-  `#super-overview`, `#super-users`, `#super-user-details`, `#super-roles`, `#super-permissions`, `#super-hierarchy`, `#super-assignment-engine`, `#super-settings`, `#super-audit-logs`, `#super-activity`, `#super-analytics`.
+- **Authority Dashboard (11)**:
+  `#authority-overview`, `#authority-report` (Direct Work Order), `#authority-queue`, `#authority-review`, `#authority-approved`, `#authority-rejected`, `#authority-active`, `#authority-workers`, `#authority-analytics`, `#authority-notifications`, `#authority-settings`.
+- **Worker Dashboard (11)**:
+  `#worker-overview`, `#worker-report` (Field Hazard Discovery), `#worker-incoming`, `#worker-assignment`, `#worker-active`, `#worker-progress`, `#worker-complete`, `#worker-completed`, `#worker-history`, `#worker-notifications`, `#worker-profile`.
+- **Admin Dashboard (12)**:
+  `#admin-overview`, `#admin-report` (Facilities Directorate Order), `#admin-complaints`, `#admin-workers`, `#admin-create-worker`, `#admin-worker-details`, `#admin-departments`, `#admin-assignments`, `#admin-assignment-details`, `#admin-reports`, `#admin-notifications`, `#admin-settings`.
+- **Super Admin Dashboard (12)**:
+  `#super-overview`, `#super-report` (Executive Priority Dispatch), `#super-users`, `#super-user-details`, `#super-roles`, `#super-permissions`, `#super-hierarchy`, `#super-assignment-engine`, `#super-settings`, `#super-audit-logs`, `#super-activity`, `#super-analytics`.
 - **Operational States**:
   Empty Data, Skeleton Loading, 30m SLA Expiration / Cascade, 403 Jurisdiction Boundary, Offline Cached Mode, Cryptographically Signed Completion.
 
@@ -148,10 +148,10 @@ The application has been decomposed into individual, standalone HTML files so `i
   - `pages/public/` (11 pages): `landing.html`, `about.html`, `platform.html`, `how-it-works.html`, `departments.html`, `department-details.html`, `analytics.html`, `login.html`, `signup.html`, `otp-verify.html`, `account-recovery.html`.
   - `pages/user/` (7 pages): `overview.html`, `report-issue.html`, `my-complaints.html`, `complaint-details.html`, `history.html`, `notifications.html`, `profile.html`.
   - `pages/faculty/` (7 pages): `overview.html`, `report-issue.html` (Auto-Verified fast-track), `my-complaints.html`, `complaint-details.html`, `history.html`, `notifications.html`, `profile.html`.
-  - `pages/authority/` (10 pages): `overview.html`, `verification-queue.html`, `complaint-review.html`, `approved-requests.html`, `rejected-requests.html`, `active-maintenance.html`, `worker-monitoring.html`, `analytics.html`, `notifications.html`, `settings.html`.
-  - `pages/worker/` (10 pages): `overview.html`, `incoming-dispatch.html` (30m ticking timer), `assignment-details.html`, `active-job.html`, `work-progress.html`, `job-complete.html`, `completed-jobs.html`, `history.html`, `notifications.html`, `profile.html`.
-  - `pages/admin/` (11 pages): `overview.html`, `complaints-master.html`, `workers-directory.html`, `create-worker.html`, `worker-details.html`, `departments.html`, `assignment-telemetry.html`, `assignment-details.html`, `reports.html`, `notifications.html`, `settings.html`.
-  - `pages/super/` (11 pages): `overview.html`, `user-directory.html`, `user-details.html`, `role-management.html`, `permission-matrix.html`, `department-hierarchy.html`, `assignment-engine-config.html`, `platform-settings.html`, `audit-logs.html`, `system-activity.html`, `global-analytics.html`.
+  - `pages/authority/` (11 pages): `overview.html`, `report-issue.html` (Direct Authority Work Order), `verification-queue.html`, `complaint-review.html`, `approved-requests.html`, `rejected-requests.html`, `active-maintenance.html`, `worker-monitoring.html`, `analytics.html`, `notifications.html`, `settings.html`.
+  - `pages/worker/` (11 pages): `overview.html`, `report-issue.html` (Field Hazard / Defect Report), `incoming-dispatch.html` (30m ticking timer), `assignment-details.html`, `active-job.html`, `work-progress.html`, `job-complete.html`, `completed-jobs.html`, `history.html`, `notifications.html`, `profile.html`.
+  - `pages/admin/` (12 pages): `overview.html`, `report-issue.html` (Facilities Directorate Order), `complaints-master.html`, `workers-directory.html`, `create-worker.html`, `worker-details.html`, `departments.html`, `assignment-telemetry.html`, `assignment-details.html`, `reports.html`, `notifications.html`, `settings.html`.
+  - `pages/super/` (12 pages): `overview.html`, `report-issue.html` (Executive Priority Dispatch), `user-directory.html`, `user-details.html`, `role-management.html`, `permission-matrix.html`, `department-hierarchy.html`, `assignment-engine-config.html`, `platform-settings.html`, `audit-logs.html`, `system-activity.html`, `global-analytics.html`.
 - **Shared Assets**:
   - `css/style.css` (Design system styles, solid opaque `#f8fafc` canvas background, pinned/fixed `#auth-sidebar` navigation panel with custom dark scrollbar).
   - `js/auth.js` (4-field login logic, role selector, Google SSO, and redirects).
@@ -199,6 +199,15 @@ The application has been decomposed into individual, standalone HTML files so `i
   - **Faculty Role Integration & Fast-Track Auto-Verification**:
     - Separate role persona for Faculty (`role === 'faculty'`) accessible via login and role switchers.
     - When a faculty member reports a hazard, authority verification gatekeeping is automatically bypassed: ticket directly transitions to `VERIFIED_DISPATCHED`, assigns a certified technician, alerts the worker's shift terminal, and reflects immediately in the admin command telemetry.
+  - **Universal Issue & Work Order Creation Across All 6 Roles**:
+    - **Student (`user`)**: Reports issue tagged `PENDING_VERIFICATION`, held in warden inspection queue.
+    - **Faculty (`faculty`)**: Reports issue tagged `VERIFIED_DISPATCHED` via fast-track privilege, immediately dispatching technician.
+    - **Authority (`authority`)**: Logs direct work orders tagged `VERIFIED_DISPATCHED` with authority direct dispatch privilege (`pages/authority/report-issue.html`).
+    - **Worker (`worker`)**: Logs newly discovered on-site safety hazards and infrastructure defects (`pages/worker/report-issue.html`), auto-verified as high-priority orders.
+    - **Facilities Admin (`admin`)**: Issues campus-wide facility work orders and preventative maintenance directives (`pages/admin/report-issue.html`), directly assigning certified trade leads.
+    - **Super Admin (`super`)**: Logs executive platform incidents and emergency dispatches (`pages/super/report-issue.html`), overriding departmental hierarchy with immediate workforce dispatch and immutable SHA-256 audit logging.
+    - Universal `handleUserComplaintSubmit(e)` dynamically resolves complainant identity, tags role-specific labels, sets direct verification status for non-students, and routes dynamically to the complainant's portal upon submission.
+    - Top overview header action buttons added to `overview.html` across all dashboards (`Report New Issue`, `Report Hazard`, `Log Work Order`, `Report Incident`).
   - When the **Warden** approves and verifies the complaint (`approveComplaint`):
     - Status updates to `VERIFIED_DISPATCHED`.
     - Technician `Rajesh Kumar (WRK-0018)` is officially assigned.

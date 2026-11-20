@@ -1,0 +1,210 @@
+<!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Admin Direct Facilities Order & Issue Logging
+     ID: view-admin-report
+     Location: frontend/src/pages/admin/report-issue.html
+     ========================================================================= -->
+
+<div id="view-admin-report" class="auth-view hidden">
+  <div class="max-w-3xl mx-auto">
+    <div class="mb-6">
+      <button onclick="navigateTo('admin-overview', 'admin')" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 mb-2">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        <span>Back to Operations Center</span>
+      </button>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl font-bold text-slate-900">Log Facilities Directorate Work Order</h1>
+        <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold border border-emerald-300">
+          Facilities Direct Dispatch
+        </span>
+      </div>
+      <p class="text-xs text-slate-600 mt-0.5">Campus Facilities Directorate direct work order. Automatically enters active workforce telemetry with verified priority status.</p>
+    </div>
+
+    <!-- Privilege Banner -->
+    <div class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-xs text-emerald-900 font-mono">
+      <span class="material-symbols-outlined text-[18px] text-emerald-600">domain_verification</span>
+      <span><strong>Directorate Authority:</strong> Work orders issued by Facilities Management are pre-verified, immediately auto-assigned to certified trade leads, and tracked in real-time telemetry.</span>
+    </div>
+
+    <form onsubmit="handleUserComplaintSubmit(event)" class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      <!-- Title -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Work Order / Issue Title <span class="text-red-500">*</span></label>
+        <input type="text" id="report-title" required placeholder="e.g. Central Chiller Unit 2 Overhaul & Compressor Servicing" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"/>
+      </div>
+
+      <!-- Department & Category -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Multi-Select Maintenance Department -->
+        <div class="relative" id="dept-multiselect-container">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700 uppercase">Maintenance Department <span class="text-red-500">*</span></label>
+            <span class="text-[10px] font-mono text-slate-400">Select 1 or more</span>
+          </div>
+
+          <!-- Hidden input that carries the actual submitted value -->
+          <input type="hidden" id="report-dept" name="report-dept" value="Electrical" required />
+
+          <!-- Multi-Select Trigger Button -->
+          <button
+            type="button"
+            id="dept-multiselect-btn"
+            onclick="toggleDeptDropdown(event)"
+            class="w-full min-h-[42px] px-3 py-1.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 flex items-center justify-between cursor-pointer transition-all text-left shadow-xs"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+          >
+            <div id="dept-chips-container" class="flex flex-wrap items-center gap-1.5 min-w-0 pr-2">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium" data-dept="Electrical">
+                Electrical & Power Systems
+                <span onclick="removeDeptItem('Electrical', event)" class="hover:text-blue-900 cursor-pointer ml-0.5 text-sm leading-none font-bold">&times;</span>
+              </span>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-slate-400 shrink-0 transition-transform duration-200" id="dept-dropdown-arrow">expand_more</span>
+          </button>
+
+          <!-- Dropdown Checkbox Menu -->
+          <div
+            id="dept-dropdown-menu"
+            class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-2 space-y-1 text-xs max-h-64 overflow-y-auto"
+            role="listbox"
+            aria-multiselectable="true"
+          >
+            <div class="px-2 py-1 text-[11px] font-semibold text-slate-400 font-mono border-b border-slate-100 flex items-center justify-between">
+              <span>SELECT DEPARTMENTS</span>
+              <button type="button" onclick="clearAllDepts(event)" class="text-[10px] text-blue-600 hover:underline font-sans font-medium">Clear All</button>
+            </div>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors bg-blue-50/80 text-blue-900" onclick="toggleDeptSelection('Electrical', 'Electrical & Power Systems', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Electrical" checked />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Electrical & Power Systems</span>
+                <span class="text-[10px] text-slate-400">Wiring, switchboards, generators, power points</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('HVAC', 'HVAC & Climate Control', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="HVAC" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">HVAC & Climate Control</span>
+                <span class="text-[10px] text-slate-400">Air conditioning, ventilation, heating units</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Plumbing', 'Plumbing & Water Core', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Plumbing" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Plumbing & Water Core</span>
+                <span class="text-[10px] text-slate-400">Pipes, drainage, washroom fixtures, faucets</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Civil', 'Civil & Structural', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Civil" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Civil & Structural</span>
+                <span class="text-[10px] text-slate-400">Masonry, plaster, flooring, glass panels</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Carpentry', 'Carpentry & Locksmith', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Carpentry" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Carpentry & Locksmith</span>
+                <span class="text-[10px] text-slate-400">Doors, latches, desks, cupboards, windows</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('General', 'General Logistics & Sanitation', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="General" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">General Logistics & Sanitation</span>
+                <span class="text-[10px] text-slate-400">Sanitation, pest control, waste management</span>
+              </div>
+            </label>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-500">
+              <span id="dept-selected-count">1 department selected</span>
+              <button type="button" onclick="closeDeptDropdown()" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[10px] font-semibold hover:bg-slate-800 transition-colors">Done</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Problem Category <span class="text-red-500">*</span></label>
+          <select id="report-category" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none bg-white">
+            <option value="Hazardous / Sparking">Hazardous / Sparking / Safety Risk</option>
+            <option value="Equipment Failure">Equipment Failure</option>
+            <option value="Leakage / Burst">Leakage / Pipe Burst</option>
+            <option value="Structural Damage">Structural Damage / Broken Fixture</option>
+            <option value="Routine Maintenance">Routine Maintenance</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Location Description -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label class="block text-xs font-semibold text-slate-700 uppercase">Target Location / Facility Asset <span class="text-red-500">*</span></label>
+          <span class="text-[11px] font-mono text-slate-400">Campus Sector & Asset ID</span>
+        </div>
+        <input type="text" id="report-location" required placeholder="e.g. Utility Plant South, Central Chiller Bay 2" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"/>
+        <p class="text-[11px] text-slate-500 mt-1">Specify sector, facility plant, or campus zone for fleet dispatch.</p>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Directorate Work Scope & Specifications <span class="text-red-500">*</span></label>
+        <textarea id="report-desc" required rows="4" placeholder="Detail standard operating procedures, technical parameters, safety isolations, and required SLA completion time..." class="w-full p-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"></textarea>
+      </div>
+
+      <!-- Priority -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-2">Priority Level <span class="text-red-500">*</span></label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-900 transition-colors">
+            <input type="radio" name="report-priority" value="Low" class="text-slate-900 focus:ring-0"/>
+            <span class="text-xs font-medium">Low</span>
+          </label>
+          <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-900 transition-colors">
+            <input type="radio" name="report-priority" value="Medium" class="text-slate-900 focus:ring-0"/>
+            <span class="text-xs font-medium">Medium</span>
+          </label>
+          <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-900 transition-colors">
+            <input type="radio" name="report-priority" value="High" checked class="text-slate-900 focus:ring-0"/>
+            <span class="text-xs font-medium text-amber-700 font-bold">High</span>
+          </label>
+          <label class="flex items-center gap-2 p-3 border border-red-200 bg-red-50/50 rounded-xl cursor-pointer hover:border-red-600 transition-colors">
+            <input type="radio" name="report-priority" value="Emergency" class="text-red-600 focus:ring-0"/>
+            <span class="text-xs font-medium text-red-700 font-bold">Emergency</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Attachment Dropzone -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Attach Work Specification / Schematic (Optional)</label>
+        <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-slate-400 transition-colors cursor-pointer" onclick="document.getElementById('file-upload-mock').click()">
+          <input type="file" id="file-upload-mock" class="hidden" onchange="handleMockFileSelect(this)"/>
+          <span class="material-symbols-outlined text-[32px] text-slate-400">cloud_upload</span>
+          <p class="text-xs font-medium text-slate-700 mt-2">Click to upload schematics, specs or photos</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">PNG, JPG, PDF up to 25MB</p>
+        </div>
+        <div id="file-preview-pill" class="hidden mt-2 p-2 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between text-xs font-mono">
+          <span id="file-preview-name" class="text-slate-700">attachment.jpg (2.4MB)</span>
+          <button type="button" onclick="removeMockFile()" class="text-red-500 hover:text-red-700">Remove</button>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+        <button type="button" onclick="navigateTo('admin-overview', 'admin')" class="px-5 py-2.5 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50">
+          Cancel
+        </button>
+        <button type="submit" class="px-6 py-2.5 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-all shadow-sm flex items-center gap-2">
+          <span>Authorize & Dispatch Order</span>
+          <span class="material-symbols-outlined text-[16px]">send</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -41,6 +41,7 @@ const ROUTE_MAP = {
 
   // Authority / HOD / Warden
   'authority-overview': 'authority/overview.html',
+  'authority-report': 'authority/report-issue.html',
   'authority-queue': 'authority/verification-queue.html',
   'authority-review': 'authority/complaint-review.html',
   'authority-approved': 'authority/approved-requests.html',
@@ -53,6 +54,7 @@ const ROUTE_MAP = {
 
   // Worker / Technician
   'worker-overview': 'worker/overview.html',
+  'worker-report': 'worker/report-issue.html',
   'worker-incoming': 'worker/incoming-dispatch.html',
   'worker-assignment': 'worker/assignment-details.html',
   'worker-active': 'worker/active-job.html',
@@ -65,6 +67,8 @@ const ROUTE_MAP = {
 
   // Facilities Admin
   'admin-overview': 'admin/overview.html',
+  'admin-report': 'admin/report-issue.html',
+  'admin-report-issue': 'admin/report-issue.html',
   'admin-complaints': 'admin/complaints-master.html',
   'admin-workers': 'admin/workers-directory.html',
   'admin-create-worker': 'admin/create-worker.html',
@@ -79,6 +83,7 @@ const ROUTE_MAP = {
 
   // Super Admin
   'super-overview': 'super/overview.html',
+  'super-report': 'super/report-issue.html',
   'super-users': 'super/user-directory.html',
   'super-user-details': 'super/user-details.html',
   'super-roles': 'super/role-management.html',
@@ -790,19 +795,26 @@ function handleUserComplaintSubmit(e) {
   });
   const newTicketId = `CF-2026-00${maxNum + 1}`;
 
-  const sessionUser = typeof sessionStorage !== 'undefined' ? (sessionStorage.getItem('campusflow_user') ? JSON.parse(sessionStorage.getItem('campusflow_user')) : null) : null;
-  const isFaculty = (typeof window !== 'undefined' && (
-    window.location.pathname.includes('/faculty/') || 
-    window.location.href.includes('faculty') ||
-    (sessionUser && sessionUser.role === 'faculty')
-  ));
+  const userInfo = getCurrentUserInfo();
+  const currentRole = userInfo.role || 'user';
+  const roleDisplayNames = {
+    user: 'Student',
+    faculty: 'Faculty',
+    authority: 'HOD / Warden',
+    worker: 'Technician',
+    admin: 'Facilities Admin',
+    super: 'Super Admin'
+  };
+  const roleLabel = roleDisplayNames[currentRole] || 'User';
+  const complainantName = `${userInfo.name} (${roleLabel})`;
+  const complainantId = userInfo.id;
 
-  const complainantName = isFaculty ? (sessionUser && sessionUser.name ? `${sessionUser.name} (Faculty)` : 'Prof. Ananya Sen (Faculty)') : (sessionUser && sessionUser.name ? `${sessionUser.name} (Student)` : 'Aarav Patel (Student)');
-  const complainantId = isFaculty ? (sessionUser && sessionUser.roll ? sessionUser.roll : 'FAC-ENG-089') : (sessionUser && sessionUser.roll ? sessionUser.roll : '2024-ENG-UG-0142');
-  const initialStatus = isFaculty ? 'VERIFIED_DISPATCHED' : 'PENDING_VERIFICATION';
+  const isStudent = currentRole === 'user';
+  const initialStatus = isStudent ? 'PENDING_VERIFICATION' : 'VERIFIED_DISPATCHED';
   const assignedTech = getTechnicianForDepartment(dept);
-  const initialWorker = isFaculty ? assignedTech.name : 'Pending Authority Verification';
-  const verifiedBy = isFaculty ? 'Autonomous Engine (Faculty Auto-Verification Privilege)' : null;
+  const initialWorker = isStudent ? 'Pending Authority Verification' : assignedTech.name;
+  const verifiedBy = isStudent ? null : (currentRole === 'faculty' ? 'Autonomous Engine (Faculty Auto-Verification Privilege)' : `${userInfo.name} (${roleLabel} Direct Authority)`);
+  const initialWarden = currentRole === 'authority' ? userInfo.name : (isStudent ? 'Dr. Ramesh Sharma' : 'Autonomous Engine (Auto-Verified)');
 
   const newTicket = {
     id: newTicketId,
@@ -815,7 +827,7 @@ function handleUserComplaintSubmit(e) {
     status: initialStatus,
     complainant: complainantName,
     complainantId,
-    warden: isFaculty ? 'Autonomous Engine (Auto-Verified)' : 'Dr. Ramesh Sharma',
+    warden: initialWarden,
     verifiedBy: verifiedBy,
     worker: initialWorker,
     submittedTime: 'Just now',
@@ -824,8 +836,8 @@ function handleUserComplaintSubmit(e) {
 
   complaints.unshift(newTicket);
   saveStoredComplaints(complaints);
-  if (isFaculty) {
-    addAuditLog(complainantName, 'Faculty', 'AUTO_VERIFY_FACULTY', newTicketId, 'NONE → VERIFIED_DISPATCHED');
+  if (!isStudent) {
+    addAuditLog(complainantName, roleLabel, 'DIRECT_DISPATCH_ORDER', newTicketId, 'NONE → VERIFIED_DISPATCHED');
   } else {
     addAuditLog(complainantName, 'Complainant', 'CREATE_TICKET', newTicketId, 'NONE → PENDING_VERIFICATION');
   }
@@ -850,9 +862,35 @@ function handleUserComplaintSubmit(e) {
   const successEl = document.getElementById('success-ticket-id');
   if (successEl) successEl.textContent = newTicketId;
 
+  // Adapt submit modal action button dynamically to role
+  const trackBtn = document.querySelector('#modal-submit-success button');
+  if (trackBtn) {
+    const roleRoutes = {
+      user: "navigateTo('user-complaints', 'user')",
+      faculty: "navigateTo('faculty-complaints', 'faculty')",
+      authority: "navigateTo('authority-queue', 'authority')",
+      worker: "navigateTo('worker-overview', 'worker')",
+      admin: "navigateTo('admin-complaints', 'admin')",
+      super: "navigateTo('super-overview', 'super')"
+    };
+    const route = roleRoutes[currentRole] || "navigateTo('user-complaints', 'user')";
+    trackBtn.setAttribute('onclick', `closeModal('modal-submit-success'); ${route}`);
+  }
+
+  const modalStatusBox = document.querySelector('#modal-submit-success .p-3');
+  if (modalStatusBox) {
+    if (!isStudent) {
+      modalStatusBox.className = 'p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-mono text-emerald-800';
+      modalStatusBox.innerHTML = `Status: <span class="font-bold">Verified & Dispatched (${initialWorker})</span>`;
+    } else {
+      modalStatusBox.className = 'p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-700';
+      modalStatusBox.innerHTML = `Status: <span class="text-amber-600 font-bold">Pending Authority Verification</span>`;
+    }
+  }
+
   showModal('modal-submit-success');
-  if (isFaculty) {
-    showToast(`Faculty Complaint ${newTicketId} logged & auto-verified! Directly dispatched to Rajesh Kumar.`, 'success');
+  if (!isStudent) {
+    showToast(`${roleLabel} Order ${newTicketId} logged & dispatched directly to ${initialWorker}!`, 'success');
   } else {
     showToast(`Complaint ${newTicketId} logged! Awaiting Warden verification before dispatch.`, 'success');
   }

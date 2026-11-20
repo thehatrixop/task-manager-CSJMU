@@ -527,6 +527,7 @@ const rolesConfig = {
     avatar: 'RS',
     navs: [
       { file: 'overview.html', label: 'Overview', icon: 'dashboard' },
+      { file: 'report-issue.html', label: 'Report New Issue', icon: 'add_circle' },
       { file: 'verification-queue.html', label: 'Verification Queue', icon: 'pending_actions' },
       { file: 'complaint-review.html', label: 'Complaint Review', icon: 'rate_review' },
       { file: 'approved-requests.html', label: 'Approved Requests', icon: 'verified' },
@@ -546,6 +547,7 @@ const rolesConfig = {
     hasSlaScript: true,
     navs: [
       { file: 'overview.html', label: 'Cockpit Overview', icon: 'dashboard' },
+      { file: 'report-issue.html', label: 'Report Hazard / Defect', icon: 'add_circle' },
       { file: 'incoming-dispatch.html', label: 'Incoming Job (30m SLA)', icon: 'notification_important' },
       { file: 'assignment-details.html', label: 'Assignment Details', icon: 'description' },
       { file: 'active-job.html', label: 'Active Job Live', icon: 'bolt' },
@@ -564,6 +566,7 @@ const rolesConfig = {
     avatar: 'VR',
     navs: [
       { file: 'overview.html', label: 'Overview', icon: 'dashboard' },
+      { file: 'report-issue.html', label: 'Log New Issue', icon: 'add_circle' },
       { file: 'complaints-master.html', label: 'Master Complaints', icon: 'table_chart' },
       { file: 'workers-directory.html', label: 'Workforce Roster', icon: 'badge' },
       { file: 'create-worker.html', label: 'Provision Worker', icon: 'person_add' },
@@ -583,6 +586,7 @@ const rolesConfig = {
     avatar: 'AT',
     navs: [
       { file: 'overview.html', label: 'Global Overview', icon: 'hub' },
+      { file: 'report-issue.html', label: 'Report Incident', icon: 'add_circle' },
       { file: 'user-directory.html', label: 'User Directory', icon: 'group' },
       { file: 'user-details.html', label: 'User Details', icon: 'manage_accounts' },
       { file: 'role-management.html', label: 'Role Hierarchy', icon: 'security' },

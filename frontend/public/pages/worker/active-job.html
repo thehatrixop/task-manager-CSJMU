@@ -51,7 +51,7 @@
   <aside id="auth-sidebar" class="w-64 bg-slate-950 text-white shrink-0 hidden md:flex flex-col justify-between p-4 border-r border-slate-900">
     <div>
       <a href="../../index.html" class="flex items-center gap-3 px-2 py-3 mb-6">
-        <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
           <span class="material-symbols-outlined text-[18px]">account_balance</span>
         </div>
         <div class="flex flex-col">
@@ -61,6 +61,7 @@
       </a>
       <nav class="space-y-1 text-xs">
         <a href="overview.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">dashboard</span><span>Cockpit Overview</span></a>
+        <a href="report-issue.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">add_circle</span><span>Report Hazard / Defect</span></a>
         <a href="incoming-dispatch.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">notification_important</span><span>Incoming Job (30m SLA)</span></a>
         <a href="assignment-details.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">description</span><span>Assignment Details</span></a>
         <a href="active-job.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white bg-slate-900 border border-slate-800 font-bold"><span class="material-symbols-outlined text-[18px]">bolt</span><span>Active Job Live</span></a>
@@ -302,6 +303,153 @@
     <!-- Active State Display Container -->
     <div id="system-state-output" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl min-h-[120px] flex items-center justify-center text-center text-xs text-slate-500">
       Click any state above to inspect live representation
+    </div>
+  </div>
+</div>
+
+<!-- Modal 8: Edit Complaint Details (Before Verification) -->
+<div id="modal-edit-complaint" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 fade-in max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+      <div>
+        <div class="flex items-center gap-2">
+          <h3 class="text-lg font-bold text-slate-900">Edit Maintenance Request</h3>
+          <span id="edit-ticket-id-display" class="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold border border-slate-200">CF-2026-00000</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-0.5">Correct details, symptoms, or room location before warden verification.</p>
+      </div>
+      <button onclick="closeModal('modal-edit-complaint')" class="text-slate-400 hover:text-slate-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form onsubmit="event.preventDefault(); saveComplaintEdit();" class="space-y-4 text-xs">
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Issue Title <span class="text-red-500">*</span></label>
+        <input type="text" id="edit-title" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs font-medium focus:border-blue-600 focus:outline-none"/>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Department</label>
+          <select id="edit-dept" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+            <option value="Electrical">Electrical & Power Systems</option>
+            <option value="HVAC">HVAC & Climate Control</option>
+            <option value="Plumbing">Plumbing & Water Core</option>
+            <option value="Civil">Civil & Structural</option>
+            <option value="Carpentry">Carpentry & Locksmith</option>
+            <option value="General">General Logistics & Sanitation</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Category</label>
+          <select id="edit-category" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+            <option value="Hazardous / Sparking">Hazardous / Sparking / Safety Risk</option>
+            <option value="Equipment Failure">Equipment Failure</option>
+            <option value="Leakage / Burst">Leakage / Pipe Burst</option>
+            <option value="Structural Damage">Structural Damage / Broken Fixture</option>
+            <option value="Routine Maintenance">Routine Maintenance</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Room Location <span class="text-red-500">*</span></label>
+        <input type="text" id="edit-location" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs font-mono focus:border-blue-600 focus:outline-none"/>
+      </div>
+
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Description <span class="text-red-500">*</span></label>
+        <textarea id="edit-desc" rows="3" required class="w-full p-2.5 border border-slate-300 rounded-lg text-xs focus:border-blue-600 focus:outline-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Priority</label>
+          <select id="edit-priority" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Emergency">Emergency</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Photo / Proof Evidence</label>
+          <button type="button" onclick="document.getElementById('edit-photo-input').click()" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-slate-50 hover:bg-slate-100 flex items-center justify-center gap-1.5 font-medium text-slate-700">
+            <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+            <span id="edit-photo-label">Update Attached Photo</span>
+          </button>
+          <input type="file" id="edit-photo-input" class="hidden" onchange="handleEditPhotoSelect(this)"/>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeModal('modal-edit-complaint')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
+          Discard Changes
+        </button>
+        <button type="submit" class="px-5 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors shadow-sm">
+          Save & Update Request
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 9: Cancel / Retract Verification Request (Pending State) -->
+<div id="modal-cancel-request" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in text-center">
+    <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">cancel_presentation</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Cancel Verification Request?</h3>
+    <p class="text-xs text-slate-600">
+      You are about to cancel ticket <span class="font-mono font-bold text-slate-900" id="cancel-ticket-id-display">CF-2026-00000</span>.
+    </p>
+    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 text-left font-mono">
+      <p id="cancel-ticket-title-display" class="truncate font-semibold">Switchboard Sparking</p>
+      <p class="text-[10px] text-amber-700 mt-1">Status: Pending Verification (Not yet reviewed by authority)</p>
+    </div>
+    <p class="text-[11px] text-slate-500">
+      Because the authority has not yet approved this complaint, it will be immediately retracted and purged from the warden's queue.
+    </p>
+    <div class="flex gap-3 pt-2">
+      <button type="button" onclick="closeModal('modal-cancel-request')" class="w-1/2 py-2.5 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-50">
+        Keep Request
+      </button>
+      <button type="button" onclick="confirmCancelComplaint()" class="w-1/2 py-2.5 bg-red-600 text-white rounded-xl text-xs font-semibold hover:bg-red-700 shadow-sm transition-colors">
+        Cancel & Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 10: Reject / Withdraw Approved Request (Post-Approval Rejection) -->
+<div id="modal-reject-approved-request" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[22px]">block</span>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-slate-900">Cancel & Reject Approved Request</h3>
+        <p class="text-xs text-slate-500 font-mono" id="approved-reject-ticket-id-display">CF-2026-00124</p>
+      </div>
+    </div>
+    <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800">
+      <span class="font-bold">Notice:</span> This request has already been approved and dispatched by the authority. Cancelling it now will formally mark it as <strong>REJECTED</strong> and notify the technician.
+    </div>
+    <p id="approved-reject-meta-display" class="text-xs text-slate-600 font-medium"></p>
+    <div>
+      <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">State Reason for Post-Approval Cancellation <span class="text-red-500">*</span></label>
+      <textarea id="approved-reject-reason-text" rows="3" placeholder="e.g. Issue was self-resolved, entered wrong laboratory room, or technician is no longer needed..." class="w-full p-2.5 border border-slate-300 rounded-xl text-xs focus:border-red-600 focus:outline-none"></textarea>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+      <button type="button" onclick="closeModal('modal-reject-approved-request')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
+        Keep Active
+      </button>
+      <button type="button" onclick="confirmRejectApprovedSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors shadow-sm">
+        Confirm Rejection
+      </button>
     </div>
   </div>
 </div>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" style="background-color: #f8fafc;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Incident — SUPER ADMIN — CampusFlow</title>
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' },
+            surface: { DEFAULT: '#f8fafc', container: '#f1f5f9', 'container-lowest': '#ffffff', 'container-high': '#e2e8f0', 'container-highest': '#cbd5e1' },
+            'on-surface': '#0f172a',
+            'on-surface-variant': '#475569',
+            outline: '#cbd5e1',
+            'outline-variant': '#e2e8f0',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    html, body {
+      background-color: #f8fafc !important;
+      color: #0f172a;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen relative w-full" style="background-color: #f8fafc;">
+
+<div class="flex-1 flex w-full min-h-screen bg-slate-50">
+  <!-- Sidebar -->
+  <aside id="auth-sidebar" class="w-64 bg-slate-950 text-white shrink-0 hidden md:flex flex-col justify-between p-4 border-r border-slate-900">
+    <div>
+      <a href="../../index.html" class="flex items-center gap-3 px-2 py-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-[18px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-base tracking-tight text-white leading-none">CampusFlow</span>
+          <span class="font-mono text-[9px] text-slate-400 uppercase tracking-widest mt-1">SUPER ADMIN</span>
+        </div>
+      </a>
+      <nav class="space-y-1 text-xs">
+        <a href="overview.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">hub</span><span>Global Overview</span></a>
+        <a href="report-issue.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white bg-slate-900 border border-slate-800 font-bold"><span class="material-symbols-outlined text-[18px]">add_circle</span><span>Report Incident</span></a>
+        <a href="user-directory.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">group</span><span>User Directory</span></a>
+        <a href="user-details.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">manage_accounts</span><span>User Details</span></a>
+        <a href="role-management.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">security</span><span>Role Hierarchy</span></a>
+        <a href="permission-matrix.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">key</span><span>Permission Matrix</span></a>
+        <a href="department-hierarchy.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">account_tree</span><span>Org Hierarchy</span></a>
+        <a href="assignment-engine-config.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">settings_suggest</span><span>Assignment Engine</span></a>
+        <a href="platform-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">settings</span><span>Platform Settings</span></a>
+        <a href="audit-logs.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">fact_check</span><span>Audit Logs (SHA-256)</span></a>
+        <a href="system-activity.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">terminal</span><span>System Activity</span></a>
+        <a href="global-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 transition-colors font-medium"><span class="material-symbols-outlined text-[18px]">monitoring</span><span>Global Analytics</span></a>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Main Canvas -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Topbar -->
+    <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-600 hover:text-slate-900">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-500">
+          <span class="font-semibold text-slate-900">SUPER ADMIN</span>
+          <span>/</span>
+          <span class="text-slate-600">Report Incident</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-xs text-slate-500">
+          <span class="material-symbols-outlined text-[16px]">search</span>
+          <span>Search records...</span>
+        </div>
+        <a href="../public/login.html?mode=signin" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">switch_account</span>
+          <span>Switch Role</span>
+        </a>
+        <a href="../../index.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">logout</span>
+          <span class="hidden sm:inline">Sign Out</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Content Outlet -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <!-- =========================================================================
+     CAMPUSFLOW PAGE COMPONENT: Super Admin Incident & Priority Work Order
+     ID: view-super-report
+     Location: frontend/src/pages/super/report-issue.html
+     ========================================================================= -->
+
+<div  class="w-full">
+  <div class="max-w-3xl mx-auto">
+    <div class="mb-6">
+      <button onclick="navigateTo('super-overview', 'super')" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 mb-2">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        <span>Back to Global Command</span>
+      </button>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl font-bold text-slate-900">Executive Platform Incident & Emergency Dispatch</h1>
+        <span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-mono text-[10px] font-bold border border-purple-300">
+          Executive Override
+        </span>
+      </div>
+      <p class="text-xs text-slate-600 mt-0.5">Top-level administrative incident report. Directly overrides departmental hierarchy with instantaneous workforce dispatch and immutable ledger tagging.</p>
+    </div>
+
+    <!-- Privilege Banner -->
+    <div class="mb-6 p-3.5 bg-purple-50 border border-purple-200 rounded-xl flex items-center gap-3 text-xs text-purple-900 font-mono">
+      <span class="material-symbols-outlined text-[18px] text-purple-600">verified_user</span>
+      <span><strong>Executive Override Authority:</strong> Incidents logged by Super Admin bypass all intermediary approval tiers, automatically trigger top-tier technician dispatch, and broadcast to central oversight.</span>
+    </div>
+
+    <form onsubmit="handleUserComplaintSubmit(event)" class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      <!-- Title -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Incident / Order Title <span class="text-red-500">*</span></label>
+        <input type="text" id="report-title" required placeholder="e.g. Campus-Wide Fiber Backbone Severed near North Gate" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"/>
+      </div>
+
+      <!-- Department & Category -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Multi-Select Maintenance Department -->
+        <div class="relative" id="dept-multiselect-container">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700 uppercase">Maintenance Department <span class="text-red-500">*</span></label>
+            <span class="text-[10px] font-mono text-slate-400">Select 1 or more</span>
+          </div>
+
+          <!-- Hidden input that carries the actual submitted value -->
+          <input type="hidden" id="report-dept" name="report-dept" value="Electrical" required />
+
+          <!-- Multi-Select Trigger Button -->
+          <button
+            type="button"
+            id="dept-multiselect-btn"
+            onclick="toggleDeptDropdown(event)"
+            class="w-full min-h-[42px] px-3 py-1.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 flex items-center justify-between cursor-pointer transition-all text-left shadow-xs"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+          >
+            <div id="dept-chips-container" class="flex flex-wrap items-center gap-1.5 min-w-0 pr-2">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-xs font-medium" data-dept="Electrical">
+                Electrical & Power Systems
+                <span onclick="removeDeptItem('Electrical', event)" class="hover:text-blue-900 cursor-pointer ml-0.5 text-sm leading-none font-bold">&times;</span>
+              </span>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-slate-400 shrink-0 transition-transform duration-200" id="dept-dropdown-arrow">expand_more</span>
+          </button>
+
+          <!-- Dropdown Checkbox Menu -->
+          <div
+            id="dept-dropdown-menu"
+            class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-2 space-y-1 text-xs max-h-64 overflow-y-auto"
+            role="listbox"
+            aria-multiselectable="true"
+          >
+            <div class="px-2 py-1 text-[11px] font-semibold text-slate-400 font-mono border-b border-slate-100 flex items-center justify-between">
+              <span>SELECT DEPARTMENTS</span>
+              <button type="button" onclick="clearAllDepts(event)" class="text-[10px] text-blue-600 hover:underline font-sans font-medium">Clear All</button>
+            </div>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors bg-blue-50/80 text-blue-900" onclick="toggleDeptSelection('Electrical', 'Electrical & Power Systems', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Electrical" checked />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Electrical & Power Systems</span>
+                <span class="text-[10px] text-slate-400">Wiring, switchboards, generators, power points</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('HVAC', 'HVAC & Climate Control', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="HVAC" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">HVAC & Climate Control</span>
+                <span class="text-[10px] text-slate-400">Air conditioning, ventilation, heating units</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Plumbing', 'Plumbing & Water Core', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Plumbing" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Plumbing & Water Core</span>
+                <span class="text-[10px] text-slate-400">Pipes, drainage, washroom fixtures, faucets</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Civil', 'Civil & Structural', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Civil" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Civil & Structural</span>
+                <span class="text-[10px] text-slate-400">Masonry, plaster, flooring, glass panels</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('Carpentry', 'Carpentry & Locksmith', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="Carpentry" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">Carpentry & Locksmith</span>
+                <span class="text-[10px] text-slate-400">Doors, latches, desks, cupboards, windows</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleDeptSelection('General', 'General Logistics & Sanitation', event)">
+              <input type="checkbox" class="dept-checkbox rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer" value="General" />
+              <div class="flex flex-col">
+                <span class="font-semibold text-slate-800">General Logistics & Sanitation</span>
+                <span class="text-[10px] text-slate-400">Sanitation, pest control, waste management</span>
+              </div>
+            </label>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] px-1 text-slate-500">
+              <span id="dept-selected-count">1 department selected</span>
+              <button type="button" onclick="closeDeptDropdown()" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[10px] font-semibold hover:bg-slate-800 transition-colors">Done</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Problem Category <span class="text-red-500">*</span></label>
+          <select id="report-category" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none bg-white">
+            <option value="Hazardous / Sparking">Hazardous / Sparking / Safety Risk</option>
+            <option value="Equipment Failure">Equipment Failure</option>
+            <option value="Leakage / Burst">Leakage / Pipe Burst</option>
+            <option value="Structural Damage">Structural Damage / Broken Fixture</option>
+            <option value="Routine Maintenance">Routine Maintenance</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Location Description -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label class="block text-xs font-semibold text-slate-700 uppercase">Campus Location / Facility Jurisdiction <span class="text-red-500">*</span></label>
+          <span class="text-[11px] font-mono text-slate-400">All Sectors & Buildings</span>
+        </div>
+        <input type="text" id="report-location" required placeholder="e.g. North Campus Main Fiber Distribution Ring" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"/>
+        <p class="text-[11px] text-slate-500 mt-1">Specify cross-campus coordinates or building zones.</p>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Executive Directive / Incident Scope <span class="text-red-500">*</span></label>
+        <textarea id="report-desc" required rows="4" placeholder="Detail executive operational instructions, inter-departmental coordination parameters, and critical SLA targets..." class="w-full p-3 border border-slate-300 rounded-lg text-sm focus:border-blue-600 focus:outline-none"></textarea>
+      </div>
+
+      <!-- Priority -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-2">Priority Level <span class="text-red-500">*</span></label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-900 transition-colors">
+            <input type="radio" name="report-priority" value="Low" class="text-slate-900 focus:ring-0"/>
+            <span class="text-xs font-medium">Low</span>
+          </label>
+          <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-900 transition-colors">
+            <input type="radio" name="report-priority" value="Medium" class="text-slate-900 focus:ring-0"/>
+            <span class="text-xs font-medium">Medium</span>
+          </label>
+          <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-900 transition-colors">
+            <input type="radio" name="report-priority" value="High" class="text-slate-900 focus:ring-0"/>
+            <span class="text-xs font-medium text-amber-700 font-bold">High</span>
+          </label>
+          <label class="flex items-center gap-2 p-3 border border-purple-200 bg-purple-50/50 rounded-xl cursor-pointer hover:border-purple-600 transition-colors">
+            <input type="radio" name="report-priority" value="Emergency" checked class="text-purple-600 focus:ring-0"/>
+            <span class="text-xs font-medium text-purple-700 font-bold">Emergency Directive</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Attachment Dropzone -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Attach Executive Brief / Incident Photo (Optional)</label>
+        <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-slate-400 transition-colors cursor-pointer" onclick="document.getElementById('file-upload-mock').click()">
+          <input type="file" id="file-upload-mock" class="hidden" onchange="handleMockFileSelect(this)"/>
+          <span class="material-symbols-outlined text-[32px] text-slate-400">cloud_upload</span>
+          <p class="text-xs font-medium text-slate-700 mt-2">Click to upload documents or photos</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">PNG, JPG, PDF up to 25MB</p>
+        </div>
+        <div id="file-preview-pill" class="hidden mt-2 p-2 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between text-xs font-mono">
+          <span id="file-preview-name" class="text-slate-700">attachment.jpg (2.4MB)</span>
+          <button type="button" onclick="removeMockFile()" class="text-red-500 hover:text-red-700">Remove</button>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+        <button type="button" onclick="navigateTo('super-overview', 'super')" class="px-5 py-2.5 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50">
+          Cancel
+        </button>
+        <button type="submit" class="px-6 py-2.5 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-purple-600 transition-all shadow-sm flex items-center gap-2">
+          <span>Authorize & Dispatch Order</span>
+          <span class="material-symbols-outlined text-[16px]">send</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    </main>
+  </div>
+</div>
+
+<!-- SHARED MODALS & SYSTEM STATES -->
+<!-- ========================================== -->
+
+<!-- Modal 1: Complaint Submission Success -->
+<div id="modal-submit-success" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-4 fade-in">
+    <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">task_alt</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Complaint Submitted Successfully</h3>
+    <p class="text-xs text-slate-600">
+      Your ticket has been generated with ID <span class="font-mono font-bold text-slate-900" id="success-ticket-id">CF-2026-00128</span>. It has been routed to your hostel warden / department HOD for immediate verification.
+    </p>
+    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-700">
+      Status: <span class="text-amber-600 font-bold">Pending Authority Verification</span>
+    </div>
+    <div class="flex gap-3 pt-2">
+      <button onclick="closeModal('modal-submit-success'); navigateTo('user-complaints', 'user')" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">
+        Track in My Complaints
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Authority Approval Confirmation -->
+<div id="modal-approve-confirm" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-4 fade-in">
+    <div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">smart_toy</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Authority Verification Approved</h3>
+    <p class="text-xs text-slate-600">
+      Ticket <span class="font-mono font-bold text-slate-900" id="approved-ticket-id">CF-2026-00124</span> is verified. The intelligent assignment engine is now scanning available technicians.
+    </p>
+    <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs font-mono text-blue-800">
+      Dispatching Candidate: <span class="font-bold">Rajesh Kumar (WRK-0018)</span> (Score 96.4%)
+    </div>
+    <button onclick="closeModal('modal-approve-confirm')" class="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">
+      Done
+    </button>
+  </div>
+</div>
+
+<!-- Modal 3: Authority Rejection Reason -->
+<div id="modal-reject-reason" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Reject Maintenance Request</h3>
+    <p class="text-xs text-slate-600">Provide an administrative justification for declining this request. The complainant will receive this reason.</p>
+    <textarea id="reject-reason-text" rows="3" placeholder="e.g. Duplicate report, user-damage not covered, or incorrect department selection..." class="w-full p-3 border border-slate-300 rounded-xl text-xs focus:border-red-600 focus:outline-none"></textarea>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-reject-reason')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmRejectSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 4: Request Additional Info -->
+<div id="modal-request-info" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Request Information from Complainant</h3>
+    <p class="text-xs text-slate-600">Ask the student or staff member for clarification regarding the room number or symptom.</p>
+    <textarea id="request-info-text" rows="3" placeholder="e.g. Please clarify which sub-bench in Lab 204 is sparking..." class="w-full p-3 border border-slate-300 rounded-xl text-xs focus:border-blue-600 focus:outline-none"></textarea>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-request-info')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmRequestInfoSubmit()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600">Send Clarification Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5: Worker Decline Reason & Auto-Reassignment -->
+<div id="modal-worker-decline" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Decline Job Dispatch</h3>
+    <p class="text-xs text-slate-600">Select reason. The system will automatically reroute this ticket to the next eligible technician without delay.</p>
+    <select id="worker-decline-reason" class="w-full h-10 px-3 border border-slate-300 rounded-xl text-xs bg-white">
+      <option>Handling active emergency job elsewhere</option>
+      <option>Missing specialized high-voltage tools</option>
+      <option>Physical injury / medical relief needed</option>
+      <option>Shift concluding within 15 minutes</option>
+    </select>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-worker-decline')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmWorkerDeclineSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700">Decline & Reassign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 6: Admin Manual Intervention / Reassignment -->
+<div id="modal-admin-intervention" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <h3 class="text-lg font-bold text-slate-900">Manual Administrative Reassignment</h3>
+    <p class="text-xs text-slate-600">Override the automated assignment engine and manually assign a certified technician.</p>
+    <div>
+      <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Select Technician</label>
+      <select id="override-worker-select" class="w-full h-10 px-3 border border-slate-300 rounded-xl text-xs bg-white">
+        <option value="WRK-0018">WRK-0018: Rajesh Kumar (Available)</option>
+        <option value="WRK-0019">WRK-0019: Vikram Singh (Standby)</option>
+        <option value="WRK-0020">WRK-0020: Priya Nair (Available)</option>
+      </select>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeModal('modal-admin-intervention')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700">Cancel</button>
+      <button onclick="confirmInterventionSubmit()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600">Force Reassign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 7: System States Showcase -->
+<div id="modal-system-states" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 fade-in">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+      <h3 class="text-lg font-bold text-slate-900">System States Inspector</h3>
+      <button onclick="closeModal('modal-system-states')" class="text-slate-400 hover:text-slate-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <p class="text-xs text-slate-600">Trigger standard application operational states for QA inspection:</p>
+    
+    <div class="grid grid-cols-2 gap-2 text-xs">
+      <button onclick="renderSystemState('empty')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">1. Empty Data State</span>
+        <span class="text-slate-500 text-[11px]">No active work orders</span>
+      </button>
+      <button onclick="renderSystemState('loading')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">2. Skeleton Loading</span>
+        <span class="text-slate-500 text-[11px]">Asynchronous data fetch</span>
+      </button>
+      <button onclick="renderSystemState('timeout')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-red-600 block">3. 30m SLA Expiry</span>
+        <span class="text-slate-500 text-[11px]">Auto-cascade state</span>
+      </button>
+      <button onclick="renderSystemState('unauthorized')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">4. 403 Forbidden</span>
+        <span class="text-slate-500 text-[11px]">Jurisdiction boundary</span>
+      </button>
+      <button onclick="renderSystemState('offline')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-slate-900 block">5. Offline Cache</span>
+        <span class="text-slate-500 text-[11px]">Basement plant room mode</span>
+      </button>
+      <button onclick="renderSystemState('completed')" class="p-3 border border-slate-200 rounded-xl text-left hover:border-slate-900">
+        <span class="font-bold text-emerald-600 block">6. Certified Seal</span>
+        <span class="text-slate-500 text-[11px]">Geostamped audit receipt</span>
+      </button>
+    </div>
+
+    <!-- Active State Display Container -->
+    <div id="system-state-output" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl min-h-[120px] flex items-center justify-center text-center text-xs text-slate-500">
+      Click any state above to inspect live representation
+    </div>
+  </div>
+</div>
+
+<!-- Modal 8: Edit Complaint Details (Before Verification) -->
+<div id="modal-edit-complaint" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 fade-in max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+      <div>
+        <div class="flex items-center gap-2">
+          <h3 class="text-lg font-bold text-slate-900">Edit Maintenance Request</h3>
+          <span id="edit-ticket-id-display" class="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold border border-slate-200">CF-2026-00000</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-0.5">Correct details, symptoms, or room location before warden verification.</p>
+      </div>
+      <button onclick="closeModal('modal-edit-complaint')" class="text-slate-400 hover:text-slate-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form onsubmit="event.preventDefault(); saveComplaintEdit();" class="space-y-4 text-xs">
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Issue Title <span class="text-red-500">*</span></label>
+        <input type="text" id="edit-title" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs font-medium focus:border-blue-600 focus:outline-none"/>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Department</label>
+          <select id="edit-dept" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+            <option value="Electrical">Electrical & Power Systems</option>
+            <option value="HVAC">HVAC & Climate Control</option>
+            <option value="Plumbing">Plumbing & Water Core</option>
+            <option value="Civil">Civil & Structural</option>
+            <option value="Carpentry">Carpentry & Locksmith</option>
+            <option value="General">General Logistics & Sanitation</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Category</label>
+          <select id="edit-category" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+            <option value="Hazardous / Sparking">Hazardous / Sparking / Safety Risk</option>
+            <option value="Equipment Failure">Equipment Failure</option>
+            <option value="Leakage / Burst">Leakage / Pipe Burst</option>
+            <option value="Structural Damage">Structural Damage / Broken Fixture</option>
+            <option value="Routine Maintenance">Routine Maintenance</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Room Location <span class="text-red-500">*</span></label>
+        <input type="text" id="edit-location" required class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs font-mono focus:border-blue-600 focus:outline-none"/>
+      </div>
+
+      <div>
+        <label class="block font-semibold text-slate-700 uppercase mb-1">Description <span class="text-red-500">*</span></label>
+        <textarea id="edit-desc" rows="3" required class="w-full p-2.5 border border-slate-300 rounded-lg text-xs focus:border-blue-600 focus:outline-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Priority</label>
+          <select id="edit-priority" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-white">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Emergency">Emergency</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 uppercase mb-1">Photo / Proof Evidence</label>
+          <button type="button" onclick="document.getElementById('edit-photo-input').click()" class="w-full h-10 px-3 border border-slate-300 rounded-lg text-xs bg-slate-50 hover:bg-slate-100 flex items-center justify-center gap-1.5 font-medium text-slate-700">
+            <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+            <span id="edit-photo-label">Update Attached Photo</span>
+          </button>
+          <input type="file" id="edit-photo-input" class="hidden" onchange="handleEditPhotoSelect(this)"/>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeModal('modal-edit-complaint')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
+          Discard Changes
+        </button>
+        <button type="submit" class="px-5 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors shadow-sm">
+          Save & Update Request
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 9: Cancel / Retract Verification Request (Pending State) -->
+<div id="modal-cancel-request" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in text-center">
+    <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+      <span class="material-symbols-outlined text-[32px]">cancel_presentation</span>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">Cancel Verification Request?</h3>
+    <p class="text-xs text-slate-600">
+      You are about to cancel ticket <span class="font-mono font-bold text-slate-900" id="cancel-ticket-id-display">CF-2026-00000</span>.
+    </p>
+    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 text-left font-mono">
+      <p id="cancel-ticket-title-display" class="truncate font-semibold">Switchboard Sparking</p>
+      <p class="text-[10px] text-amber-700 mt-1">Status: Pending Verification (Not yet reviewed by authority)</p>
+    </div>
+    <p class="text-[11px] text-slate-500">
+      Because the authority has not yet approved this complaint, it will be immediately retracted and purged from the warden's queue.
+    </p>
+    <div class="flex gap-3 pt-2">
+      <button type="button" onclick="closeModal('modal-cancel-request')" class="w-1/2 py-2.5 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-50">
+        Keep Request
+      </button>
+      <button type="button" onclick="confirmCancelComplaint()" class="w-1/2 py-2.5 bg-red-600 text-white rounded-xl text-xs font-semibold hover:bg-red-700 shadow-sm transition-colors">
+        Cancel & Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 10: Reject / Withdraw Approved Request (Post-Approval Rejection) -->
+<div id="modal-reject-approved-request" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 fade-in">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[22px]">block</span>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-slate-900">Cancel & Reject Approved Request</h3>
+        <p class="text-xs text-slate-500 font-mono" id="approved-reject-ticket-id-display">CF-2026-00124</p>
+      </div>
+    </div>
+    <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800">
+      <span class="font-bold">Notice:</span> This request has already been approved and dispatched by the authority. Cancelling it now will formally mark it as <strong>REJECTED</strong> and notify the technician.
+    </div>
+    <p id="approved-reject-meta-display" class="text-xs text-slate-600 font-medium"></p>
+    <div>
+      <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">State Reason for Post-Approval Cancellation <span class="text-red-500">*</span></label>
+      <textarea id="approved-reject-reason-text" rows="3" placeholder="e.g. Issue was self-resolved, entered wrong laboratory room, or technician is no longer needed..." class="w-full p-2.5 border border-slate-300 rounded-xl text-xs focus:border-red-600 focus:outline-none"></textarea>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+      <button type="button" onclick="closeModal('modal-reject-approved-request')" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
+        Keep Active
+      </button>
+      <button type="button" onclick="confirmRejectApprovedSubmit()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors shadow-sm">
+        Confirm Rejection
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Toast Notification -->
+<div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- ========================================== -->
+<!-- CLIENT-SIDE ROUTER & REACTIVE APPLICATION ENGINE -->
+<!-- ========================================== -->
+
+
+<script src="../../js/app.js"></script>
+
+</body>
+</html>
