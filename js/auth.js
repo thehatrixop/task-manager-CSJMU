@@ -607,15 +607,17 @@ const AuthSecurity = {
       return { success: false, error: 'Full Legal Name, Account Type, Contact Identifier, and Password are required.' };
     }
 
-    // 2. Privilege Escalation Prevention (Anti-Root Hijack)
-    // Non-user roles (authority, worker, admin, super) require a valid Institutional Authorization Token
+    // 2. Privilege Escalation Prevention (Anti-Root Hijack & Public Signup Restriction)
+    // Public self-registration is strictly restricted to Student and Faculty accounts.
+    // Privileged roles (worker, authority, admin, super) must be provisioned administratively
+    // or provide a verified Institutional Master Key.
     const privilegedRoles = ['authority', 'worker', 'admin', 'super'];
     if (privilegedRoles.includes(role)) {
       const requiredKey = this.PRIVILEGED_ROLE_TOKENS[role];
-      if (authCode && authCode !== requiredKey) {
+      if (!authCode || authCode !== requiredKey) {
         return {
           success: false,
-          error: `Privilege Escalation Blocked: Registering as '${role}' requires a verified Department Authorization Master Key.`
+          error: `Self-registration is restricted to Student and Faculty accounts only. Technicians, Wardens, and Administrators must be provisioned directly by Facilities Directorate Admin.`
         };
       }
     }
@@ -1139,6 +1141,17 @@ function handleSignupSubmit(e) {
   const identifier = document.getElementById('signup-identifier')?.value || '';
   const password = document.getElementById('signup-password')?.value || '';
   const rollId = document.getElementById('signup-roll')?.value || '';
+
+  const allowedSignupRoles = ['user', 'faculty'];
+  if (!allowedSignupRoles.includes(role)) {
+    const errorMsg = 'Self-registration is restricted to Student and Faculty accounts only. Technicians, Wardens, and Administrators must be provisioned directly by Facilities Directorate Admin.';
+    if (typeof showToast === 'function') {
+      showToast(errorMsg, 'error');
+    } else {
+      alert(errorMsg);
+    }
+    return false;
+  }
 
   const signupResult = AuthSecurity.registerAccount({
     name,

@@ -57,6 +57,9 @@
     - **Facilities Admin (`admin`)**: `vikram.rao@facilities.university.edu` / `+91 98110 33400` (Password: `Campus@2026` or `Admin@2026`)
     - **Super Admin (`super`)**: `aris.thorne@governance.university.edu` / `+91 98000 99999` (Password: `Campus@2026` or `Super@2026`)
   - **Google SSO**: Available for `User` and `Faculty` roles.
+  - **Public Self-Registration Confinement (`login.html?mode=signup`)**:
+    - **Allowed Self-Signup Roles**: Strictly confined to **Student / Complainant** (`user`) and **Faculty / Professor** (`faculty`) personas.
+    - **Privileged Roles Provisioning Requirement**: Technicians (`worker`), Wardens/HODs (`authority`), Facilities Administrators (`admin`), and Super Administrators (`super`) cannot self-register through the public signup form. Field technicians are onboarded and provisioned administratively by the Facilities Directorate Admin via `#admin-create-worker` (`pages/admin/create-worker.html`). Public signup attempts for privileged roles are blocked client- and runtime-side with descriptive guidance.
   - **Dynamic Profile Avatar & Badges**:
     - **Algorithmic Initials Engine (`getInitials`)**: Strips honorifics (`Prof.`, `Dr.`, `Mr.`, `Ms.`) and extracts 2-letter uppercase initials dynamically from any user's registered or logged-in legal name (e.g., `John Doe` → `JD`, `Tarun Sharma` → `TS`).
     - **Deterministic Palette (`getAvatarColor`)**: Computes a stable brand avatar color (`bg-blue-600`, `bg-emerald-600`, `bg-indigo-600`, `bg-violet-600`, `bg-teal-600`, `bg-rose-600`, `bg-cyan-700`, `bg-slate-900`) derived from the user's name hash.
