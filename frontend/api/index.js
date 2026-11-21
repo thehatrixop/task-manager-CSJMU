@@ -52,6 +52,32 @@ app.get(['/health', '/api/health'], (req, res) => {
   });
 });
 
+// Real-Time Telemetry Metrics endpoint
+app.get(['/telemetry', '/api/telemetry'], (req, res) => {
+  const total = mockComplaints.length;
+  const resolved = mockComplaints.filter(c => c.status === 'COMPLETED_RESOLVED').length;
+  const active = mockComplaints.filter(c => c.status === 'ACTIVE_IN_PROGRESS' || c.status === 'VERIFIED_DISPATCHED').length;
+  const pending = mockComplaints.filter(c => c.status === 'PENDING_VERIFICATION').length;
+  const departments = ['Electrical', 'HVAC', 'Plumbing', 'Civil', 'Carpentry', 'General'];
+  const deptCounts = {};
+  departments.forEach(d => {
+    deptCounts[d] = mockComplaints.filter(c => (c.department || '').toLowerCase().includes(d.toLowerCase())).length;
+  });
+
+  res.json({
+    status: 'ONLINE',
+    cluster: 'CLUSTER::CAMPUS-MAIN-HUB',
+    departmentsOnline: 6,
+    slaRating: total > 0 ? (((total - mockComplaints.filter(c => c.status === 'REJECTED').length) / total) * 100).toFixed(1) : '100.0',
+    totalComplaints: total,
+    resolvedComplaints: resolved,
+    activeComplaints: active,
+    pendingComplaints: pending,
+    departmentCounts: deptCounts,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ==========================================
 // Authentication Routes (/api/auth)
 // ==========================================

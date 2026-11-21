@@ -12,57 +12,63 @@
         <span class="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-mono">Zero-Trust Vault</span>
       </div>
       <h1 class="text-2xl font-bold text-slate-900 mt-1">Global System Architecture</h1>
-      <p class="text-xs text-slate-600">Cross-university tenant telemetry, user roles hierarchy, and algorithmic assignment engine configuration</p>
+      <p class="text-xs text-slate-600">Cross-university tenant telemetry, user roles hierarchy, and algorithmic
+        assignment engine configuration</p>
     </div>
-    <div class="flex items-center gap-3">
-      <button onclick="navigateTo('super-report', 'super')" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-xs font-semibold hover:bg-purple-700 transition-colors flex items-center gap-1.5 shadow-sm">
-        <span class="material-symbols-outlined text-[16px]">add_circle</span>
-        <span>Report Incident / Dispatch</span>
-      </button>
-      <div class="flex items-center gap-2 font-mono text-xs">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="font-bold text-slate-900">NODE-EAST-CAMPUS [HEALTHY]</span>
+      <div class="flex items-center gap-3">
+        <button onclick="navigateTo('super-report', 'super')"
+          class="px-4 py-2 bg-purple-600 text-white rounded-lg text-xs font-semibold hover:bg-purple-700 transition-colors flex items-center gap-1.5 shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">add_circle</span>
+          <span>Report Incident / Dispatch</span>
+        </button>
+        <div class="flex items-center gap-2 font-mono text-xs">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-bold text-slate-900">NODE-EAST-CAMPUS [HEALTHY]</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Multi-Role KPI Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+        <span class="text-xs font-mono uppercase text-slate-500">Total Registered Users</span>
+        <div class="text-2xl font-bold text-slate-900 mt-1">4,280</div>
+        <span class="text-[11px] text-slate-500">Students, Staff, Faculty</span>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+        <span class="text-xs font-mono uppercase text-slate-500">Field Workforce</span>
+        <div class="text-2xl font-bold text-slate-900 mt-1">95 Staff</div>
+        <span class="text-[11px] text-emerald-600 font-mono">18 Standby</span>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+        <span class="text-xs font-mono uppercase text-slate-500">Authorities (HODs/Wardens)</span>
+        <div class="text-2xl font-bold text-slate-900 mt-1">48</div>
+        <span class="text-[11px] text-slate-500">Across 24 Blocks</span>
+      </div>
+      <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+        <span class="text-xs font-mono uppercase text-emerald-600">Overall System SLA</span>
+        <div class="text-2xl font-bold text-emerald-600 mt-1">98.4%</div>
+        <span class="text-[11px] text-emerald-700 font-mono">18.4m MTTR</span>
+      </div>
+    </div>
+
+    <!-- Cluster Telemetry Ribbon -->
+    <div class="bg-slate-950 text-white rounded-2xl p-6 shadow-xl mb-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Real-Time Core Engine State</h3>
+        <span class="font-mono text-xs text-emerald-400">UPTIME: 99.98%</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+        <div><span class="text-slate-400 block">WebSocket Gateway</span><span class="font-bold text-white">412 Live
+            Sockets</span></div>
+        <div><span class="text-slate-400 block">Dispatch Engine</span><span class="font-bold text-emerald-400">Active
+            (30m Rule)</span></div>
+        <div><span class="text-slate-400 block">Active Database</span><span class="font-bold text-white">PostgreSQL
+            Multi-AZ</span></div>
+        <div><span class="text-slate-400 block">Audit Log Hash</span><span class="font-bold text-slate-300">SHA-256
+            Verified</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Global Multi-Role KPI Cards -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-      <span class="text-xs font-mono uppercase text-slate-500">Total Registered Users</span>
-      <div class="text-2xl font-bold text-slate-900 mt-1">4,280</div>
-      <span class="text-[11px] text-slate-500">Students, Staff, Faculty</span>
-    </div>
-    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-      <span class="text-xs font-mono uppercase text-slate-500">Field Workforce</span>
-      <div class="text-2xl font-bold text-slate-900 mt-1">95 Staff</div>
-      <span class="text-[11px] text-emerald-600 font-mono">18 Standby</span>
-    </div>
-    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-      <span class="text-xs font-mono uppercase text-slate-500">Authorities (HODs/Wardens)</span>
-      <div class="text-2xl font-bold text-slate-900 mt-1">48</div>
-      <span class="text-[11px] text-slate-500">Across 24 Blocks</span>
-    </div>
-    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-      <span class="text-xs font-mono uppercase text-emerald-600">Overall System SLA</span>
-      <div class="text-2xl font-bold text-emerald-600 mt-1">98.4%</div>
-      <span class="text-[11px] text-emerald-700 font-mono">18.4m MTTR</span>
-    </div>
-  </div>
-
-  <!-- Cluster Telemetry Ribbon -->
-  <div class="bg-slate-950 text-white rounded-2xl p-6 shadow-xl mb-8">
-    <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
-      <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Real-Time Core Engine State</h3>
-      <span class="font-mono text-xs text-emerald-400">UPTIME: 99.98%</span>
-    </div>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-      <div><span class="text-slate-400 block">WebSocket Gateway</span><span class="font-bold text-white">412 Live Sockets</span></div>
-      <div><span class="text-slate-400 block">Dispatch Engine</span><span class="font-bold text-emerald-400">Active (30m Rule)</span></div>
-      <div><span class="text-slate-400 block">Active Database</span><span class="font-bold text-white">PostgreSQL Multi-AZ</span></div>
-      <div><span class="text-slate-400 block">Audit Log Hash</span><span class="font-bold text-slate-300">SHA-256 Verified</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- PAGE 48: USER MANAGEMENT (super-users) & PAGE 49: USER DETAILS -->
+  <!-- PAGE 48: USER MANAGEMENT (super-users) & PAGE 49: USER DETAILS -->
