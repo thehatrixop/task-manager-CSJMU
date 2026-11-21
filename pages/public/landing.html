@@ -428,17 +428,20 @@
               <span class="material-symbols-outlined">electrical_services</span>
             </div>
             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold border border-slate-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 18 Technicians
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span id="dept-tech-count-electrical">18 Technicians</span>
             </span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Electrical & Power Systems</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900">Electrical & Power Systems</h3>
+            <span id="dept-status-electrical" class="text-[11px] font-mono text-emerald-600 font-semibold">• 1 Active Dispatch</span>
+          </div>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
             Transformer substations, phase load balancers, backup diesel generators, classroom wiring faults, and switchboard hazards.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
           <span class="text-slate-500">AVG RESPONSE SLA</span>
-          <span class="font-bold text-slate-900">14.2 min</span>
+          <span class="font-bold text-slate-900" id="dept-sla-electrical">14.2 min</span>
         </div>
       </div>
 
@@ -450,17 +453,20 @@
               <span class="material-symbols-outlined">mode_fan</span>
             </div>
             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold border border-slate-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 12 Technicians
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span id="dept-tech-count-hvac">12 Technicians</span>
             </span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">HVAC & Climate Control</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900">HVAC & Climate Control</h3>
+            <span id="dept-status-hvac" class="text-[11px] font-mono text-emerald-600 font-semibold">• 1 Active Dispatch</span>
+          </div>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
             Central chiller plants, chilled-water coils, server room environmental units, and laboratory negative pressure ducting.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
           <span class="text-slate-500">AVG RESPONSE SLA</span>
-          <span class="font-bold text-slate-900">22.0 min</span>
+          <span class="font-bold text-slate-900" id="dept-sla-hvac">22.0 min</span>
         </div>
       </div>
 
@@ -472,17 +478,20 @@
               <span class="material-symbols-outlined">plumbing</span>
             </div>
             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold border border-slate-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 15 Technicians
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span id="dept-tech-count-plumbing">15 Technicians</span>
             </span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Plumbing & Water Core</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900">Plumbing & Water Core</h3>
+            <span id="dept-status-plumbing" class="text-[11px] font-mono text-slate-400 font-normal">• Standby Ready</span>
+          </div>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
             Hydro-pneumatic pump towers, RO drinking water filtration, stormwater lines, and dormitory water pressure balancing.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
           <span class="text-slate-500">AVG RESPONSE SLA</span>
-          <span class="font-bold text-slate-900">19.5 min</span>
+          <span class="font-bold text-slate-900" id="dept-sla-plumbing">19.5 min</span>
         </div>
       </div>
 
@@ -494,17 +503,20 @@
               <span class="material-symbols-outlined">foundation</span>
             </div>
             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold border border-slate-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 8 Field Units
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span id="dept-tech-count-civil">8 Field Units</span>
             </span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Civil & Structural</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900">Civil & Structural</h3>
+            <span id="dept-status-civil" class="text-[11px] font-mono text-slate-400 font-normal">• Standby Ready</span>
+          </div>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
             Masonry inspection, roof waterproofing, seismic joint monitoring, and walkway pavement integrity.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
           <span class="text-slate-500">AVG RESPONSE SLA</span>
-          <span class="font-bold text-slate-900">45.0 min</span>
+          <span class="font-bold text-slate-900" id="dept-sla-civil">45.0 min</span>
         </div>
       </div>
 
@@ -516,17 +528,20 @@
               <span class="material-symbols-outlined">carpenter</span>
             </div>
             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold border border-slate-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 6 Technicians
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span id="dept-tech-count-carpentry">6 Technicians</span>
             </span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Carpentry & Locksmith</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900">Carpentry & Locksmith</h3>
+            <span id="dept-status-carpentry" class="text-[11px] font-mono text-slate-400 font-normal">• Standby Ready</span>
+          </div>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
             Auditorium seating assemblies, fire exit door hinges, smart card electronic locks, and laboratory furniture.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
           <span class="text-slate-500">AVG RESPONSE SLA</span>
-          <span class="font-bold text-slate-900">28.4 min</span>
+          <span class="font-bold text-slate-900" id="dept-sla-carpentry">28.4 min</span>
         </div>
       </div>
 
@@ -538,17 +553,20 @@
               <span class="material-symbols-outlined">cleaning_services</span>
             </div>
             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[11px] font-semibold border border-slate-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 34 Personnel
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span id="dept-tech-count-general">34 Personnel</span>
             </span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">General Services & Logistics</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900">General Services & Logistics</h3>
+            <span id="dept-status-general" class="text-[11px] font-mono text-slate-400 font-normal">• Standby Ready</span>
+          </div>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
             Waste divergence programs, hazardous material disposal, biohazard containment, and campus deep sanitation.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
           <span class="text-slate-500">AVG RESPONSE SLA</span>
-          <span class="font-bold text-slate-900">11.0 min</span>
+          <span class="font-bold text-slate-900" id="dept-sla-general">11.0 min</span>
         </div>
       </div>
     </div>
@@ -701,41 +719,31 @@
             
             <div class="grid grid-cols-3 gap-3 mb-4">
               <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
-                <span class="font-mono text-2xl font-bold text-white block">99.98%</span>
+                <span class="font-mono text-2xl font-bold text-white block" id="cmd-system-uptime">99.98%</span>
                 <span class="text-[11px] text-slate-400">System Availability</span>
               </div>
               <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
-                <span class="font-mono text-2xl font-bold text-white block">18.4 min</span>
+                <span class="font-mono text-2xl font-bold text-white block" id="cmd-avg-res-time">18.2 min</span>
                 <span class="text-[11px] text-slate-400">Avg Resolution Time</span>
               </div>
               <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
-                <span class="font-mono text-2xl font-bold text-white block">42 Units</span>
+                <span class="font-mono text-2xl font-bold text-white block" id="cmd-active-units">42 Units</span>
                 <span class="text-[11px] text-slate-400">Active Field Units</span>
               </div>
             </div>
 
             <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-2">Live Automated Dispatch Feed</span>
-              <div class="space-y-2 text-xs font-mono">
-                <div class="flex items-center justify-between text-slate-300">
-                  <span class="text-emerald-400">[DISPATCH]</span>
-                  <span>CF-2026-00124 (Electrical)</span>
-                  <span>→ Rajesh Kumar (WRK-0018)</span>
-                  <span class="text-slate-500">28m SLA</span>
-                </div>
-                <div class="flex items-center justify-between text-slate-300">
-                  <span class="text-blue-400">[VERIFIED]</span>
-                  <span>CF-2026-00125 (HVAC)</span>
-                  <span>Approved by Warden Sharma</span>
-                  <span class="text-slate-500">Just now</span>
-                </div>
-                <div class="flex items-center justify-between text-slate-300">
-                  <span class="text-amber-400">[RESOLVED]</span>
-                  <span>CF-2026-00123 (Plumbing)</span>
-                  <span>Photo Signed Off (Hostel A)</span>
-                  <span class="text-slate-500">4m ago</span>
-                </div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Live Automated Dispatch Feed</span>
+                <span class="inline-flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>LIVE FEED SYNC</span>
+                </span>
               </div>
+              <div id="live-dispatch-feed" class="space-y-2 text-xs font-mono">
+                <!-- Dynamically populated by renderLandingTelemetry() -->
+              </div>
+            </div>
             </div>
           </div>
         </div>

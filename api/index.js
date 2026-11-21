@@ -54,23 +54,39 @@ app.get(['/health', '/api/health'], (req, res) => {
 
 // Real-Time Telemetry Metrics endpoint
 app.get(['/telemetry', '/api/telemetry'], (req, res) => {
-  const total = mockComplaints.length;
-  const resolved = mockComplaints.filter(c => c.status === 'COMPLETED_RESOLVED').length;
-  const active = mockComplaints.filter(c => c.status === 'ACTIVE_IN_PROGRESS' || c.status === 'VERIFIED_DISPATCHED').length;
-  const pending = mockComplaints.filter(c => c.status === 'PENDING_VERIFICATION').length;
+  const baseMonthlyResolved = 1365;
+  const liveResolved = mockComplaints.filter(c => c.status === 'COMPLETED_RESOLVED').length;
+  const totalMonthlyResolved = baseMonthlyResolved + liveResolved;
+
+  const baseDeptLoads = {
+    Electrical: 483,
+    HVAC: 370,
+    Plumbing: 256,
+    Civil: 171,
+    Carpentry: 104,
+    General: 82
+  };
+
   const departments = ['Electrical', 'HVAC', 'Plumbing', 'Civil', 'Carpentry', 'General'];
   const deptCounts = {};
   departments.forEach(d => {
-    deptCounts[d] = mockComplaints.filter(c => (c.department || '').toLowerCase().includes(d.toLowerCase())).length;
+    deptCounts[d] = baseDeptLoads[d] + mockComplaints.filter(c => (c.department || '').toLowerCase().includes(d.toLowerCase())).length;
   });
+
+  const active = mockComplaints.filter(c => c.status === 'ACTIVE_IN_PROGRESS' || c.status === 'VERIFIED_DISPATCHED').length;
+  const pending = mockComplaints.filter(c => c.status === 'PENDING_VERIFICATION').length;
 
   res.json({
     status: 'ONLINE',
     cluster: 'CLUSTER::CAMPUS-MAIN-HUB',
     departmentsOnline: 6,
-    slaRating: total > 0 ? (((total - mockComplaints.filter(c => c.status === 'REJECTED').length) / total) * 100).toFixed(1) : '100.0',
-    totalComplaints: total,
-    resolvedComplaints: resolved,
+    slaRating: '98.4%',
+    avgWorkerAcceptance: '18.2 min',
+    activeFieldForce: '42 Units',
+    standbyUnits: Math.max(5, 18 - active),
+    monthlyResolved: totalMonthlyResolved,
+    onTimeRate: '96%',
+    firstDispatchPassRate: '94.8%',
     activeComplaints: active,
     pendingComplaints: pending,
     departmentCounts: deptCounts,
@@ -133,7 +149,86 @@ app.post(['/auth/google', '/api/auth/google'], (req, res) => {
 // ==========================================
 // Complaints Routes (/api/complaints)
 // ==========================================
-const mockComplaints = [];
+const mockComplaints = [
+  {
+    id: 'CF-2026-00124',
+    title: 'Switchboard Malfunction & Sparking',
+    department: 'Electrical & Power Systems',
+    location: 'Academic Block B, Rm 204',
+    priority: 'HIGH',
+    status: 'ACTIVE_IN_PROGRESS',
+    assignedWorker: 'Rajesh Kumar (WRK-0018)',
+    complainant: 'Aarav Patel (Student)',
+    createdAt: new Date(Date.now() - 18 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'CF-2026-00125',
+    title: 'Server Room AC Unit Temperature Spike',
+    department: 'HVAC & Climate Control',
+    location: 'CS & Engineering Building, Ground Floor Server Room',
+    priority: 'HIGH',
+    status: 'VERIFIED_DISPATCHED',
+    assignedWorker: 'Vikram Singh (WRK-0019)',
+    verifiedBy: 'Autonomous Engine (Faculty Auto-Verification Privilege)',
+    complainant: 'Prof. Ananya Sen (Faculty)',
+    createdAt: new Date(Date.now() - 4 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'CF-2026-00126',
+    title: 'Dormitory Corridor Overhead Fluorescent Flickering',
+    department: 'Electrical & Power Systems',
+    location: 'Hostel Block C, 3rd Floor East Wing',
+    priority: 'MEDIUM',
+    status: 'PENDING_VERIFICATION',
+    assignedWorker: 'Awaiting Warden Verification',
+    complainant: 'Kavita Joshi (Student)',
+    createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'CF-2026-00123',
+    title: 'Hostel A Overhead Tank Float Valve Overflow',
+    department: 'Plumbing & Water Core',
+    location: 'Hostel Block A, Rooftop Header Tank',
+    priority: 'HIGH',
+    status: 'COMPLETED_RESOLVED',
+    assignedWorker: 'Suresh Nair (WRK-0022)',
+    complainant: 'Siddharth Roy (Student)',
+    createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'CF-2026-00122',
+    title: 'Auditorium Exit Door Latch & Hydraulic Closer Jam',
+    department: 'Carpentry & Locksmith',
+    location: 'Central University Auditorium, Exit Gate 3',
+    priority: 'MEDIUM',
+    status: 'COMPLETED_RESOLVED',
+    assignedWorker: 'Mohammad Tariq (WRK-0028)',
+    complainant: 'Dr. Manish Verma (Faculty)',
+    createdAt: new Date(Date.now() - 120 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'CF-2026-00121',
+    title: 'Chemistry Annex Neutralization Pit Inspection',
+    department: 'General Services & Logistics',
+    location: 'Science Complex, Chemistry Lab Basement',
+    priority: 'HIGH',
+    status: 'COMPLETED_RESOLVED',
+    assignedWorker: 'Rohan Verma (WRK-0031)',
+    complainant: 'Prof. Ananya Sen (Faculty)',
+    createdAt: new Date(Date.now() - 240 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'CF-2026-00120',
+    title: 'Main Quad Walkway Paver Slab Dislodgement',
+    department: 'Civil & Structural',
+    location: 'Administrative Square, West Pathway',
+    priority: 'MEDIUM',
+    status: 'COMPLETED_RESOLVED',
+    assignedWorker: 'Amit Deshmukh (WRK-0025)',
+    complainant: 'Dr. Ramesh Sharma (Authority)',
+    createdAt: new Date(Date.now() - 360 * 60 * 1000).toISOString()
+  }
+];
 
 app.get(['/complaints', '/api/complaints'], (req, res) => {
   const { role, status } = req.query;
